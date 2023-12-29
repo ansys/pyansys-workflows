@@ -4,6 +4,8 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
+from ansys.geometry.core import Modeler
+
 # draw pipe
 # plane = Plane(origin=Point3D([0,0,0]), direction_x=Vector3D([1,0,0]), direction_y=Vector3D([0,0,1]))
 # sketch = Sketch(plane)
@@ -19,6 +21,7 @@ sketch.plot()
 
 
 # Start by creating the Design
+modeler = Modeler()
 design = modeler.create_design("Pipe")
 
 # Create a body directly on the design by extruding the sketch
