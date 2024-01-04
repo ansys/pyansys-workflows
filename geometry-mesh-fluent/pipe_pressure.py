@@ -4,6 +4,8 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, Vector3D
 from ansys.geometry.core.misc import UNITS
 from ansys.geometry.core.sketch import Sketch
 
+from ansys.geometry.core.misc.measurements import Distance
+
 from ansys.geometry.core import Modeler
 
 import ansys.fluent.core as pyfluent
@@ -35,8 +37,8 @@ body = design.extrude_sketch(
 design.plot()
 
 # Download and save design
-cad_file = "D:\\test"
-design.download(cad_file, as_stream=False)
+cad_file = "D:\\test.scdocx"
+design.download(cad_file)
 
 
 # Import the geometry and mesh it
@@ -46,7 +48,7 @@ import tempfile
 from ansys.meshing import prime
 from ansys.meshing.prime.graphics import Graphics
 
-prime_client = prime.launch_prime()
+prime_client = prime.launch_prime(version="24.1")
 model = prime_client.model
 mesh_util = prime.lucid.Mesh(model=model)
 
@@ -73,6 +75,14 @@ mesh_util.volume_mesh(
 # Display the mesh
 display = Graphics(model=model)
 display()
+
+# Write the mesh
+with tempfile.TemporaryDirectory() as temp_folder:
+    print(temp_folder)
+    mesh_file = os.path.join(temp_folder, "pipe.cas")
+    mesh_util.write(mesh_file)
+    assert os.path.exists(mesh_file)
+    print("\nExported file:\n", mesh_file)
 
 # Fluent
 solver = pyfluent.launch_fluent(precision="double", processor_count=2, mode="solver")
