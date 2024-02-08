@@ -9,7 +9,6 @@ on:
       - main
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
   MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
   ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
   ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
@@ -67,7 +66,9 @@ jobs:
           .\.venv\Scripts\Activate.ps1
           python -m pip install --upgrade pip
           pip install --upgrade build wheel
-          pip install 
+          pip install ansys-geometry-core
+          pip install ansys-meshing-prime
+          pip install ansys-fluent-core
 
       - name: Login to GitHub Container Registry
         if: env.SKIP_UNSTABLE == 'false'
@@ -105,7 +106,7 @@ jobs:
         if: env.SKIP_UNSTABLE == 'false'
         run: |
           .\.venv\Scripts\Activate.ps1
-          pytest -v
+          python pipe_pressure.py
 
 
       # - name: Upload PyVista generated images (cache and results)
