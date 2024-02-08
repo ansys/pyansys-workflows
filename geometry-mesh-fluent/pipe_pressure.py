@@ -11,17 +11,23 @@ from ansys.geometry.core import Modeler
 import ansys.fluent.core as pyfluent
 
 # draw pipe
-# plane = Plane(origin=Point3D([0,0,0]), direction_x=Vector3D([1,0,0]), direction_y=Vector3D([0,0,1]))
-# sketch = Sketch(plane)
+plane = Plane(origin=Point3D([0,0,0]), direction_x=Vector3D([1,0,0]), direction_y=Vector3D([0,0,1]))
+sketch = Sketch(plane)
 
 sketch = Sketch()
-
 (
-    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(2, UNITS.cm), "input")
-      .circle(Point2D([0, 0], UNITS.mm), Quantity(3, UNITS.cm), "output")
+    sketch.circle(Point2D([0, 0], UNITS.mm), Quantity(2, UNITS.cm))
+      .circle(Point2D([0, 0], UNITS.mm), Quantity(3, UNITS.cm))
 )
 
-sketch.plot()
+
+sketch2 = Sketch()
+(
+    sketch2.circle(Point2D([10, 0], UNITS.cm), Quantity(2, UNITS.cm))
+      .circle(Point2D([10, 0], UNITS.cm), Quantity(3, UNITS.cm))
+)
+
+# sketch.plot()
 
 
 # Start by creating the Design
@@ -32,6 +38,36 @@ design = modeler.create_design("Pipe")
 body = design.extrude_sketch(
     name="Pipe_Body", sketch=sketch, distance=Distance(15, unit=UNITS.cm)
 )
+
+body = design.extrude_sketch(
+    name="Pipe_Body", sketch=sketch2, distance=Distance(15, unit=UNITS.cm)
+)
+
+
+sketch3 = Sketch()
+plane = Plane(origin=Point3D([-4,0,0], UNITS.cm), direction_x=Vector3D([0,-1,0]), direction_y=Vector3D([0,0,-1]))
+sketch3 = Sketch(plane)
+sketch3.box(Point2D([0,0]), Quantity(6, UNITS.cm), Quantity(6, UNITS.cm))
+
+sketch4 = Sketch()
+plane = Plane(origin=Point3D([-4,0,0], UNITS.cm), direction_x=Vector3D([0,-1,0]), direction_y=Vector3D([0,0,-1]))
+sketch4 = Sketch(plane)
+sketch4.box(Point2D([0,0]), Quantity(3, UNITS.cm), Quantity(3, UNITS.cm))
+
+
+# sketch3.plot()
+
+main_rectangle = design.extrude_sketch(
+    name="Pipe_Body", sketch=sketch3, distance=Distance(17, unit=UNITS.cm)
+)
+
+
+second_rectangle = design.extrude_sketch(
+    name="Pipe_Body2", sketch=sketch4, distance=Distance(15, unit=UNITS.cm)
+)
+
+main_rectangle.subtract(second_rectangle)
+
 
 # Plot the body
 design.plot()
@@ -48,7 +84,7 @@ import tempfile
 from ansys.meshing import prime
 from ansys.meshing.prime.graphics import Graphics
 
-prime_client = prime.launch_prime(version="24.1")
+prime_client = prime.launch_prime(version="23.2")
 model = prime_client.model
 mesh_util = prime.lucid.Mesh(model=model)
 
@@ -77,18 +113,22 @@ display = Graphics(model=model)
 display()
 
 # Write the mesh
-with tempfile.TemporaryDirectory() as temp_folder:
-    print(temp_folder)
-    mesh_file = os.path.join(temp_folder, "pipe.cas")
-    mesh_util.write(mesh_file)
-    assert os.path.exists(mesh_file)
-    print("\nExported file:\n", mesh_file)
+# with tempfile.TemporaryDirectory() as temp_folder:
+#     print(temp_folder)
+#     mesh_file = os.path.join(temp_folder, "pipe.cas")
+#     mesh_util.write(mesh_file)
+#     assert os.path.exists(mesh_file)
+#     print("\nExported file:\n", mesh_file)
+
+mesh_file = "D:\\pipe.cas"
+mesh_util.write(mesh_file)
+assert os.path.exists(mesh_file)
 
 # Fluent
 solver = pyfluent.launch_fluent(precision="double", processor_count=2, mode="solver")
 
 # Import mesh and perform mesh check
-solver.file.read(file_type="case", file_name=import_filename)
+solver.file.read(file_type="case", file_name=mesh_file)
 solver.tui.mesh.check()
 
 # Set working units for mesh
@@ -98,16 +138,16 @@ solver.tui.define.units("length", "cm")
 solver.setup.materials.database.copy_by_name(type="fluid", name="water-liquid")
 
 # Set up cell zone conditions
-solver.setup.cell_zone_conditions.fluid["elbow-fluid"].material = "water-liquid"
+solver.setup.cell_zone_conditions.fluid["pipe_body."].material = "water-liquid"
 
-cold_inlet = solver.setup.boundary_conditions.velocity_inlet["cold-inlet"]
+cold_inlet = solver.setup.boundary_conditions.velocity_inlet["inlet1"]
 cold_inlet.vmag = 0.4
 cold_inlet.ke_spec = "Intensity and Hydraulic Diameter"
 cold_inlet.turb_intensity = 0.05
 cold_inlet.turb_hydraulic_diam = "4 [in]"
 cold_inlet.t = 293.15
 
-hot_inlet = solver.setup.boundary_conditions.velocity_inlet["hot-inlet"]
+hot_inlet = solver.setup.boundary_conditions.velocity_inlet["outlet"]
 hot_inlet.vmag = 1.2
 hot_inlet.ke_spec = "Intensity and Hydraulic Diameter"
 hot_inlet.turb_hydraulic_diam = "1 [in]"
@@ -127,3 +167,20 @@ velocity_symmetry.field = "temperature"
 velocity_symmetry.surfaces_list = ["symmetry-xyplane"]
 velocity_symmetry.scale.scale_f = 4
 velocity_symmetry.style = "arrow"
+
+
+
+# Display contour
+solver.results.graphics.contour.create("contour_vf_vapor")
+
+contour_vf_vapor = {
+    "coloring": {"option": "banded", "smooth": False},
+    "field": "vapor-vof",
+    "filled": True,
+}
+
+solver.results.graphics.contour["contour_vf_vapor"] = contour_vf_vapor
+
+solver.results.graphics.contour["contour_vf_vapor"].display()
+
+solver.results.graphics.picture.save_picture(file_name="contour_vf_vapor.png")

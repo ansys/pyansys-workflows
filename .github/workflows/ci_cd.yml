@@ -1,0 +1,152 @@
+name: GitHub CI
+on:
+  pull_request:
+  workflow_dispatch:
+  push:
+    tags:
+      - "*"
+    branches:
+      - main
+
+env:
+  MAIN_PYTHON_VERSION: '3.11'
+  MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED: '3.9'
+  ANSRV_GEO_IMAGE: 'ghcr.io/ansys/geometry'
+  ANSRV_GEO_IMAGE_WINDOWS_TAG: ghcr.io/ansys/geometry:windows-latest
+  ANSRV_GEO_PORT: 700
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+  GEO_CONT_NAME: ans_geo
+  RESET_IMAGE_CACHE: 6
+  IS_WORKFLOW_RUNNING: True
+  ARTIFACTORY_VERSION: v241
+
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  testing-windows:
+    name: Testing and coverage (Windows)
+    runs-on: [self-hosted, Windows, pygeometry]
+    continue-on-error: ${{ matrix.experimental }}
+    env:
+      SKIP_UNSTABLE: ${{ vars.SKIP_UNSTABLE_CONTAINERS_TEMPORARILY == 1 && matrix.experimental }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - docker-image: "windows-latest"
+            experimental: false
+          - docker-image: "windows-latest-unstable"
+            experimental: true
+
+    steps:
+      - uses: actions/checkout@v4
+        if: env.SKIP_UNSTABLE == 'false'
+
+      - name: Set up Python
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION_WINDOWS_SELFHOSTED }} # self-hosted has an issue with 3.11
+
+      - name: Set up headless display
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: pyvista/setup-headless-display-action@v2
+
+      - name: Create Python venv
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          python -m venv .venv
+          .\.venv\Scripts\Activate.ps1
+
+      - name: Install packages for testing
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          python -m pip install --upgrade pip
+          pip install --upgrade build wheel
+          pip install 
+
+      - name: Login to GitHub Container Registry
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Geometry service container (if needed)
+        if: env.SKIP_UNSTABLE == 'false'
+        run: docker pull ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+
+      - name: Check location of self-hosted runner and define license server accordingly
+        if: env.SKIP_UNSTABLE == 'false' && (runner.name == 'pygeometry-ci-1' || runner.name == 'pygeometry-ci-2')
+        run:
+          echo "ANSRV_GEO_LICENSE_SERVER=${{ secrets.INTERNAL_LICENSE_SERVER }}" | Out-File -FilePath $env:GITHUB_ENV -Append
+
+      - name: Start Geometry service and verify start
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          docker run --detach --name ${{ env.GEO_CONT_NAME }} -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.ANSRV_GEO_IMAGE }}:${{ matrix.docker-image }}
+          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
+
+      - name: Restore images cache
+        if: env.SKIP_UNSTABLE == 'false'
+        uses: actions/cache@v3
+        with:
+          path: .\tests\integration\image_cache
+          key: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}-${{ hashFiles('pyproject.toml') }}
+          restore-keys: pyvista-image-cache-${{ runner.name }}-v-${{ env.RESET_IMAGE_CACHE }}
+
+      - name: Testing
+        if: env.SKIP_UNSTABLE == 'false'
+        run: |
+          .\.venv\Scripts\Activate.ps1
+          pytest -v
+
+
+      # - name: Upload PyVista generated images (cache and results)
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: pytest-pyvista-images-${{ matrix.docker-image }}
+      #     path: tests/integration/image_cache
+      #     retention-days: 7
+
+      # - name: Upload Coverage Results
+      #   if: always()
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     name: coverage-html
+      #     path: .cov/html
+      #     retention-days: 7
+
+      # - name: Upload coverage to Codecov
+      #   uses: codecov/codecov-action@v3
+      #   if: matrix.docker-image == 'windows-latest'
+      #   env:
+      #     CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      #   with:
+      #     files: .cov/xml
+
+      - name: Stop the Geometry service
+        if: always()
+        run: |
+          if ( $env:SKIP_UNSTABLE -match 'false')
+          {
+            docker stop $env:GEO_CONT_NAME
+            docker logs $env:GEO_CONT_NAME
+            docker rm $env:GEO_CONT_NAME
+          }
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
