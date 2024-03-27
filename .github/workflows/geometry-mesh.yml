@@ -1,0 +1,118 @@
+name: Geometry Mesh Workflow
+
+on:
+  push:
+    paths:
+      - 'geometry-mesh/**'
+
+env:
+  MAIN_PYTHON_VERSION: '3.11'
+  GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
+  PRIME_DOCKER_IMAGE: 'ghcr.io/ansys/prime'
+  ANSRV_GEO_PORT: 700
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+  PYPRIMEMESH_LAUNCH_CONTAINER: 1
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+
+jobs:
+  geometry:
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [241, 242]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'geometry-mesh'
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r geometry-mesh/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Geometry service container (if needed)
+        run: docker pull ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+
+      - name: Run the geometry script
+        run: |
+          python geometry-mesh/01_geometry.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-outputs-${{ matrix.ansys-release }}
+          path: geometry-mesh/outputs
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
+  prime:
+    runs-on: ubuntu-latest
+    needs: geometry
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [241, 242]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'geometry-mesh'
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r geometry-mesh/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Geometry service container (if needed)
+        run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:latest
+
+      - name: Check out the geometry outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: geometry-outputs-${{ matrix.ansys-release }}
+          path: geometry-mesh/outputs
+
+      - name: Run the PyPrimeMesh script
+        run: |
+          python geometry-mesh/02_mesh.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: prime-outputs-${{ matrix.ansys-release }}
+          path: geometry-mesh/outputs
