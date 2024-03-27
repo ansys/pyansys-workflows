@@ -69,8 +69,11 @@ design = modeler.create_design("ModelingDemo")
 
 # Create a body directly on the design by extruding the sketch
 body = design.extrude_sketch(
-    name="Design_Body", sketch=sketch, distance=Distance(80, unit=UNITS.cm)
+    name="Design_Body", sketch=sketch, distance=Distance(1)
 )
+
+# Plot the body (uncomment the line below to plot the body)
+# design.plot()
 
 # -- Export file --
 #
