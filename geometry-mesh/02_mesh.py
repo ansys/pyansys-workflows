@@ -26,11 +26,17 @@ from pathlib import Path
 from ansys.meshing import prime
 from ansys.meshing.prime.graphics import Graphics
 
-OUTPUT_DIR = Path(Path(__file__).parent, "outputs")
+# -- Parameters --
+#
+GRAPHICS_BOOL = False  # Set to True to display the mesh
+OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 # -- Launch the PRIME client --
 #
-prime_client = prime.launch_prime()
+prime_client = prime.launch_prime(timeout=120)
+print(prime_client)
+
+# Get the model from the client
 model = prime_client.model
 
 # Load the FMD file
@@ -40,19 +46,18 @@ file_io.import_cad(
     file_name=modeling_file,
     params=prime.ImportCadParams(
         model=model,
-        length_unit=prime.LengthUnit.CM,
-        part_creation_type=prime.PartCreationType.MODEL,
     ),
 )
 
 # -- Review the part --
 #
-part = model.get_part_by_name("Design_Body")
+part = model.get_part_by_name("modelingdemo")
 part_summary_res = part.get_summary(prime.PartSummaryParams(model, print_mesh=False))
 print(part_summary_res)
 
-display = Graphics(model=model)
-display()
+if GRAPHICS_BOOL:
+    display = Graphics(model=model)
+    display()
 
 # -- Initialize the connection tolerance and other parameters --
 #
@@ -87,8 +92,9 @@ surfer_params = prime.SurferParams(
 surfer_result = prime.Surfer(model).mesh_topo_faces(part.id, topo_faces=faces, params=surfer_params)
 
 # Display the mesh
-display = Graphics(model=model)
-display()
+if GRAPHICS_BOOL:
+    display = Graphics(model=model)
+    display()
 
 # -- Write the mesh --
 #
