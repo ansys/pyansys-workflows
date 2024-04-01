@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [241, 242]
+        ansys-release: [24.1, 24.2]
     steps:
 
       - name: Checkout code
@@ -73,7 +73,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [241, 242]
+        ansys-release: [24.1, 24.2]
     steps:
 
       - name: Checkout code
@@ -99,7 +99,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download Geometry service container (if needed)
-        run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:latest
+        run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:${{ matrix.ansys-release }}
 
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v4
@@ -108,6 +108,8 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: Run the PyPrimeMesh script
+        env:
+          PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
         run: |
           python geometry-mesh/02_mesh.py
 
