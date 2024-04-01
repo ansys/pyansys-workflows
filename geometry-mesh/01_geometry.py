@@ -28,6 +28,11 @@ from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
 
+# -- Parameters --
+#
+GRAPHICS_BOOL = False  # Set to True to display the mesh
+OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
+
 # -- Start a modeler session --
 #
 modeler = Modeler()
@@ -70,8 +75,9 @@ design = modeler.create_design("ModelingDemo")
 # Create a body directly on the design by extruding the sketch
 body = design.extrude_sketch(name="Design_Body", sketch=sketch, distance=Distance(1))
 
-# Plot the body (uncomment the line below to plot the body)
-# design.plot()
+# Plot the body
+if GRAPHICS_BOOL:
+    design.plot()
 
 # -- Export file --
 #
@@ -82,9 +88,8 @@ body = design.extrude_sketch(name="Design_Body", sketch=sketch, distance=Distanc
 # Export files in SCDOCX and FMD formats.
 
 # Download the design in FMD format
-file_dir = Path(Path(__file__).resolve().parent, "outputs")
-file_dir.mkdir(exist_ok=True)
-download_file = Path(file_dir, "modeling_demo.fmd")
+OUTPUT_DIR.mkdir(exist_ok=True)
+download_file = Path(OUTPUT_DIR, "modeling_demo.fmd")
 design.download(file_location=download_file, format=DesignFileFormat.FMD)
 
 # -- Close session --
