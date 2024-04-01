@@ -43,6 +43,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m venv .venv
+          .venv/Scripts/activate
           pip install -r geometry-mesh/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
@@ -57,6 +59,7 @@ jobs:
 
       - name: Run the geometry script
         run: |
+          .venv/Scripts/activate
           python geometry-mesh/01_geometry.py
 
       - name: Store the outputs
