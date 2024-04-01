@@ -9,7 +9,7 @@ on:
       - 'geometry-mesh/**'
 
 env:
-  MAIN_PYTHON_VERSION: '3.11'
+  MAIN_PYTHON_VERSION: '3.12'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
   PRIME_DOCKER_IMAGE: 'ghcr.io/ansys/prime'
   ANSRV_GEO_PORT: 700
