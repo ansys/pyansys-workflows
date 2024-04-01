@@ -17,6 +17,10 @@ env:
   PYPRIMEMESH_LAUNCH_CONTAINER: 1
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   geometry:
     runs-on: [self-hosted, Windows, pyansys-workflows]
