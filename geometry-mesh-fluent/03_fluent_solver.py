@@ -52,7 +52,7 @@ def solve_airfoil_flow(
     sim_pressure: float,
     data_dir: str,
     iter_count: int = 25,
-    ui_mode: str = "gui",
+    ui_mode: str | None = None,
 ):
     """
     Solve the flow around a NACA airfoil using Fluent.
@@ -74,7 +74,7 @@ def solve_airfoil_flow(
     iter_count : int, optional
         Number of iterations to solve. The default is ``25``.
     ui_mode : str, optional
-        User interface mode. The default is "gui".
+        User interface mode. The default is None.
     """
 
     # Switch to Fluent solver

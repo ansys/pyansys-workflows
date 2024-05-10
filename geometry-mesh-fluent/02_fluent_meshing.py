@@ -40,7 +40,7 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 ####################################################################################################
 
 
-def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str = "gui"):
+def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str | None = None):
     """
     Generate a mesh for a NACA airfoil using Fluent Meshing.
 
@@ -51,7 +51,7 @@ def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str = "gui"):
     data_dir : str
         Directory to save the mesh file.
     ui_mode : str, optional
-        User interface mode. The default is "gui".
+        User interface mode. The default is None.
     """
 
     # Launch Fluent Meshing
