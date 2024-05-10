@@ -124,6 +124,8 @@ jobs:
           path: geometry-mesh-fluent/outputs
 
       - name: Run the Fluent meshing script
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
           python geometry-mesh-fluent/02_fluent_meshing.py
 
@@ -175,6 +177,8 @@ jobs:
           path: geometry-mesh-fluent/outputs
 
       - name: Run the Fluent solver script
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
           python geometry-mesh-fluent/03_fluent_solver.py
 
