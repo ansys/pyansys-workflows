@@ -34,6 +34,9 @@ import numpy as np
 # Default parameters - when running the script directly
 ####################################################################################################
 
+# Graphics boolean
+GRAPHICS_BOOL = False  # Set to True to display the graphs
+
 # Type of airfoil to generate
 NACA_AIRFOIL = "6412"
 
@@ -175,13 +178,15 @@ def generate_geometry(
     airfoil_sketch.segment(points[-1], points[0])
 
     # Plot the airfoil
-    airfoil_sketch.plot()
+    if GRAPHICS_BOOL:
+        airfoil_sketch.plot()
 
     # Extrude the airfoil
     airfoil = design.extrude_sketch("Airfoil", airfoil_sketch, 1)
 
     # Plot the design
-    design.plot()
+    if GRAPHICS_BOOL:
+        design.plot()
 
     # Create the surrounding fluid domain
     #
@@ -203,7 +208,10 @@ def generate_geometry(
         height=box_size_height,
         width=box_size_length,
     )
-    fluid_sketch.plot()
+
+    # Plot the fluid domain
+    if GRAPHICS_BOOL:
+        fluid_sketch.plot()
 
     # Extrude the fluid domain
     fluid = design.extrude_sketch("Fluid", fluid_sketch, box_size_width)
@@ -228,10 +236,11 @@ def generate_geometry(
     design.create_named_selection("Airfoil Faces", faces=airfoil.faces)
 
     # Plot the design intelligently...
-    plotter_helper = PlotterHelper()
-    plotter_helper.add(airfoil, color="blue")
-    plotter_helper.add(fluid, color="green", opacity=0.25)
-    plotter_helper.show_plotter()
+    if GRAPHICS_BOOL:
+        plotter_helper = PlotterHelper()
+        plotter_helper.add(airfoil, color="blue")
+        plotter_helper.add(fluid, color="green", opacity=0.25)
+        plotter_helper.show_plotter()
 
     # Save the design
     file = design.export_to_pmdb(data_dir)
@@ -251,6 +260,7 @@ if __name__ == "__main__":
         image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
         for geom_services in GeometryContainers:
             if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+                print(f"Using {image_tag} image")
                 image = geom_services
                 break
 

@@ -38,6 +38,7 @@ if "ANSYS_GEOMETRY_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
     for geom_services in GeometryContainers:
         if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+            print(f"Using {image_tag} image")
             image = geom_services
             break
 
