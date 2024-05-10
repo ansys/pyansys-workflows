@@ -80,9 +80,9 @@ jobs:
               docker rm $dockerContainers
           }
 
-  prime:
-    name: Meshing
-    runs-on: ubuntu-latest
+  fluent-mesh:
+    name: Fluent Meshing
+    runs-on: ubuntu-latest-4-cores
     needs: geometry
     strategy:
       fail-fast: false
