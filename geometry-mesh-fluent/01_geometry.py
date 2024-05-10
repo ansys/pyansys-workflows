@@ -23,7 +23,7 @@
 import os
 from typing import List, Union
 
-from ansys.geometry.core import launch_modeler, Modeler
+from ansys.geometry.core import Modeler, launch_modeler
 from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.plotting import PlotterHelper
