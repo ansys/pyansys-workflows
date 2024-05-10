@@ -9,7 +9,7 @@ on:
       - 'geometry-mesh-fluent/**'
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.11'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
   FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
   ANSRV_GEO_PORT: 700
