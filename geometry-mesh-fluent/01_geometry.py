@@ -1,4 +1,4 @@
-# Copyright (C) 2024 - 2024 ANSYS, Inc. and/or its affiliates.
+# Copyright (C) 2024 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
 #
 #
@@ -23,7 +23,8 @@
 import os
 from typing import List, Union
 
-from ansys.geometry.core import launch_modeler
+from ansys.geometry.core import launch_modeler, Modeler
+from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.plotting import PlotterHelper
 from ansys.geometry.core.sketch import Sketch
@@ -136,8 +137,7 @@ def generate_geometry(
     box_size_width: int,
     box_size_height: int,
     data_dir: str,
-    mode: str = "spaceclaim",
-    hidden: bool = False,
+    modeler: Modeler,
 ):
     """
     Generate the geometry of a NACA airfoil and the surrounding fluid domain
@@ -155,17 +155,9 @@ def generate_geometry(
         Height of the fluid domain along the Y-axis.
     data_dir : str
         Directory to save the generated geometry.
-    mode : str, optional
-        Mode to launch the modeler. The default is "spaceclaim".
-    hidden : bool, optional
-        Launch the modeler in hidden mode. The default is False.
+    modeler : Modeler
+        PyAnsys Geometry Modeler instance.
     """
-
-    # Launch the modeler
-    modeler = launch_modeler(mode=mode, hidden=hidden)
-
-    modeler.open_file
-
     # Create the design
     design = modeler.create_design(f"NACA_Airfoil_{naca_airfoil}")
 
@@ -245,14 +237,30 @@ def generate_geometry(
     file = design.export_to_pmdb(data_dir)
     print(f"Design saved to {file}")
 
-    # Close the modeler
-    modeler.close()
-
     return
 
 
 ####################################################################################################
 
 if __name__ == "__main__":
+    # Check env vars to see which image to launch
+    #
+    # --- ONLY FOR WORKFLOW RUNS ---
+    image = None
+    if "ANSYS_GEOMETRY_RELEASE" in os.environ:
+        image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
+        for geom_services in GeometryContainers:
+            if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+                image = geom_services
+                break
+
+    # Instantiate the modeler
+    modeler = launch_modeler(image=image)
+
     # Generate the geometry
-    generate_geometry(NACA_AIRFOIL, BOX_SIZE_LENGTH, BOX_SIZE_WIDTH, BOX_SIZE_HEIGHT, DATA_DIR)
+    generate_geometry(
+        NACA_AIRFOIL, BOX_SIZE_LENGTH, BOX_SIZE_WIDTH, BOX_SIZE_HEIGHT, DATA_DIR, modeler
+    )
+
+    # Close the modeler
+    modeler.close()
