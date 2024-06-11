@@ -61,7 +61,7 @@ jobs:
 
       - name: Run the PyAnsys Geometry script
         env:
-          ANSYS_GEOMETERY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+          ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
         run: |
           .venv/Scripts/activate
           python geometry-mesh-fluent/01_geometry.py
