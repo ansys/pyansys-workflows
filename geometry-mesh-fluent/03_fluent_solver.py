@@ -101,7 +101,7 @@ def solve_airfoil_flow(
         )
 
     # Load mesh
-    solver.file.read_mesh(file_name=os.path.join(data_dir, f"NACA_Airfoil_{naca_airfoil}.msh.h5"))
+    solver.file.read_mesh(file_name=f"{data_dir}/NACA_Airfoil_{naca_airfoil}.msh.h5")
 
     # Verify the mesh
     solver.mesh.check()
@@ -157,19 +157,19 @@ def solve_airfoil_flow(
 
     # Save case file
     solver.file.write(
-        file_name=os.path.join(data_dir, f"NACA_Airfoil_{naca_airfoil}_initialization.cas.h5"),
+        file_name=f"{data_dir}/NACA_Airfoil_{naca_airfoil}_initialization.cas.h5",
         file_type="case",
     )
 
     # Solve for 50 iterations
     solver.solution.run_calculation.iterate(iter_count=iter_count)
     solver.file.write(
-        file_name=os.path.join(data_dir, f"NACA_Airfoil_{naca_airfoil}_resolved.cas.h5"),
+        file_name=f"{data_dir}/NACA_Airfoil_{naca_airfoil}_resolved.cas.h5",
         file_type="case",
     )
     # Write data file as well
     solver.file.write(
-        file_name=os.path.join(data_dir, f"NACA_Airfoil_{naca_airfoil}_resolved.dat.h5"),
+        file_name=f"{data_dir}/NACA_Airfoil_{naca_airfoil}_resolved.dat.h5",
         file_type="data",
     )
 
