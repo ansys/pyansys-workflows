@@ -36,10 +36,10 @@ jobs:
         with:
           sparse-checkout: 'geometry-mesh-fluent'
 
-      - name: Set up Python 3.12
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v4
         with:
-          python-version: '3.12'
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |

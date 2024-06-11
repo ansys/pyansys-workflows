@@ -257,14 +257,17 @@ if __name__ == "__main__":
     # --- ONLY FOR WORKFLOW RUNS ---
     image = None
     if "ANSYS_GEOMETRY_RELEASE" in os.environ:
+        print(f"Using {os.environ['ANSYS_GEOMETRY_RELEASE']} image")
         image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
         for geom_services in GeometryContainers:
+            print(f"Checking match... '{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}'")
             if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
                 print(f"Using {image_tag} image")
                 image = geom_services
                 break
 
     # Instantiate the modeler
+    print("Launching modeler... with image: ", image)
     modeler = launch_modeler(image=image)
     print(modeler)
 
