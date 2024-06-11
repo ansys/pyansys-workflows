@@ -51,6 +51,7 @@ def solve_airfoil_flow(
     sim_aoa: float,
     sim_pressure: float,
     data_dir: str,
+    container_dict: dict | None = None,
     iter_count: int = 25,
     ui_mode: str | None = None,
 ):
@@ -71,6 +72,8 @@ def solve_airfoil_flow(
         Pressure in Pascal.
     data_dir : str
         Directory to save the mesh file.
+    container_dict : dict, optional
+        Configuration for the Fluent container. The default is None.
     iter_count : int, optional
         Number of iterations to solve. The default is ``25``.
     ui_mode : str, optional
@@ -78,13 +81,24 @@ def solve_airfoil_flow(
     """
 
     # Switch to Fluent solver
-    solver = pyfluent.launch_fluent(
-        precision="double",
-        processor_count=4,
-        mode="solver",
-        ui_mode=ui_mode,
-        cwd=data_dir,
-    )
+    if container_dict is not None:
+        solver = pyfluent.launch_fluent(
+            container_dict=container_dict,
+            start_container=True,
+            precision="double",
+            processor_count=4,
+            mode="solver",
+            ui_mode="no_gui_or_graphics",
+            cwd=data_dir,
+        )
+    else:
+        solver = pyfluent.launch_fluent(
+            precision="double",
+            processor_count=4,
+            mode="solver",
+            ui_mode=ui_mode,
+            cwd=data_dir,
+        )
 
     # Load mesh
     solver.file.read_mesh(file_name=os.path.join(data_dir, f"NACA_Airfoil_{naca_airfoil}.msh.h5"))
@@ -164,5 +178,29 @@ def solve_airfoil_flow(
 
 
 if __name__ == "__main__":
-    # Solve the flow around the airfoil
-    solve_airfoil_flow(NACA_AIRFOIL, SIM_MACH, SIM_TEMPERATURE, SIM_AOA, SIM_PRESSURE, DATA_DIR)
+
+    import os
+
+    # Depending on the environment, the script will run in a container or locally
+    if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+        container_dict = {
+            "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
+            "host_mount_path": DATA_DIR,
+            "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
+            "timeout": 300,
+        }
+        # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
+
+        # Solve the flow around the airfoil
+        solve_airfoil_flow(
+            NACA_AIRFOIL,
+            SIM_MACH,
+            SIM_TEMPERATURE,
+            SIM_AOA,
+            SIM_PRESSURE,
+            "/mnt/pyfluent",
+            container_dict=container_dict,
+        )
+    else:
+        # Solve the flow around the airfoil
+        solve_airfoil_flow(NACA_AIRFOIL, SIM_MACH, SIM_TEMPERATURE, SIM_AOA, SIM_PRESSURE, DATA_DIR)

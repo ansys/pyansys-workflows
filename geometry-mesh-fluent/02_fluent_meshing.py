@@ -40,7 +40,12 @@ DATA_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 ####################################################################################################
 
 
-def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str | None = None):
+def generate_mesh(
+    naca_airfoil: str,
+    data_dir: str,
+    ui_mode: str | None = None,
+    container_dict: dict | None = None,
+):
     """
     Generate a mesh for a NACA airfoil using Fluent Meshing.
 
@@ -52,16 +57,29 @@ def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str | None = None):
         Directory to save the mesh file.
     ui_mode : str, optional
         User interface mode. The default is None.
+    container_dict : dict, optional
+        Configuration for the Fluent container. The default is None.
     """
 
     # Launch Fluent Meshing
-    meshing = pyfluent.launch_fluent(
-        precision="double",
-        processor_count=4,
-        mode="meshing",
-        ui_mode=ui_mode,
-        cwd=data_dir,
-    )
+    if container_dict is not None:
+        meshing = pyfluent.launch_fluent(
+            container_dict=container_dict,
+            start_container=True,
+            precision="double",
+            processor_count=4,
+            mode="meshing",
+            ui_mode="no_gui_or_graphics",
+            cwd=data_dir,
+        )
+    else:
+        meshing = pyfluent.launch_fluent(
+            precision="double",
+            processor_count=4,
+            mode="meshing",
+            ui_mode=ui_mode,
+            cwd=data_dir,
+        )
 
     # Initialize workflow - Watertight Geometry
     meshing.workflow.InitializeWorkflow(WorkflowType="Watertight Geometry")
@@ -127,5 +145,19 @@ def generate_mesh(naca_airfoil: str, data_dir: str, ui_mode: str | None = None):
 
 
 if __name__ == "__main__":
-    # Generate the mesh
-    generate_mesh(NACA_AIRFOIL, DATA_DIR)
+
+    import os
+
+    # Depending on the environment, the script will run in a container or locally
+    if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+        container_dict = {
+            "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
+            "host_mount_path": DATA_DIR,
+            "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
+            "timeout": 300,
+        }
+        # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
+
+        generate_mesh(NACA_AIRFOIL, "/mnt/pyfluent", container_dict=container_dict)
+    else:
+        generate_mesh(NACA_AIRFOIL, DATA_DIR)
