@@ -26,7 +26,7 @@ from typing import List, Union
 from ansys.geometry.core import Modeler, launch_modeler
 from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
 from ansys.geometry.core.math import Plane, Point2D, Point3D
-from ansys.geometry.core.plotting import PlotterHelper
+from ansys.geometry.core.plotting import GeometryPlotter
 from ansys.geometry.core.sketch import Sketch
 import numpy as np
 
@@ -237,10 +237,10 @@ def generate_geometry(
 
     # Plot the design intelligently...
     if GRAPHICS_BOOL:
-        plotter_helper = PlotterHelper()
-        plotter_helper.add(airfoil, color="blue")
-        plotter_helper.add(fluid, color="green", opacity=0.25)
-        plotter_helper.show_plotter()
+        geom_plotter = GeometryPlotter()
+        geom_plotter.plot(airfoil, color="blue")
+        geom_plotter.plot(fluid, color="green", opacity=0.25)
+        geom_plotter.show()
 
     # Save the design
     file = design.export_to_pmdb(data_dir)
