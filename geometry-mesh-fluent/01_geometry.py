@@ -266,6 +266,7 @@ if __name__ == "__main__":
 
     # Instantiate the modeler
     modeler = launch_modeler(image=image)
+    print(modeler)
 
     # Generate the geometry
     generate_geometry(
