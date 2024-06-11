@@ -267,7 +267,6 @@ if __name__ == "__main__":
                 break
 
     # Instantiate the modeler
-    print("Launching modeler... with image: ", image)
     modeler = launch_modeler(image=image)
     print(modeler)
 
