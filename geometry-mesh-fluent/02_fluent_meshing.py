@@ -71,6 +71,7 @@ def generate_mesh(
             mode="meshing",
             ui_mode="no_gui_or_graphics",
             cwd=data_dir,
+            cleanup_on_exit=False,
         )
     else:
         meshing = pyfluent.launch_fluent(

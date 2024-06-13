@@ -132,7 +132,9 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fluent-mesh-outputs-${{ matrix.ansys-release }}
-          path: geometry-mesh-fluent/outputs
+          path: |
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
 
   fluent-solve:
     name: Fluent Solver
@@ -185,4 +187,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: fluent-solve-outputs-${{ matrix.ansys-release }}
-          path: geometry-mesh-fluent/outputs
+          path: |
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.cas.h5
+            geometry-mesh-fluent/outputs/NACA_Airfoil_*.dat.h5

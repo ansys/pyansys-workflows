@@ -90,6 +90,7 @@ def solve_airfoil_flow(
             mode="solver",
             ui_mode="no_gui_or_graphics",
             cwd=data_dir,
+            cleanup_on_exit=False,
         )
     else:
         solver = pyfluent.launch_fluent(
