@@ -1,0 +1,5 @@
+# This is a CODEOWNERS file
+# It is used to define code ownership in a repository
+
+# Specify the owners for specific files or directories
+*      @RobPasMue @MaxJPRey

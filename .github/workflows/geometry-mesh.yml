@@ -58,11 +58,10 @@ jobs:
       - name: Download (if needed) and run Geometry service container
         run: |
           docker pull ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
-          docker run -d --name geometry-service -e LICENSE_SERVER=${{ env.ANSRV_GEO_LICENSE_SERVER }} -p ${{ env.ANSRV_GEO_PORT }}:50051 ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
-          .venv/Scripts/activate
-          python -c "from ansys.geometry.core.connection.validate import validate; validate()"
 
       - name: Run the PyAnsys Geometry script
+        env:
+          ANSYS_GEOMETERY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
         run: |
           .venv/Scripts/activate
           python geometry-mesh/01_geometry.py
@@ -98,7 +97,7 @@ jobs:
           sparse-checkout: 'geometry-mesh'
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 

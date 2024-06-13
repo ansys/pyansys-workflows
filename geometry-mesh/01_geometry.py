@@ -20,13 +20,27 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+import os
 from pathlib import Path
 
-from ansys.geometry.core import Modeler
+from ansys.geometry.core import launch_modeler
+from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
 from ansys.geometry.core.designer import DesignFileFormat
 from ansys.geometry.core.math import Point2D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS, Distance
 from ansys.geometry.core.sketch import Sketch
+
+# Check env vars to see which image to launch
+#
+# --- ONLY FOR WORKFLOW RUNS ---
+image = None
+if "ANSYS_GEOMETRY_RELEASE" in os.environ:
+    image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
+    for geom_services in GeometryContainers:
+        if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+            print(f"Using {image_tag} image")
+            image = geom_services
+            break
 
 # -- Parameters --
 #
@@ -35,7 +49,7 @@ OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 # -- Start a modeler session --
 #
-modeler = Modeler()
+modeler = launch_modeler(image=image)
 print(modeler)
 
 # -- Create and plot a sketch --
