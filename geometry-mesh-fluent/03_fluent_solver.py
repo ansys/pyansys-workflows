@@ -138,15 +138,26 @@ def solve_airfoil_flow(
     solver.setup.boundary_conditions.set_zone_type(
         zone_list=["inlet-fluid"], new_type="pressure-far-field"
     )
+
     inlet_fluid = solver.setup.boundary_conditions.pressure_far_field["inlet-fluid"]
-    inlet_fluid.gauge_pressure = 0
-    inlet_fluid.m = sim_mach
-    inlet_fluid.t = sim_temperature
     aoa = np.deg2rad(sim_aoa)
-    inlet_fluid.flow_direction[0] = np.cos(aoa)
-    inlet_fluid.flow_direction[1] = np.sin(aoa)
-    inlet_fluid.turbulent_intensity = 0.05
-    inlet_fluid.turbulent_viscosity_ratio_real = 10
+    if solver.get_fluent_version() < pyfluent.FluentVersion.v242:
+        inlet_fluid.gauge_pressure = 0
+        inlet_fluid.m = sim_mach
+        inlet_fluid.t = sim_temperature
+        inlet_fluid.flow_direction[0] = np.cos(aoa)
+        inlet_fluid.flow_direction[1] = np.sin(aoa)
+        inlet_fluid.turbulent_intensity = 0.05
+        inlet_fluid.turbulent_viscosity_ratio_real = 10
+
+    else:
+        inlet_fluid.momentum.gauge_pressure = 0
+        inlet_fluid.momentum.mach_number = sim_mach
+        inlet_fluid.thermal.temperature = sim_temperature
+        inlet_fluid.momentum.flow_direction[0] = np.cos(aoa)
+        inlet_fluid.momentum.flow_direction[1] = np.sin(aoa)
+        inlet_fluid.turbulence.turbulent_intensity = 0.05
+        inlet_fluid.turbulence.turbulent_viscosity_ratio = 10
 
     # Define operating conditions
     #
