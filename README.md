@@ -88,7 +88,7 @@ The workflows in this repository are tested with the following Ansys releases:
 - Ansys 2024 R1
 - Ansys 2024 R2
 
-Each workflow is ran on our CI/CD pipeline to ensure compatibility with the supported Ansys versions.
+Each workflow is ran on our CI/CD pipelines to ensure compatibility with the supported Ansys versions.
 
 ## Contributing
 
