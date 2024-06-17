@@ -13,7 +13,7 @@ Table of contents:
 
 As PyAnsys grows in adoption, we want to provide users with examples of how to use the ecosystem libraries
 to automate Ansys simulations. This repository contains workflows that demonstrate how to use PyAnsys to
-automate different parts of the simulation process, such as geometry creation, meshing, and simulation setup.
+automate different parts of the simulation process, such as geometry creation, meshing, simulation setup and post-processing.
 
 ## Available workflows
 
@@ -27,7 +27,7 @@ for every part of the simulation process. The available workflows are:
     - For meshing: Ansys PRIME Server
 
 - [Geometry, meshing and fluids simulation](./geometry-mesh-fluent): this workflow demonstrates how to
-  create a geometry, mesh it, and run a fluid simulation using PyAnsys. THe geometry generated is a NACA
+  create a geometry, mesh it, and run a fluid simulation using PyAnsys. The geometry generated is a NACA
   airfoil, which is prepared for a fluid simulation. The exported CAD file is then consumed by Ansys Fluent
   to run a compressible flow simulation over the airfoil. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
