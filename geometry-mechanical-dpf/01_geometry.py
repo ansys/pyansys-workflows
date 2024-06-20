@@ -172,7 +172,7 @@ for body in component.bodies:
 
 # Plot the the entire geometry
 if GRAPHICS_BOOL:
-    component.plot()
+    design.plot()
 
 # -- Export file --
 #
