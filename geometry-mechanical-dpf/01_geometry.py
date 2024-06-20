@@ -63,26 +63,19 @@ pcb_hole_radius = 1
 
 # Create PCB Substrate
 sketch_substrate = Sketch()
-sketch_substrate.segment(Point2D([5, 0]), Point2D([122, 0])).arc_to_point(
-    Point2D([127, 5]), Point2D([122, 5])
-).segment_to_point(Point2D([127, 135])).arc_to_point(
-    Point2D([122, 140]), Point2D([122, 135])
-).segment_to_point(
-    Point2D([5, 140])
-).arc_to_point(
-    Point2D([0, 135]), Point2D([5, 135])
-).segment_to_point(
-    Point2D([0, 5])
-).arc_to_point(
-    Point2D([5, 0]), Point2D([5, 5])
-).circle(
-    Point2D([6.35, 6.35]), radius=3.94 / 2
-).circle(
-    Point2D([127 - 6.35, 6.35]), radius=3.94 / 2
-).circle(
-    Point2D([127 - 6.35, 140 - 6.35]), radius=3.94 / 2
-).circle(
-    Point2D([6.35, 140 - 6.35]), radius=3.94 / 2
+(
+    sketch_substrate.segment(Point2D([5, 0]), Point2D([122, 0]))
+    .arc_to_point(Point2D([127, 5]), Point2D([122, 5]))
+    .segment_to_point(Point2D([127, 135]))
+    .arc_to_point(Point2D([122, 140]), Point2D([122, 135]))
+    .segment_to_point(Point2D([5, 140]))
+    .arc_to_point(Point2D([0, 135]), Point2D([5, 135]))
+    .segment_to_point(Point2D([0, 5]))
+    .arc_to_point(Point2D([5, 0]), Point2D([5, 5]))
+    .circle(Point2D([6.35, 6.35]), radius=3.94 / 2)
+    .circle(Point2D([127 - 6.35, 6.35]), radius=3.94 / 2)
+    .circle(Point2D([127 - 6.35, 140 - 6.35]), radius=3.94 / 2)
+    .circle(Point2D([6.35, 140 - 6.35]), radius=3.94 / 2)
 )
 substrate_height = 1.575
 plane = Plane(

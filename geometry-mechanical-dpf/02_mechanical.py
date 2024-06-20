@@ -152,7 +152,7 @@ internal_heat_generation.Magnitude.Output.SetDiscreteValue(0, Quantity(5e7, "W m
 all_bodies = [i for i in NSall if i.Name == "all_bodies"][0]
 convection = steady.AddConvection()
 convection.Location = all_bodies
-convection.FilmCoefficient.Output.DiscreteValues = [Quantity("5[W m^-2 C^-1]")]  # not quite correct
+convection.FilmCoefficient.Output.DiscreteValues = [Quantity("5[W m^-2 C^-1]")]
 
 steady_solution = steady.Solution
 temperature_result = steady_solution.AddTemperature()
