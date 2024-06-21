@@ -27,9 +27,18 @@ import ansys.mechanical.core as mech
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
 
+# Check env vars to see which image to launch
+#
+# --- ONLY FOR WORKFLOW RUNS ---
+version = None
+if "ANSYS_GEOMETRY_RELEASE" in os.environ:
+    image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
+    version = int(image_tag.replace(".", ""))
+
+
 # -- Start PyMechanical app --
 #
-app = mech.App()
+app = mech.App(version=version)
 globals().update(mech.global_variables(app, True))
 print(app)
 
