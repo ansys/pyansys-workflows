@@ -71,11 +71,11 @@ decimal_precision = 6
 # -- Steady state thermal results --
 #
 # Create model
-path = steady_state_rth_file[0]
+steady_state_result_file_path = steady_state_rth_file[0]
 my_data_sources = dpf.DataSources()
-my_data_sources.set_result_file_path(path)
-my_data_sources.add_file_path(path)
-my_model = dpf.Model(path)
+my_data_sources.set_result_file_path(steady_state_result_file_path)
+my_data_sources.add_file_path(steady_state_result_file_path)
+my_model = dpf.Model(steady_state_result_file_path)
 
 # Get temperature distribution
 temp = my_model.results.temperature.on_last_time_freq.eval()[0]
@@ -88,11 +88,11 @@ if GRAPHICS_BOOL:
 #
 # Create model
 
-path = transient_rth_file[0]
+transient_result_file_path = transient_rth_file[0]
 my_data_sources = dpf.DataSources()
-my_data_sources.set_result_file_path(path)
-my_data_sources.add_file_path(path)
-my_model = dpf.Model(path)
+my_data_sources.set_result_file_path(transient_result_file_path)
+my_data_sources.add_file_path(transient_result_file_path)
+my_model = dpf.Model(transient_result_file_path)
 
 # Get temperature distribution
 temp = my_model.results.temperature.on_last_time_freq.eval()[0]
