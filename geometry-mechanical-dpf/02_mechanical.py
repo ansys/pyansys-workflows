@@ -30,7 +30,7 @@ from matplotlib import pyplot as plt
 # -- Start PyMechanical app --
 #
 app = mech.App()
-app.update_globals(globals())
+globals().update(mech.global_variables(app, True))
 print(app)
 
 # -- Parameters --
@@ -63,7 +63,7 @@ settings_720p.CurrentGraphicsDisplay = False
 # -- Import geometry --
 #
 # Reads geometry file and displa
-geometry_path = modeling_file = Path(OUTPUT_DIR, "pcb.mechdb")
+geometry_path = Path(OUTPUT_DIR, "pcb.pmdb")
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
 geometry_import_format = Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic

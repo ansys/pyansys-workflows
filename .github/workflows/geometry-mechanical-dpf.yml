@@ -127,6 +127,7 @@ jobs:
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
+          . /env/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py
 
       - name: Store the outputs
