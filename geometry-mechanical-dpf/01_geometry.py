@@ -100,24 +100,6 @@ sketch_ic_7.box(Point2D([25, 108]), 18, 24)
 sketch_ic_8 = Sketch(plane=plane)
 sketch_ic_8.box(Point2D([21, 59]), 10, 18)
 
-
-sketch = Sketch()
-(
-    sketch.segment(start=Point2D([-4, 5]), end=Point2D([4, 5]))
-    .segment_to_point(end=Point2D([4, -5]))
-    .segment_to_point(end=Point2D([-4, -5]))
-    .segment_to_point(end=Point2D([-4, 5]))
-    .box(
-        center=Point2D([0, 0]),
-        width=Distance(3),
-        height=Distance(3),
-    )
-    .circle(center=Point2D([3, 4]), radius=outer_hole_radius)
-    .circle(center=Point2D([-3, -4]), radius=outer_hole_radius)
-    .circle(center=Point2D([-3, 4]), radius=outer_hole_radius)
-    .circle(center=Point2D([3, -4]), radius=outer_hole_radius)
-)
-
 # -- Perform some modeling operations --
 #
 # Now that the sketch is ready to be extruded, perform some modeling operations,
