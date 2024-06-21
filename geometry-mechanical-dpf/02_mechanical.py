@@ -31,10 +31,11 @@ from matplotlib import pyplot as plt
 #
 # --- ONLY FOR WORKFLOW RUNS ---
 version = None
-if "ANSYS_GEOMETRY_RELEASE" in os.environ:
-    image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
+if "ANSYS_MECHANICAL_RELEASE" in os.environ:
+    image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
     version = int(image_tag.replace(".", ""))
 
+print(version)
 
 # -- Start PyMechanical app --
 #

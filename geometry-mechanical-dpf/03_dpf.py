@@ -71,14 +71,11 @@ decimal_precision = 6
 # -- Steady state thermal results --
 #
 # Create model
-steady_state_result_file_path = steady_state_rth_file[0]
-my_data_sources = dpf.DataSources()
-my_data_sources.set_result_file_path(steady_state_result_file_path)
-my_data_sources.add_file_path(steady_state_result_file_path)
-my_model = dpf.Model(steady_state_result_file_path)
+steady_state_model = dpf.Model(steady_state_rth_file[0])
+print(steady_state_model)
 
 # Get temperature distribution
-temp = my_model.results.temperature.on_last_time_freq.eval()[0]
+temp = steady_state_model.results.temperature.on_last_time_freq.eval()[0]
 
 # Plot the the temperature for ic-6
 if GRAPHICS_BOOL:
@@ -87,15 +84,11 @@ if GRAPHICS_BOOL:
 # -- Transien thermal results --
 #
 # Create model
-
-transient_result_file_path = transient_rth_file[0]
-my_data_sources = dpf.DataSources()
-my_data_sources.set_result_file_path(transient_result_file_path)
-my_data_sources.add_file_path(transient_result_file_path)
-my_model = dpf.Model(transient_result_file_path)
+model = dpf.Model(transient_rth_file[0])
+print(steady_state_model)
 
 # Get temperature distribution
-temp = my_model.results.temperature.on_last_time_freq.eval()[0]
+temp = model.results.temperature.on_last_time_freq.eval()[0]
 
 # Plot the the temperature for ic-1
 if GRAPHICS_BOOL:
