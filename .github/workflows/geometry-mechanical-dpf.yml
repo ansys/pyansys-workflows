@@ -122,13 +122,23 @@ jobs:
       - name: Run the PyPyMechanical script
         env:
           NUM_CORES: 1
-          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
           ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
           . /env/bin/activate
-          xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py
+          xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymechlogs${{ matrix.ansys-release }}.txt
+
+      # - name: Run the PyDPF script
+      #   env:
+      #     NUM_CORES: 1
+      #     ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+      #     ANSYS_WORKBENCH_LOGGING: 0
+      #     ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+      #   run: |
+      #     . /env/bin/activate
+      #     python geometry-mechanical-dpf/03_dpf.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
