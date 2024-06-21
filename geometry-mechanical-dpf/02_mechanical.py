@@ -21,6 +21,7 @@
 # SOFTWARE.
 
 import os
+from pathlib import Path
 
 import ansys.mechanical.core as mech
 from matplotlib import image as mpimg
@@ -35,8 +36,7 @@ print(app)
 # -- Parameters --
 #
 GRAPHICS_BOOL = False  # Set to True to display the mesh
-CWD = os.getcwd()
-OUTPUT_DIR = os.path.join(CWD, "geometry-mechanical-dpf" "outputs")  # Output directory
+OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 
 def display_image(image_name):
@@ -62,16 +62,16 @@ settings_720p.CurrentGraphicsDisplay = False
 
 # -- Import geometry --
 #
-# Reads geometry file and displa
-geometry_path = os.path.join(OUTPUT_DIR, "pcb.pmdb")
+# Import geometry
+geometry_path = Path(OUTPUT_DIR, "pcb.pmdb")
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
 geometry_import_format = Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic
 geometry_import_preferences = Ansys.ACT.Mechanical.Utilities.GeometryImportPreferences()
 geometry_import_preferences.ProcessNamedSelections = True
-geometry_import.Import(geometry_path, geometry_import_format, geometry_import_preferences)
+geometry_import.Import(str(geometry_path), geometry_import_format, geometry_import_preferences)
 
-# Plot the the entire geometry
+# Plot geometry
 if GRAPHICS_BOOL:
     app.plot()
 
