@@ -38,6 +38,8 @@ print(app)
 GRAPHICS_BOOL = False  # Set to True to display the mesh
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 CWD = os.getcwd()
+print(OUTPUT_DIR)
+print(CWD)
 
 def display_image(image_name):
     plt.figure(figsize=(16, 9))
