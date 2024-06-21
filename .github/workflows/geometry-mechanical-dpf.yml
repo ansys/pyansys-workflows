@@ -87,9 +87,9 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1.0, 24.2.0]
+        ansys-release: [24.1, 24.2]
     container:
-        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}'
+        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
         options: --entrypoint /bin/bash
     steps:
 
@@ -109,18 +109,9 @@ jobs:
 
       - name: Install dependencies
         run: |
+         . /env/bin/activate
           python -m pip install --upgrade pip
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download PRIME service container
-        run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:${{ matrix.ansys-release }}
 
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v4
@@ -128,11 +119,15 @@ jobs:
           name: geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
-      - name: Run the PyPrimeMesh script
+      - name: Run the PyPyMechanical script
         env:
-          PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
+          NUM_CORES: 1
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
-          python geometry-mechanical-dpf/02_mesh.py
+          xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
