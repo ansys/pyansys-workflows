@@ -35,8 +35,6 @@ if "ANSYS_MECHANICAL_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
     version = int(image_tag.replace(".", ""))
 
-print(version)
-
 # -- Start PyMechanical app --
 #
 app = mech.App(version=version)
