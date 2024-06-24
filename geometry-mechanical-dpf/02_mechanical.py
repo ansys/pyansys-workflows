@@ -116,23 +116,6 @@ ns2.Location = selection
 #
 mesh = Model.Mesh
 
-# automatic_method = mesh.AddAutomaticMethod()
-# NSall = ExtAPI.DataModel.Project.Model.NamedSelections.GetChildren[
-#     Ansys.ACT.Automation.Mechanical.NamedSelection
-# ](True)
-# all_bodies = [i for i in NSall if i.Name == "all_bodies"][0]
-# automatic_method.Location = all_bodies
-# automatic_method.Method = MethodType.MultiZone
-
-# addsizing1 = mesh.AddSizing()
-# all_bodies_except_board = [i for i in NSall if i.Name == "all_except_board"][0]
-# addsizing1.Location = all_bodies_except_board
-# addsizing1.ElementSize = Quantity(0.0009, "m")
-
-# addsizing2 = mesh.AddSizing()
-# board = [i for i in NSall if i.Name == "substrate"][0]
-# addsizing2.Location = board
-# addsizing2.ElementSize = Quantity(0.002, "m")
 mesh.GenerateMesh()
 
 # Export mesh image
@@ -144,7 +127,6 @@ ExtAPI.Graphics.ExportImage(
 # Display the mesh
 if GRAPHICS_BOOL:
     display_image("mesh.png")
-
 
 # -- Analysis --
 #
@@ -192,7 +174,6 @@ temperature_probe2.GeometryLocation = ic1
 # -- Solve --
 #
 transient_solution.Solve(True)
-
 
 # -- Save files and close mechanical --
 #

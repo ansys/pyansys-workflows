@@ -60,7 +60,6 @@ DEFAULT_UNITS.LENGTH = UNITS.cm
 # Define the radius of holes in pcb
 pcb_hole_radius = 1
 
-
 # Create PCB Substrate
 sketch_substrate = Sketch()
 (

@@ -1,4 +1,4 @@
-name: Geometry Mesh Workflow
+name: Geometry Mechanical DPF Workflow
 
 on:
   push:

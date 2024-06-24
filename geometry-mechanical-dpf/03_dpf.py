@@ -67,7 +67,6 @@ print(transient_rth_file)
 # Result precision
 decimal_precision = 6
 
-
 # -- Steady state thermal results --
 #
 # Create model
