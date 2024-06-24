@@ -83,11 +83,11 @@ if GRAPHICS_BOOL:
 # -- Transien thermal results --
 #
 # Create model
-model = dpf.Model(transient_rth_file[0])
-print(steady_state_model)
+transient_model = dpf.Model(transient_rth_file[0])
+print(transient_model)
 
 # Get temperature distribution
-temp = model.results.temperature.on_last_time_freq.eval()[0]
+temp = transient_model.results.temperature.on_last_time_freq.eval()[0]
 
 # Plot the the temperature for ic-1
 if GRAPHICS_BOOL:
