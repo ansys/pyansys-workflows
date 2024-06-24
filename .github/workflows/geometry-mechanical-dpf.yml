@@ -80,8 +80,8 @@ jobs:
               docker rm $dockerContainers
           }
 
-  mech-dpf:
-    name: Mechanical - Dpf
+  mechanical:
+    name: Mechanical
     runs-on: ubuntu-latest-8-cores
     needs: geometry
     strategy:
@@ -130,6 +130,61 @@ jobs:
           . /env/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: pymechanical-dpf-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
+
+  dpf:
+    name: Data Processing Framework
+    runs-on: ubuntu-latest-8-cores
+    needs: mechanical
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2]
+    container:
+        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
+        options: --entrypoint /bin/bash
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'geometry-mechanical-dpf'
+
+      - name: Set up Python
+        run: |
+            apt update
+            apt install --reinstall ca-certificates
+            apt install software-properties-common -y
+            add-apt-repository ppa:deadsnakes/ppa -y
+            apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv
+            python${{ env.MAIN_PYTHON_VERSION }} -m venv /env
+
+      - name: Install dependencies
+        run: |
+         . /env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Check out the geometry outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: geometry-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
 
       - name: Run the PyDPF script
         run: |
