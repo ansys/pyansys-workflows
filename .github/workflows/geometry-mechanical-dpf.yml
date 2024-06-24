@@ -197,3 +197,12 @@ jobs:
         with:
           name: pymechanical-dpf-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
