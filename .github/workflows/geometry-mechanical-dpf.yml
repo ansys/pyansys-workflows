@@ -1,0 +1,144 @@
+name: Geometry Mechanical DPF Workflow
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'geometry-mechanical-dpf/**'
+
+env:
+  MAIN_PYTHON_VERSION: '3.12'
+  GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
+  MECHANICAL_DOCKER_IMAGE: 'ghcr.io/ansys/mechanical'
+  ANSRV_GEO_PORT: 700
+  ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  geometry:
+    name: Geometry
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'geometry-mechanical-dpf'
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          .venv/Scripts/activate
+          pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download (if needed) and run Geometry service container
+        run: |
+          docker pull ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+
+      - name: Run the PyAnsys Geometry script
+        env:
+          ANSYS_GEOMETERY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+        run: |
+          .venv/Scripts/activate
+          python geometry-mechanical-dpf/01_geometry.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
+
+  mech-dpf:
+    name: Mechanical - Dpf
+    runs-on: ubuntu-latest-8-cores
+    needs: geometry
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2]
+    container:
+        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
+        options: --entrypoint /bin/bash
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: 'geometry-mechanical-dpf'
+
+      - name: Set up Python
+        run: |
+            apt update
+            apt install --reinstall ca-certificates
+            apt install software-properties-common -y
+            add-apt-repository ppa:deadsnakes/ppa -y
+            apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv
+            python${{ env.MAIN_PYTHON_VERSION }} -m venv /env
+
+      - name: Install dependencies
+        run: |
+         . /env/bin/activate
+          python -m pip install --upgrade pip
+          pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Check out the geometry outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: geometry-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
+
+      - name: Run the PyMechanical script
+        env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
+        run: |
+          . /env/bin/activate
+          xvfb-run mechanical-env python geometry-mechanical-dpf/02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymechlogs${{ matrix.ansys-release }}.txt
+
+      - name: Run the PyDPF script
+        run: |
+          . /env/bin/activate
+          xvfb-run python geometry-mechanical-dpf/03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pydpflogs${{ matrix.ansys-release }}.txt
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: pymechanical-dpf-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
