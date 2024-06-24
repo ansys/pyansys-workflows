@@ -33,6 +33,15 @@ for every part of the simulation process. The available workflows are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For meshing: Ansys Fluent Meshing
     - For simulation: Ansys Fluent Solver
+- [Geometry, mechanical and dpf](./geometry-mechanical-dpf): this workflow demonstrates how to
+  create a printed circuit board (PCB) geometry, mesh, run steady state and transient thermal analysis,
+  and post-process using dpf. The geometry generated is a simple PCB with multiple chips.
+  The exported CAD file (PMDB format) is then imported inside Ansys Mechanical
+  to run a steady-state thermal analysis followed by transient analysis.
+  All temperature results in different chips are displayed using dpf.
+    - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
+    - For simulation: Ansys Mechanical
+    - For post-procesing: Ansys Data Processing Framework
 
 ## How to run the workflows
 
