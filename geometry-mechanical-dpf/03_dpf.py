@@ -77,7 +77,7 @@ print(steady_state_model)
 # Get temperature distribution
 temp = steady_state_model.results.temperature.on_last_time_freq.eval()[0]
 
-# Plot the the temperature for ic-6
+# Plot the temperature for ic-6
 if GRAPHICS_BOOL:
     temp.plot()
 

@@ -196,7 +196,7 @@ transient_solution.Solve(True)
 
 # -- Save files and close mechanical --
 #
-# Mechanical file (mechdb) containes results files for each analysis
+# Mechanical file (mechdb) contains results for each analysis
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
 project_directory = ExtAPI.DataModel.Project.ProjectDirectory
 app.exit()

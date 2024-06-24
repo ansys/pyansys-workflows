@@ -84,7 +84,7 @@ plane = Plane(
     direction_y=[0, 1, 0],
 )
 
-# creat IC
+# create IC
 sketch_IC = Sketch(plane)
 sketch_IC.box(Point2D([62 / 2 + 7.5, 51 / 2 + 5]), 15, 10)
 
@@ -109,7 +109,7 @@ sketch_ic_8.box(Point2D([21, 59]), 10, 18)
 # Start by creating the Design
 design = modeler.create_design("pcb_design")
 
-# Create a all necessary components for pcb
+# Create all necessary components for pcb
 component = design.add_component("PCB")
 component.extrude_sketch("substrate", sketch_substrate, distance=substrate_height)
 ic_1 = component.extrude_sketch("ic-1", sketch_IC, distance=4.5)
