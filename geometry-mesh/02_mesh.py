@@ -28,7 +28,7 @@ from ansys.meshing.prime.graphics import Graphics
 
 # -- Parameters --
 #
-GRAPHICS_BOOL = False  # Set to True to display the mesh
+GRAPHICS_BOOL = False  # Set to True to display the graphics
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 # -- Launch the PRIME client --
