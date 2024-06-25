@@ -100,9 +100,6 @@ ns1.Name = "all_bodies"
 ns1.Location = selection
 
 # Create named selection for all except substrate
-NSall = ExtAPI.DataModel.Project.Model.NamedSelections.GetChildren[
-    Ansys.ACT.Automation.Mechanical.NamedSelection
-](True)
 substrate_id = [bd.GetGeoBody().Id for bd in bodies if bd.Name.endswith("substrate")]
 except_substrate_id = list(set(body_ids) - set(substrate_id))
 
