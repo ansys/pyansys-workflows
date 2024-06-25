@@ -141,7 +141,7 @@ jobs:
   dpf:
     name: Data Processing Framework
     runs-on: ubuntu-latest
-    needs: mechanical
+    # needs: mechanical
     strategy:
       fail-fast: false
       matrix:
@@ -167,7 +167,7 @@ jobs:
 
       - name: Update ansys-version for DPF
         run: |
-          echo ansys_version="${${{ matrix.ansys-release}}//"."}" >> $GITHUB_ENV
+          echo ansys_version=${${{matrix.ansys-release}}//.} >> $GITHUB_ENV
 
       - name: display anys_version
         run: |
