@@ -172,7 +172,7 @@ temperature_probe2.GeometryLocation = ic1
 #
 transient_solution.Solve(True)
 
-# -- Save files and close mechanical --
+# -- Save files and close Mechanical --
 #
 # Mechanical file (mechdb) contains results for each analysis
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
