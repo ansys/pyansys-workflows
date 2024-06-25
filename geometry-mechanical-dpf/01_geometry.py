@@ -44,7 +44,7 @@ if "ANSYS_GEOMETRY_RELEASE" in os.environ:
 
 # -- Parameters --
 #
-GRAPHICS_BOOL = False  # Set to True to display the mesh
+GRAPHICS_BOOL = False  # Set to True to display the graphics
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 # -- Start a modeler session --
