@@ -140,11 +140,8 @@ jobs:
       - name: Stop any remaining containers
         if: always()
         run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
 
 
   dpf:
@@ -201,8 +198,5 @@ jobs:
       - name: Stop any remaining containers
         if: always()
         run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
