@@ -137,12 +137,6 @@ jobs:
           name: pymechanical-dpf-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
-
 
   dpf:
     name: Data Processing Framework
