@@ -150,8 +150,8 @@ initial_condition = steady_solution.Children[0]
 initial_condition.InitialTemperature = InitialTemperatureType.NonUniform
 initial_condition.InitialEnvironment = steady
 
-ansys_analysis_settings = transient.AnalysisSettings
-ansys_analysis_settings.StepEndTime = Quantity(200, "sec")
+transient_analysis_settings = transient.AnalysisSettings
+transient_analysis_settings.StepEndTime = Quantity(200, "sec")
 
 internal_heat_generation2 = transient.AddInternalHeatGeneration()
 
