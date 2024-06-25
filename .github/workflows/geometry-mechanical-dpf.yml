@@ -167,11 +167,9 @@ jobs:
 
       - name: Update ansys-version for DPF
         run: |
-          echo ansys_version=${${{matrix.ansys-release}}//.} >> $GITHUB_ENV
-
-      - name: display anys_version
-        run: |
-          echo $ansys_version
+          ansys_version=${{ matrix.ansys-release }}
+          ansys_version_no_dot=${ansys_version//./}
+          echo ansys_version=$ansys_version_no_dot >> $GITHUB_ENV
 
       - name: "Install DPF server"
         id: set-server-path
