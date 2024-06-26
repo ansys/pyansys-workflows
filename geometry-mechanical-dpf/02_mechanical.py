@@ -100,9 +100,6 @@ ns1.Name = "all_bodies"
 ns1.Location = selection
 
 # Create named selection for all except substrate
-NSall = ExtAPI.DataModel.Project.Model.NamedSelections.GetChildren[
-    Ansys.ACT.Automation.Mechanical.NamedSelection
-](True)
 substrate_id = [bd.GetGeoBody().Id for bd in bodies if bd.Name.endswith("substrate")]
 except_substrate_id = list(set(body_ids) - set(substrate_id))
 
@@ -153,8 +150,8 @@ initial_condition = steady_solution.Children[0]
 initial_condition.InitialTemperature = InitialTemperatureType.NonUniform
 initial_condition.InitialEnvironment = steady
 
-ansys_analysis_settings = transient.AnalysisSettings
-ansys_analysis_settings.StepEndTime = Quantity(200, "sec")
+transient_analysis_settings = transient.AnalysisSettings
+transient_analysis_settings.StepEndTime = Quantity(200, "sec")
 
 internal_heat_generation2 = transient.AddInternalHeatGeneration()
 
@@ -175,7 +172,7 @@ temperature_probe2.GeometryLocation = ic1
 #
 transient_solution.Solve(True)
 
-# -- Save files and close mechanical --
+# -- Save files and close Mechanical --
 #
 # Mechanical file (mechdb) contains results for each analysis
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
