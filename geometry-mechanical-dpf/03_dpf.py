@@ -80,7 +80,7 @@ temp = steady_state_model.results.temperature.on_last_time_freq.eval()[0]
 if GRAPHICS_BOOL:
     temp.plot()
 
-# -- Transien thermal results --
+# -- Transient thermal results --
 #
 # Create model
 transient_model = dpf.Model(transient_rth_file[0])
