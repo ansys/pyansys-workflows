@@ -141,7 +141,7 @@ jobs:
   dpf:
     name: Data Processing Framework
     runs-on: ubuntu-latest
-    # needs: mechanical
+    needs: mechanical
     strategy:
       fail-fast: false
       matrix:
@@ -161,8 +161,6 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          python -m venv .venv
-          . .venv/bin/activate
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Update ansys-version for DPF
@@ -186,7 +184,6 @@ jobs:
 
       - name: Run the PyDPF script
         run: |
-          . .venv/bin/activate
           xvfb-run python geometry-mechanical-dpf/03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
