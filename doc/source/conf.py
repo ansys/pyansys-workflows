@@ -3,10 +3,15 @@
 from datetime import datetime
 import os
 
-from ansys_sphinx_theme import ansys_favicon, get_version_match
-from ansys_sphinx_theme import pyansys_logo_black as logo
-from ansys_sphinx_theme import pyansys_logo_white
-from sphinx_gallery.sorting import FileNameSortKey
+from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black as logo, pyansys_logo_white
+import pyvista as pv
+from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
+
+# Env vars
+os.environ["DOC_BUILD"] = "true"
+os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
+pv.OFF_SCREEN = True
+pv.BUILDING_GALLERY = True
 
 # Project information
 project = "pyansys-workflows"
@@ -33,12 +38,11 @@ html_theme_options = {
 
 # Sphinx extensions
 extensions = [
-    "numpydoc",
     "sphinx.ext.intersphinx",
     "sphinx_copybutton",
     "sphinx_design",
-    "sphinx_jinja",
     "sphinx_gallery.gen_gallery",
+    'pyvista.ext.viewer_directive',
 ]
 
 # Intersphinx mapping
@@ -71,24 +75,30 @@ linkcheck_anchors = False
 # Sphinx gallery configuration
 sphinx_gallery_conf = {
     # path to your examples scripts
-    "examples_dirs": "../../examples",
+    "examples_dirs": [#"../../geometry-mechanical-dpf",
+                    #   "../../geometry-mesh",
+                    #   "../../geometry-mesh-fluent",
+                      ],
     # path where to save gallery generated examples
-    "gallery_dirs": "examples",
+    "gallery_dirs": [#"examples/geometry-mechanical-dpf",
+                    #  "examples/geometry-mesh",
+                    #  "examples/geometry-mesh-fluent",
+                     ],
     # Pattern to search for example files
-    "filename_pattern": r"\." + "py",
+    "filename_pattern": ".py",
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
     # Sort gallery example by file name instead of number of lines (default)
-    "within_subsection_order": FileNameSortKey,
+    "within_subsection_order": "FileNameSortKey",
     # directory where function granular galleries are stored
     "backreferences_dir": None,
     # Modules for which function level galleries are created.  In
-    "doc_module": "ansys-allie-clients",
     "ignore_pattern": "flycheck*",
     "thumbnail_size": (350, 350),
     "remove_config_comments": True,
     "default_thumb_file": pyansys_logo_white,
     "show_signature": False,
+    "image_scrapers": (DynamicScraper(), "matplotlib"),
 }
 
 

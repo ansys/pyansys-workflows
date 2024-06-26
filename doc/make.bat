@@ -13,6 +13,19 @@ set BUILDDIR=_build
 if "%1" == "" goto help
 if "%1" == "clean" goto clean
 
+REM Check if vtk is installed - if so, uninstall and install vtk-osmesa
+set IS_VTK_INSTALLED=0
+pip show vtk >NUL 2>NUL
+if %ERRORLEVEL% EQU 0 (
+	set IS_VTK_INSTALLED=1
+	echo Uninstalling vtk...
+	pip uninstall -y vtk
+)
+if %IS_VTK_INSTALLED% EQU 1 (
+	echo Installing vtk-osmesa...
+	pip install --extra-index-url https://wheels.vtk.org vtk-osmesa
+)
+
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
 	echo.
@@ -32,8 +45,7 @@ goto end
 :clean
 rmdir /s /q %BUILDDIR% > /NUL 2>&1
 del /s /q %SOURCEDIR%\sg_execution_times.rst > /NUL 2>&1
-for /d /r %SOURCEDIR% %%d in (api) do @if exist "%%d" rmdir /s /q "%%d"
-for /d /r %SOURCEDIR% %%d in (examples) do @if exist "%%d" rmdir /s /q "%%d"
+for /d /r %SOURCEDIR% %%d in (api, examples) do @if exist "%%d" rmdir /s /q "%%d"
 goto end
 
 :help

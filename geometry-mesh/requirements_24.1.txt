@@ -1,2 +1,2 @@
-ansys-geometry-core[all]==0.6.0
+ansys-geometry-core[all]==0.6.4
 ansys-meshing-prime==0.5.1
