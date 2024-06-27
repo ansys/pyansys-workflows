@@ -105,15 +105,15 @@ jobs:
             apt install software-properties-common -y
             add-apt-repository ppa:deadsnakes/ppa -y
             apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv
-            python${{ env.MAIN_PYTHON_VERSION }} -m venv /env
+            python${{ env.MAIN_PYTHON_VERSION }} -m venv .venv
 
       - name: Install dependencies
         run: |
-          . /env/bin/activate
+          . .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
-      - name: Check out the geometry outputs
+      - name: Download the geometry outputs
         uses: actions/download-artifact@v4
         with:
           name: geometry-outputs-${{ matrix.ansys-release }}
@@ -176,7 +176,7 @@ jobs:
           dpf-standalone-TOKEN: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           ANSYS_VERSION : ${{env.ansys_version}}
 
-      - name: Check out the mechanical outputs
+      - name: Download the mechanical outputs
         uses: actions/download-artifact@v4
         with:
           name: mechanical-outputs-${{ matrix.ansys-release }}

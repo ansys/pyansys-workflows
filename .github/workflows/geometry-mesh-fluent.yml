@@ -113,10 +113,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Fluent service container
+      - name: Pull Fluent docker image
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
-      - name: Check out the geometry outputs
+      - name: Download the geometry outputs
         uses: actions/download-artifact@v4
         with:
           name: geometry-outputs-${{ matrix.ansys-release }}
@@ -168,10 +168,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Fluent service container
+      - name: Pull Fluent docker image
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
-      - name: Check out the meshing outputs
+      - name: Download the meshing outputs
         uses: actions/download-artifact@v4
         with:
           name: fluent-mesh-outputs-${{ matrix.ansys-release }}

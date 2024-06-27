@@ -113,10 +113,10 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download PRIME service container
+      - name: Pull PRIME docker image
         run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:${{ matrix.ansys-release }}
 
-      - name: Check out the geometry outputs
+      - name: Download the geometry outputs
         uses: actions/download-artifact@v4
         with:
           name: geometry-outputs-${{ matrix.ansys-release }}
