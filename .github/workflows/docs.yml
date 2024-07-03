@@ -23,7 +23,7 @@ jobs:
   # geometry-mesh-fluent:
   #   uses: ./.github/workflows/geometry-mesh-fluent.yml
   #   secrets: inherit
-  
+
   # TODO: reactivated once the documentation is ready
   # geometry-mechanical-dpf:
   #   uses: ./.github/workflows/geometry-mechanical-dpf.yml
@@ -43,7 +43,7 @@ jobs:
         uses: actions/setup-python@v4
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-    
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -66,7 +66,7 @@ jobs:
       #   with:
       #     name: geometry-mechanical-dpf-docs
       #     path: doc/
-      
+
       - name: Build the documentation
         run: |
           cd doc
