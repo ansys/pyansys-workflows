@@ -97,3 +97,4 @@ jobs:
           publish_dir: ./doc
           commit_message: "DOC: update documentation"
           github_token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
+          cname: ${{ env.DOCUMENTATION_CNAME }}
