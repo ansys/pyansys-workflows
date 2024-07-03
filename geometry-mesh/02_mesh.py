@@ -108,7 +108,7 @@ if GRAPHICS_BOOL:
 #
 
 # Initialize the connection tolerance and other parameters --
-# 
+#
 # Target element size
 element_size = 0.5
 

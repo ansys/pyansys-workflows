@@ -1,6 +1,8 @@
 name: Geometry Mesh Fluent Workflow
 
 on:
+  workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main

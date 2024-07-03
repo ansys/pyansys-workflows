@@ -22,7 +22,7 @@ to automate Ansys simulations. The workflows are organized by folders, each cont
 for every part of the simulation process. The available workflows are:
 
 - [Geometry and meshing](./geometry-mesh): this workflow demonstrates how to create a geometry and mesh
-  it using PyAnsys. The geometry is a simple CAD structure.The involved Ansys products are:
+  it using PyAnsys. The geometry is a simple CAD structure. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For meshing: Ansys PRIME Server
 

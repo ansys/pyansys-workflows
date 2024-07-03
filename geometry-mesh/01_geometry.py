@@ -84,7 +84,7 @@ if "DOC_BUILD" in os.environ:
 # Start a modeler session
 # -----------------------
 # Start a modeler session to interact with the Ansys Geometry Service. The
-# modeler object is used to create designs, sketches, and perform modeling 
+# modeler object is used to create designs, sketches, and perform modeling
 # operations.
 #
 modeler = launch_modeler(image=image)

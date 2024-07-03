@@ -1,10 +1,34 @@
+# Copyright (C) 2024 ANSYS, Inc. and/or its affiliates.
+# SPDX-License-Identifier: MIT
+#
+#
+# Permission is hereby granted, free of charge, to any person obtaining a copy
+# of this software and associated documentation files (the "Software"), to deal
+# in the Software without restriction, including without limitation the rights
+# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+# copies of the Software, and to permit persons to whom the Software is
+# furnished to do so, subject to the following conditions:
+#
+# The above copyright notice and this permission notice shall be included in all
+# copies or substantial portions of the Software.
+#
+# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+# SOFTWARE.
+
 """Sphinx documentation configuration file."""
 
 from datetime import datetime
 import os
 import re
 
-from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black as logo, pyansys_logo_white
+from ansys_sphinx_theme import ansys_favicon
+from ansys_sphinx_theme import pyansys_logo_black as logo
+from ansys_sphinx_theme import pyansys_logo_white
 import pyvista as pv
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 
@@ -43,7 +67,7 @@ extensions = [
     "sphinx_copybutton",
     "sphinx_design",
     "sphinx_gallery.gen_gallery",
-    'pyvista.ext.viewer_directive',
+    "pyvista.ext.viewer_directive",
 ]
 
 # Intersphinx mapping
@@ -76,7 +100,7 @@ linkcheck_anchors = False
 
 def examples_gallery_dirs_and_filename_pattern():
     """Return the gallery directories to build.
-    
+
     Notes
     -----
     This function checks for workflow environment variables to determine
@@ -88,7 +112,7 @@ def examples_gallery_dirs_and_filename_pattern():
     examples_dirs = []
     gallery_dirs = []
     filename_pattern = ".py"
-    
+
     # Check for environment variables
     if os.getenv("BUILD_DOCS_SCRIPT", None):
         dir_name, script_file = os.path.split(os.getenv("BUILD_DOCS_SCRIPT"))
@@ -96,25 +120,30 @@ def examples_gallery_dirs_and_filename_pattern():
         gallery_dirs.append(f"examples/{dir_name}")
         script_file_name = os.path.splitext(script_file)[0]
         filename_pattern = re.compile(f"{script_file_name}").pattern
+        print(
+            f"Building examples in {examples_dirs} to {gallery_dirs} with pattern {filename_pattern}"  # noqa: E501
+        )
     else:
-        examples_dirs = ["../../geometry-mechanical-dpf",
-                          "../../geometry-mesh",
-                          "../../geometry-mesh-fluent",
-                          ]
-        gallery_dirs = ["examples/geometry-mechanical-dpf",
-                        "examples/geometry-mesh",
-                        "examples/geometry-mesh-fluent",
-                        ]
-    
+        examples_dirs = [
+            # "../../geometry-mechanical-dpf", # TODO: to be reactivated when ready
+            "../../geometry-mesh",
+            # "../../geometry-mesh-fluent", # TODO: to be reactivated when ready
+        ]
+        gallery_dirs = [
+            # "examples/geometry-mechanical-dpf",
+            "examples/geometry-mesh",
+            # "examples/geometry-mesh-fluent",
+        ]
+
     return examples_dirs, gallery_dirs, filename_pattern
 
+
 # Sphinx gallery configuration
-example_dirs, gallery_dirs, filename_pattern = examples_gallery_dirs_and_filename_pattern()
-print(f"Building examples in {example_dirs} to {gallery_dirs} with pattern {filename_pattern}")
+examples_dirs, gallery_dirs, filename_pattern = examples_gallery_dirs_and_filename_pattern()
 
 sphinx_gallery_conf = {
     # path to your examples scripts
-    "examples_dirs": example_dirs,
+    "examples_dirs": examples_dirs,
     # path where to save gallery generated examples
     "gallery_dirs": gallery_dirs,
     # Pattern to search for example files
