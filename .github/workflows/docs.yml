@@ -8,7 +8,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
-  DOCUMENTATION_CNAME: ''
+  DOCUMENTATION_CNAME: 'jubilant-adventure-4kp1jwo.pages.github.io'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
