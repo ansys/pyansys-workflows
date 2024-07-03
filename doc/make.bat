@@ -23,7 +23,7 @@ if %ERRORLEVEL% EQU 0 (
 )
 if %IS_VTK_INSTALLED% EQU 1 (
 	echo Installing vtk-osmesa...
-	pip install --extra-index-url https://wheels.vtk.org vtk-osmesa
+	pip install --extra-index-url https://wheels.vtk.org vtk-osmesa==9.3.0
 )
 
 %SPHINXBUILD% >NUL 2>NUL

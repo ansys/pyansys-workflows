@@ -2,6 +2,7 @@
 
 from datetime import datetime
 import os
+import re
 
 from ansys_sphinx_theme import ansys_favicon, pyansys_logo_black as logo, pyansys_logo_white
 import pyvista as pv
@@ -72,20 +73,52 @@ master_doc = "index"
 # Ignore anchors
 linkcheck_anchors = False
 
+
+def examples_gallery_dirs_and_filename_pattern():
+    """Return the gallery directories to build.
+    
+    Notes
+    -----
+    This function checks for workflow environment variables to determine
+    which directories to build. If variables are not provided, it will
+    default to building all directories which may lead to failure. The
+    environment variable expected is `BUILD_DOCS_SCRIPT` which should
+    a path to a certain script.
+    """
+    examples_dirs = []
+    gallery_dirs = []
+    filename_pattern = ".py"
+    
+    # Check for environment variables
+    if os.getenv("BUILD_DOCS_SCRIPT", None):
+        dir_name, script_file = os.path.split(os.getenv("BUILD_DOCS_SCRIPT"))
+        examples_dirs.append(f"../../{dir_name}")
+        gallery_dirs.append(f"examples/{dir_name}")
+        script_file_name = os.path.splitext(script_file)[0]
+        filename_pattern = re.compile(f"{script_file_name}").pattern
+    else:
+        examples_dirs = ["../../geometry-mechanical-dpf",
+                          "../../geometry-mesh",
+                          "../../geometry-mesh-fluent",
+                          ]
+        gallery_dirs = ["examples/geometry-mechanical-dpf",
+                        "examples/geometry-mesh",
+                        "examples/geometry-mesh-fluent",
+                        ]
+    
+    return examples_dirs, gallery_dirs, filename_pattern
+
 # Sphinx gallery configuration
+example_dirs, gallery_dirs, filename_pattern = examples_gallery_dirs_and_filename_pattern()
+print(f"Building examples in {example_dirs} to {gallery_dirs} with pattern {filename_pattern}")
+
 sphinx_gallery_conf = {
     # path to your examples scripts
-    "examples_dirs": [#"../../geometry-mechanical-dpf",
-                    #   "../../geometry-mesh",
-                    #   "../../geometry-mesh-fluent",
-                      ],
+    "examples_dirs": example_dirs,
     # path where to save gallery generated examples
-    "gallery_dirs": [#"examples/geometry-mechanical-dpf",
-                    #  "examples/geometry-mesh",
-                    #  "examples/geometry-mesh-fluent",
-                     ],
+    "gallery_dirs": gallery_dirs,
     # Pattern to search for example files
-    "filename_pattern": ".py",
+    "filename_pattern": filename_pattern,
     # Remove the "Download all examples" button from the top level gallery
     "download_all_examples": False,
     # Sort gallery example by file name instead of number of lines (default)

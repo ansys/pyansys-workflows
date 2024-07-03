@@ -59,10 +59,12 @@ if "ANSYS_GEOMETRY_RELEASE" in os.environ:
             image = geom_services
             break
 
+# sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
 # This is a workaround to run the script in Sphinx-Gallery.
 if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "01_geometry.py")
+# sphinx_gallery_end_ignore
 
 ###############################################################################
 # Parameters for the script
@@ -77,8 +79,6 @@ OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 if "DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
-
-print(f"GRAPHICS_BOOL: {GRAPHICS_BOOL}")
 
 ###############################################################################
 # Start a modeler session
