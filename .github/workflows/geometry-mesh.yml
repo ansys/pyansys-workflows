@@ -85,7 +85,7 @@ jobs:
           .venv/Scripts/activate
           cd doc
           pip install -r requirements.txt
-          make.bat html
+          ./make.bat html
 
       - name: Upload docs artifacts
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
