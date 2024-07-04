@@ -160,6 +160,14 @@ jobs:
           name: prime-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
+      - name: (temp) List the outputs
+        run: |
+          ls -R geometry-mesh/outputs
+
+      - name: (temp) List the docs directory
+        run: |
+          ls -R doc
+
       - name: Build the docs (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
