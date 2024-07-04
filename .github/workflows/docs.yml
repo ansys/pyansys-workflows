@@ -10,10 +10,6 @@ env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'jubilant-adventure-4kp1jwo.pages.github.io'
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
-
 jobs:
   geometry-mesh:
     uses: ./.github/workflows/geometry-mesh.yml
