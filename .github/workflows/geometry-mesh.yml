@@ -1,6 +1,8 @@
 name: Geometry Mesh Workflow
 
 on:
+  workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main
@@ -16,6 +18,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   PYPRIMEMESH_LAUNCH_CONTAINER: 1
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  ANSYS_RELEASE_FOR_DOCS: 24.2
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -34,7 +37,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'geometry-mesh'
+          sparse-checkout: |
+            geometry-mesh
+            doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v4
@@ -72,6 +77,25 @@ jobs:
           name: geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          BUILD_DOCS_SCRIPT: 'geometry-mesh/01_geometry.py'
+        run: |
+          .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Upload docs artifacts
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-examples-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mesh/
+
       - name: Stop any remaining containers
         if: always()
         run: |
@@ -94,7 +118,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'geometry-mesh'
+          sparse-checkout: |
+            geometry-mesh
+            doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v5
@@ -133,3 +159,35 @@ jobs:
         with:
           name: prime-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        with:
+          name: geometry-mesh-examples-docs
+          path: doc
+
+      - name: (DOCS) Setup headless display
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: pyvista/setup-headless-display-action@v2
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mesh/02_mesh.py'
+        run: |
+          cd doc
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples/geometry-mesh\\images\\|./images/|g' {} +
+          pip install -r requirements.txt
+          make html
+
+      - name: (DOCS) Upload docs artifacts
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-examples-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mesh/
+          overwrite: true
