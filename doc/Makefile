@@ -13,6 +13,7 @@ ifneq ($(IS_VTK_INSTALLED),)
 	@echo "VTK is installed. Uninstalling vtk and installing vtk-osmesa"
 	@pip uninstall -y vtk
 	@pip install --extra-index-url https://wheels.vtk.org vtk-osmesa==9.3.0
+endif
 
 # Put it first so that "make" without argument is like "make help".
 help:
