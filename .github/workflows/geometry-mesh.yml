@@ -187,6 +187,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mesh/02_mesh.py'
         run: |
           cd doc
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work|/home/runner/work|g' {} +
           pip install -r requirements.txt
           make html
 
