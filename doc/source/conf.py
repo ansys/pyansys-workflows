@@ -166,3 +166,37 @@ sphinx_gallery_conf = {
 
 # Suppress warnings
 suppress_warnings = []
+
+# Once the documentation is built, modify the examples RST files that contain
+# the statement ".. offlineviewer::" so that they use relative paths to the
+# current directoty, typically starting on the "images" directory such that
+# the images are displayed correctly in the documentation.
+#
+# For example, the following statement:
+#
+# .. offlineviewer:: C:\my\fancy\dir\examples\images\sphx_glr_01_geometry_001.vtksz
+#
+# will be modified to:
+#
+# .. offlineviewer:: .\images\sphx_glr_01_geometry_001.vtksz
+def fix_vtksz_paths(app, exc):
+    if exc is None:
+        for root, _, files in os.walk(app.builder.srcdir / "examples"):
+            for file in files:
+                if file.endswith(".rst"):
+                    with open(os.path.join(root, file), "r") as f:
+                        lines = f.readlines()
+                    with open(os.path.join(root, file), "w") as f:
+                        for line in lines:
+                            if ".. offlineviewer::" in line:
+                                # Extract the path to the file only starting on "images" directory
+                                pre = line.split("::")[0]
+                                path = line.split("::")[1].strip()
+                                path = path[path.find("images"):]
+                                f.write(f"{pre}:: ./{path}\n")
+                            else:
+                                f.write(line)
+
+def setup(app):
+    app.connect("build-finished", fix_vtksz_paths)
+    

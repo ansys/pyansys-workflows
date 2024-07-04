@@ -163,6 +163,7 @@ jobs:
       - name: Build the docs (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
+          PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mesh/02_mesh.py'
         run: |
           cd doc
