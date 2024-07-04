@@ -160,6 +160,12 @@ jobs:
           name: prime-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
+      - name: Download the docs artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: geometry-mesh-examples-docs
+          path: doc
+
       - name: (temp) List the outputs
         run: |
           ls -R geometry-mesh/outputs
