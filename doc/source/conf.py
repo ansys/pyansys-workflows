@@ -165,7 +165,9 @@ sphinx_gallery_conf = {
 
 
 # Suppress warnings
-suppress_warnings = []
+suppress_warnings = [
+    "toc.not_readable",
+]
 
 
 # Once the documentation is built, modify the examples RST files that contain
