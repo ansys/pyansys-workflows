@@ -202,4 +202,5 @@ def fix_vtksz_paths(app, exc):
 
 
 def setup(app):
-    app.connect("build-finished", fix_vtksz_paths)
+    # app.connect("build-finished", fix_vtksz_paths)
+    pass
