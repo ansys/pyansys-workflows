@@ -80,6 +80,7 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
+          ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mesh/01_geometry.py'
         run: |
           .venv/Scripts/activate
