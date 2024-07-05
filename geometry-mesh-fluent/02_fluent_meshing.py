@@ -19,25 +19,62 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry-mesh-fluent_02-fluent-meshing:
+
+Mesh generation
+###############
+
+This example demonstrates how to generate a mesh for a NACA airfoil using Fluent Meshing.
+
+Starting from the geometry created in the previous example, the script generates a mesh
+using Fluent Meshing. The parameters are set to generate a mesh with a surface mesh size
+of 2 and 1000, and a volume mesh size of 512. It leverages the Fluent Meshing Workflow
+API to create the mesh.
+
+"""  # noqa: D400, D415
 
 import os
 
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+from pathlib import Path
+
 import ansys.fluent.core as pyfluent
 
-####################################################################################################
-# Default parameters - when running the script directly
-####################################################################################################
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "02_fluent_meshing.py")
+# sphinx_gallery_end_ignore
 
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
+#
 # NACA 4-digits airfoil geometry
 NACA_AIRFOIL = "6412"
 
 # Data directory
 DATA_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 
-
-####################################################################################################
-# Fluent Meshing
-####################################################################################################
+###############################################################################
+# Generate the mesh
+# -----------------
+# The function `generate_mesh` generates a mesh for a NACA airfoil using Fluent Meshing.
+# The function takes the following parameters:
+#
+# - `naca_airfoil`: NACA 4-digits airfoil number.
+# - `data_dir`: Directory to save the mesh file.
+# - `ui_mode`: User interface mode. The default is None.
+# - `container_dict`: Configuration for the Fluent container. The default is None.
+#
+# The function launches Fluent Meshing and initializes the workflow for watertight geometry.
+# It imports the geometry, generates the surface mesh, describes the geometry, updates
+# boundaries and regions, adds boundary layers, generates the volume mesh, checks the mesh,
+# writes the mesh, and closes Fluent Meshing.
+#
 
 
 def generate_mesh(
@@ -145,20 +182,24 @@ def generate_mesh(
     meshing.exit()
 
 
-if __name__ == "__main__":
+###############################################################################
+# Executing the mesh generation
+# -----------------------------
+# The previous function is called to generate the mesh for the NACA airfoil.
+# The mesh is saved in the `outputs` directory. Depending on the environment,
+# the script will run in a container or locally.
+#
+# Depending on the environment, the script will run in a container or locally.
+#
 
-    import os
-
-    # Depending on the environment, the script will run in a container or locally
-    if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
-        container_dict = {
-            "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
-            "host_mount_path": DATA_DIR,
-            "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
-            "timeout": 300,
-        }
-        # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
-
-        generate_mesh(NACA_AIRFOIL, "/mnt/pyfluent", container_dict=container_dict)
-    else:
-        generate_mesh(NACA_AIRFOIL, DATA_DIR)
+if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+    container_dict = {
+        "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
+        "host_mount_path": DATA_DIR,
+        "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
+        "timeout": 300,
+    }
+    # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
+    generate_mesh(NACA_AIRFOIL, "/mnt/pyfluent", container_dict=container_dict)
+else:
+    generate_mesh(NACA_AIRFOIL, DATA_DIR)

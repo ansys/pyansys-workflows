@@ -127,12 +127,12 @@ def examples_gallery_dirs_and_filename_pattern():
         examples_dirs = [
             # "../../geometry-mechanical-dpf", # TODO: to be reactivated when ready
             "../../geometry-mesh",
-            # "../../geometry-mesh-fluent", # TODO: to be reactivated when ready
+            "../../geometry-mesh-fluent",
         ]
         gallery_dirs = [
             # "examples/geometry-mechanical-dpf",
             "examples/geometry-mesh",
-            # "examples/geometry-mesh-fluent",
+            "examples/geometry-mesh-fluent",
         ]
 
     return examples_dirs, gallery_dirs, filename_pattern
