@@ -36,13 +36,13 @@ and a pressure of 80600 Pa. Overall, these are the conditions for a compressible
 
 import os
 
+import ansys.fluent.core as pyfluent
+import numpy as np
+
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
 # This is a workaround to run the script in Sphinx-Gallery.
-from pathlib import Path
-
-import ansys.fluent.core as pyfluent
-import numpy as np
+from pathlib import Path  # isort:skip
 
 if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "03_fluent_solver.py")
