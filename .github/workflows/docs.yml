@@ -48,7 +48,7 @@ jobs:
       - name: Download artifacts for geometry-mesh
         uses: actions/download-artifact@v4
         with:
-          name: geometry-mesh-docs
+          name: geometry-mesh-examples-docs
           path: doc/
 
       # - name: Download artifacts for geometry-mesh-fluent
