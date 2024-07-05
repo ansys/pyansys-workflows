@@ -53,6 +53,7 @@ if "__file__" not in locals():
 # The following parameters are used to control the script execution. You can
 # modify these parameters to suit your needs.
 #
+
 # NACA 4-digits airfoil geometry
 NACA_AIRFOIL = "6412"
 
