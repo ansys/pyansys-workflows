@@ -95,7 +95,7 @@ jobs:
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh-fluent/
-  
+
       - name: Stop any remaining containers
         if: always()
         run: |
