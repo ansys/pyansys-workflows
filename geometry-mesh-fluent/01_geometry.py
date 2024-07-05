@@ -39,7 +39,7 @@ import os
 from pathlib import Path
 from typing import List, Union
 
-from ansys.geometry.core import Modeler, launch_modeler
+from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
 from ansys.geometry.core.math import Plane, Point2D, Point3D
 from ansys.geometry.core.plotting import GeometryPlotter
@@ -228,130 +228,6 @@ def naca_airfoil_4digits(number: Union[int, str], n_points: int = 200) -> List[P
 
 
 ###############################################################################
-# Generate the geometry
-# ---------------------
-# The geometry is generated using PyAnsys Geometry. The NACA airfoil is generated
-# using the function defined above. The airfoil is extruded to create a 3D model,
-# and the fluid domain is created as a box around the airfoil.
-#
-
-
-def generate_geometry(
-    naca_airfoil: str,
-    box_size_length: int,
-    box_size_width: int,
-    box_size_height: int,
-    data_dir: str,
-    modeler: Modeler,
-):
-    """
-    Generate the geometry of a NACA airfoil and the surrounding fluid domain
-    using PyAnsys Geometry.
-
-    Parameters
-    ----------
-    naca_airfoil : str
-        NACA 4-digits airfoil.
-    box_size_length : int
-        Length of the fluid domain along the X-axis.
-    box_size_width : int
-        Width of the fluid domain along the Z-axis.
-    box_size_height : int
-        Height of the fluid domain along the Y-axis.
-    data_dir : str
-        Directory to save the generated geometry.
-    modeler : Modeler
-        PyAnsys Geometry Modeler instance.
-    """
-    # Create the design
-    design = modeler.create_design(f"NACA_Airfoil_{naca_airfoil}")
-
-    # Create a sketch
-    airfoil_sketch = Sketch()
-
-    # Generate the points of the airfoil
-    points = naca_airfoil_4digits(naca_airfoil)
-
-    # Create the segments of the airfoil
-    for i in range(len(points) - 1):
-        airfoil_sketch.segment(points[i], points[i + 1])
-
-    # Close the airfoil
-    airfoil_sketch.segment(points[-1], points[0])
-
-    # Plot the airfoil
-    if GRAPHICS_BOOL:
-        airfoil_sketch.plot()
-
-    # Extrude the airfoil
-    airfoil = design.extrude_sketch("Airfoil", airfoil_sketch, 1)
-
-    # Plot the design
-    if GRAPHICS_BOOL:
-        design.plot()
-
-    # Create the surrounding fluid domain
-    #
-    # The airfoil has the following dimensions:
-    # - Chord length: 1 (X-axis)
-    # - Thickness: depends on NACA value (Y-axis)
-    #
-    # The fluid domain will be a large box with the following dimensions:
-    # - Length  (X-axis)
-    # - Width   (Z-axis)
-    # - Height  (Y-axis)
-    #
-    # The airfoil will be placed at the center of the fluid domain
-    #
-    # Create the sketch
-    fluid_sketch = Sketch(plane=Plane(origin=Point3D([0, 0, 0.5 - (box_size_width / 2)])))
-    fluid_sketch.box(
-        center=Point2D([0.5, 0]),
-        height=box_size_height,
-        width=box_size_length,
-    )
-
-    # Plot the fluid domain
-    if GRAPHICS_BOOL:
-        fluid_sketch.plot()
-
-    # Extrude the fluid domain
-    fluid = design.extrude_sketch("Fluid", fluid_sketch, box_size_width)
-
-    # Create named selections in the fluid domain - inlet, outlet, and surrounding faces
-    # Add also the airfoil as a named selection
-    fluid_faces = fluid.faces
-    surrounding_faces = []
-    inlet_faces = []
-    outlet_faces = []
-    for face in fluid_faces:
-        if face.normal().x == 1:
-            outlet_faces.append(face)
-        elif face.normal().x == -1:
-            inlet_faces.append(face)
-        else:
-            surrounding_faces.append(face)
-
-    design.create_named_selection("Outlet Fluid", faces=outlet_faces)
-    design.create_named_selection("Inlet Fluid", faces=inlet_faces)
-    design.create_named_selection("Surrounding Faces", faces=surrounding_faces)
-    design.create_named_selection("Airfoil Faces", faces=airfoil.faces)
-
-    # Plot the design intelligently...
-    if GRAPHICS_BOOL:
-        geom_plotter = GeometryPlotter()
-        geom_plotter.plot(airfoil, color="blue")
-        geom_plotter.plot(fluid, color="green", opacity=0.25)
-        geom_plotter.show()
-
-    # Save the design
-    file = design.export_to_pmdb(data_dir)
-    print(f"Design saved to {file}")
-
-    return
-
-
-###############################################################################
 # Start a modeler session
 # -----------------------
 # Start a modeler session to interact with the Ansys Geometry Service. The
@@ -364,13 +240,111 @@ modeler = launch_modeler(image=image)
 print(modeler)
 
 ###############################################################################
-# Create the geometry
-# -------------------
-# Generate the NACA airfoil and the surrounding fluid domain using PyAnsys Geometry
-# and the previously defined functions.
+# Define the airfoil points
+# -------------------------
+# The airfoil points are generated using the function defined above. The points
+# are used to create a sketch of the airfoil.
 #
 
-generate_geometry(NACA_AIRFOIL, BOX_SIZE_LENGTH, BOX_SIZE_WIDTH, BOX_SIZE_HEIGHT, DATA_DIR, modeler)
+# Create the design
+design = modeler.create_design(f"NACA_Airfoil_{NACA_AIRFOIL}")
+
+# Create a sketch
+airfoil_sketch = Sketch()
+
+# Generate the points of the airfoil
+points = naca_airfoil_4digits(NACA_AIRFOIL)
+
+# Create the segments of the airfoil
+for i in range(len(points) - 1):
+    airfoil_sketch.segment(points[i], points[i + 1])
+
+# Close the airfoil
+airfoil_sketch.segment(points[-1], points[0])
+
+# Plot the airfoil
+if GRAPHICS_BOOL:
+    airfoil_sketch.plot()
+
+###############################################################################
+# Extrude the airfoil
+# -------------------
+# The airfoil is extruded to create a 3D model by a given length. This will
+# create a 3D model of the airfoil.
+#
+
+# Extrude the airfoil
+airfoil = design.extrude_sketch("Airfoil", airfoil_sketch, 1)
+
+# Plot the design
+if GRAPHICS_BOOL:
+    design.plot()
+
+###############################################################################
+# Create the fluid domain
+# -----------------------
+# In this section, the surrounding fluid domain is created as a box around the
+# airfoil.
+#
+# The airfoil has the following dimensions:
+# - Chord length: 1 (X-axis)
+# - Thickness: depends on NACA value (Y-axis)
+#
+# The fluid domain will be a large box with the following dimensions:
+# - Length  (X-axis)
+# - Width   (Z-axis)
+# - Height  (Y-axis)
+#
+# The airfoil will be placed at the center of the fluid domain
+#
+# Create the sketch
+fluid_sketch = Sketch(plane=Plane(origin=Point3D([0, 0, 0.5 - (BOX_SIZE_WIDTH / 2)])))
+fluid_sketch.box(
+    center=Point2D([0.5, 0]),
+    height=BOX_SIZE_HEIGHT,
+    width=BOX_SIZE_LENGTH,
+)
+
+# Extrude the fluid domain
+fluid = design.extrude_sketch("Fluid", fluid_sketch, BOX_SIZE_WIDTH)
+
+# Create named selections in the fluid domain - inlet, outlet, and surrounding faces
+# Add also the airfoil as a named selection
+fluid_faces = fluid.faces
+surrounding_faces = []
+inlet_faces = []
+outlet_faces = []
+for face in fluid_faces:
+    if face.normal().x == 1:
+        outlet_faces.append(face)
+    elif face.normal().x == -1:
+        inlet_faces.append(face)
+    else:
+        surrounding_faces.append(face)
+
+design.create_named_selection("Outlet Fluid", faces=outlet_faces)
+design.create_named_selection("Inlet Fluid", faces=inlet_faces)
+design.create_named_selection("Surrounding Faces", faces=surrounding_faces)
+design.create_named_selection("Airfoil Faces", faces=airfoil.faces)
+
+# Plot the design intelligently...
+if GRAPHICS_BOOL:
+    geom_plotter = GeometryPlotter()
+    geom_plotter.plot(airfoil, color="blue")
+    geom_plotter.plot(fluid, color="green", opacity=0.25)
+    geom_plotter.show()
+
+###############################################################################
+# Export the design
+# -----------------
+# The design is exported to a file in PMDB format. The PMDB file can be used
+# in Ansys Fluent to generate the mesh, since it contains the geometry and the
+# named selections.
+#
+
+# Save the design
+file = design.export_to_pmdb(DATA_DIR)
+print(f"Design saved to {file}")
 
 ###############################################################################
 # Close session
