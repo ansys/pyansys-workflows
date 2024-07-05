@@ -48,7 +48,7 @@ jobs:
       - name: Download artifacts for geometry-mesh
         uses: actions/download-artifact@v4
         with:
-          name: geometry-mesh-examples-docs
+          name: geometry-mesh-docs
           path: doc/
 
       # - name: Download artifacts for geometry-mesh-fluent
@@ -94,3 +94,4 @@ jobs:
           commit_message: "DOC: update documentation"
           github_token: ${{ secrets.PYANSYS_CI_BOT_TOKEN }}
           cname: ${{ env.DOCUMENTATION_CNAME }}
+          force_orphan: true

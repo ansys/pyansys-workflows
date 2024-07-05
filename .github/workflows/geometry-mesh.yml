@@ -91,7 +91,7 @@ jobs:
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-examples-docs
+          name: geometry-mesh-docs
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh/
@@ -164,7 +164,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
-          name: geometry-mesh-examples-docs
+          name: geometry-mesh-docs
           path: doc
 
       - name: (DOCS) Setup headless display
@@ -186,7 +186,7 @@ jobs:
         if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-examples-docs
+          name: geometry-mesh-docs
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh/
