@@ -15,10 +15,9 @@ jobs:
     uses: ./.github/workflows/geometry-mesh.yml
     secrets: inherit
 
-  # TODO: reactivated once the documentation is ready
-  # geometry-mesh-fluent:
-  #   uses: ./.github/workflows/geometry-mesh-fluent.yml
-  #   secrets: inherit
+  geometry-mesh-fluent:
+    uses: ./.github/workflows/geometry-mesh-fluent.yml
+    secrets: inherit
 
   # TODO: reactivated once the documentation is ready
   # geometry-mechanical-dpf:
@@ -51,11 +50,11 @@ jobs:
           name: geometry-mesh-docs
           path: doc/
 
-      # - name: Download artifacts for geometry-mesh-fluent
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: geometry-mesh-fluent-docs
-      #     path: doc/
+      - name: Download artifacts for geometry-mesh-fluent
+        uses: actions/download-artifact@v4
+        with:
+          name: geometry-mesh-fluent-docs
+          path: doc/
 
       # - name: Download artifacts for geometry-mechanical-dpf
       #   uses: actions/download-artifact@v4
