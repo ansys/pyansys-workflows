@@ -1,6 +1,8 @@
 name: Geometry Mesh Fluent Workflow
 
 on:
+  workflow_dispatch:
+  workflow_call:
   push:
     branches:
       - main
@@ -34,7 +36,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'geometry-mesh-fluent'
+          sparse-checkout: |
+            geometry-mesh-fluent
+            doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v4
@@ -94,7 +98,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'geometry-mesh-fluent'
+          sparse-checkout: |
+            geometry-mesh-fluent
+            doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v5
@@ -149,7 +155,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          sparse-checkout: 'geometry-mesh-fluent'
+          sparse-checkout: |
+            geometry-mesh-fluent
+            doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v5
