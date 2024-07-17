@@ -175,6 +175,11 @@ jobs:
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
 
+      - name: Stop all containers (if any)
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
+
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
         # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
@@ -254,6 +259,11 @@ jobs:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
           python geometry-mesh-fluent/03_fluent_solver.py
+
+      - name: Stop all containers (if any)
+        run: |
+          docker stop $(docker ps -a -q)
+          docker rm $(docker ps -a -q)
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
