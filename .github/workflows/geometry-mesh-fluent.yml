@@ -191,7 +191,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/02_fluent_meshing.py'
         run: |
           cd doc
-          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples/geometry-mesh-fluent\\images\\|./images/|g' {} +
           pip install -r requirements.txt
           make html
 
