@@ -19,13 +19,41 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry-mesh-fluent_03-fluent-solver:
+
+Fluids simulation
+#################
+
+This example demonstrates how to solve the flow around a NACA airfoil using Fluent.
+
+Starting from the mesh created in the previous example, the script solves the
+flow around a NACA airfoil using Fluent. The parameters are set to solve the flow
+with a Mach number of 0.3, a temperature of 255.56 K, an angle of attack of 3.06 degrees,
+and a pressure of 80600 Pa. Overall, these are the conditions for a compressible flow.
+
+"""  # noqa: D400, D415
 
 import os
 
 import ansys.fluent.core as pyfluent
 import numpy as np
 
-####################################################################################################
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+from pathlib import Path  # isort:skip
+
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "03_fluent_solver.py")
+# sphinx_gallery_end_ignore
+
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
+#
 
 # NACA 4-digits airfoil geometry
 NACA_AIRFOIL = "6412"
@@ -39,9 +67,26 @@ SIM_TEMPERATURE = 255.56  # In Kelvin
 SIM_AOA = 3.06  # in degrees
 SIM_PRESSURE = 80600  # in Pa
 
-####################################################################################################
-# Fluent
-####################################################################################################
+###############################################################################
+# Solve the flow around the airfoil
+# ---------------------------------
+# The function `solve_airfoil_flow` solves the flow around a NACA airfoil using Fluent.
+# The function takes the following parameters:
+#
+# - `naca_airfoil`: NACA 4-digits airfoil number.
+# - `sim_mach`: Mach number.
+# - `sim_temperature`: Temperature in Kelvin.
+# - `sim_aoa`: Angle of attack in degrees.
+# - `sim_pressure`: Pressure in Pascal.
+# - `data_dir`: Directory to save the mesh file.
+# - `container_dict`: Configuration for the Fluent container. The default is None.
+# - `iter_count`: Number of iterations to solve. The default is ``25``.
+# - `ui_mode`: User interface mode. The default is None.
+#
+# The function switches to the Fluent solver and loads the mesh. It defines the model,
+# material, boundary conditions, operating conditions, initializes the flow field,
+# saves the case file, solves for the requested iterations, and exits Fluent.
+#
 
 
 def solve_airfoil_flow(
@@ -173,7 +218,7 @@ def solve_airfoil_flow(
         file_type="case",
     )
 
-    # Solve for 50 iterations
+    # Solve for requested iterations
     solver.solution.run_calculation.iterate(iter_count=iter_count)
     solver.file.write(
         file_name=f"{data_dir}/NACA_Airfoil_{naca_airfoil}_resolved.cas.h5",
@@ -189,30 +234,34 @@ def solve_airfoil_flow(
     solver.exit()
 
 
-if __name__ == "__main__":
+###############################################################################
+# Executing the mesh generation
+# -----------------------------
+# The previous function is called to generate the mesh for the NACA airfoil.
+# The mesh is saved in the `outputs` directory. Depending on the environment,
+# the script will run in a container or locally.
+#
+# Depending on the environment, the script will run in a container or locally.
+#
 
-    import os
-
-    # Depending on the environment, the script will run in a container or locally
-    if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
-        container_dict = {
-            "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
-            "host_mount_path": DATA_DIR,
-            "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
-            "timeout": 300,
-        }
-        # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
-
-        # Solve the flow around the airfoil
-        solve_airfoil_flow(
-            NACA_AIRFOIL,
-            SIM_MACH,
-            SIM_TEMPERATURE,
-            SIM_AOA,
-            SIM_PRESSURE,
-            "/mnt/pyfluent",
-            container_dict=container_dict,
-        )
-    else:
-        # Solve the flow around the airfoil
-        solve_airfoil_flow(NACA_AIRFOIL, SIM_MACH, SIM_TEMPERATURE, SIM_AOA, SIM_PRESSURE, DATA_DIR)
+if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+    container_dict = {
+        "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
+        "host_mount_path": DATA_DIR,
+        "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
+        "timeout": 300,
+    }
+    # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
+    # Solve the flow around the airfoil
+    solve_airfoil_flow(
+        NACA_AIRFOIL,
+        SIM_MACH,
+        SIM_TEMPERATURE,
+        SIM_AOA,
+        SIM_PRESSURE,
+        "/mnt/pyfluent",
+        container_dict=container_dict,
+    )
+else:
+    # Solve the flow around the airfoil
+    solve_airfoil_flow(NACA_AIRFOIL, SIM_MACH, SIM_TEMPERATURE, SIM_AOA, SIM_PRESSURE, DATA_DIR)

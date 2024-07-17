@@ -2,7 +2,17 @@ name: Geometry Mesh Fluent Workflow
 
 on:
   workflow_dispatch:
+    inputs:
+      build-docs:
+        description: 'Build the documentation'
+        type: boolean
+        default: false
   workflow_call:
+    inputs:
+      build-docs:
+        description: 'Build the documentation'
+        type: boolean
+        default: false
   push:
     branches:
       - main
@@ -18,6 +28,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
+  ANSYS_RELEASE_FOR_DOCS: 24.2
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -75,6 +86,28 @@ jobs:
         with:
           name: geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/01_geometry.py'
+        run: |
+          .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Upload docs artifacts
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-fluent-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mesh-fluent/
 
       - name: Stop any remaining containers
         if: always()
@@ -142,6 +175,43 @@ jobs:
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
 
+      - name: Stop all containers (if any)
+        run: |
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker rm -f $(docker ps -a -q)
+          fi
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        with:
+          name: geometry-mesh-fluent-docs
+          path: doc
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/02_fluent_meshing.py'
+        run: |
+          cd doc
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples/geometry-mesh-fluent\\images\\|./images/|g' {} +
+          pip install -r requirements.txt
+          make html
+
+      - name: (DOCS) Upload docs artifacts
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-fluent-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mesh-fluent/
+          overwrite: true
+
   fluent-solve:
     name: Fluent Solver
     runs-on: ubuntu-latest-8-cores # Potential memory issues with 24.1 otherwise
@@ -200,3 +270,39 @@ jobs:
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.cas.h5
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.dat.h5
+
+      - name: Stop all containers (if any)
+        run: |
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker rm -f $(docker ps -a -q)
+          fi
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        with:
+          name: geometry-mesh-fluent-docs
+          path: doc
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/03_fluent_solver.py'
+        run: |
+          cd doc
+          pip install -r requirements.txt
+          make html
+
+      - name: (DOCS) Upload docs artifacts
+        # if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-fluent-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mesh-fluent/
+          overwrite: true
