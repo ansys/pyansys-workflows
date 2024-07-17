@@ -177,8 +177,10 @@ jobs:
 
       - name: Stop all containers (if any)
         run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker stop $(docker ps -a -q)
+              docker rm $(docker ps -a -q)
+          fi
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
@@ -272,8 +274,10 @@ jobs:
 
       - name: Stop all containers (if any)
         run: |
-          docker stop $(docker ps -a -q)
-          docker rm $(docker ps -a -q)
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker stop $(docker ps -a -q)
+              docker rm $(docker ps -a -q)
+          fi
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
