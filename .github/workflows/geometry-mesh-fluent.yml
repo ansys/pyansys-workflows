@@ -84,7 +84,7 @@ jobs:
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
@@ -156,7 +156,7 @@ jobs:
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v4
         with:
-          name: geometry-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
       - name: Run the Fluent meshing script
@@ -168,7 +168,7 @@ jobs:
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
-          name: fluent-mesh-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: |
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5
@@ -247,7 +247,7 @@ jobs:
       - name: Check out the meshing outputs
         uses: actions/download-artifact@v4
         with:
-          name: fluent-mesh-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
       - name: Run the Fluent solver script
@@ -259,7 +259,7 @@ jobs:
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
-          name: fluent-solve-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-fluent-workflow-fluent-solve-outputs-${{ matrix.ansys-release }}
           path: |
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.pmdb
             geometry-mesh-fluent/outputs/NACA_Airfoil_*.msh.h5

@@ -84,7 +84,7 @@ jobs:
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
@@ -156,7 +156,7 @@ jobs:
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v4
         with:
-          name: geometry-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
       - name: Run the PyPrimeMesh script
@@ -168,7 +168,7 @@ jobs:
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
-          name: prime-outputs-${{ matrix.ansys-release }}
+          name: geometry-mesh-workflow-prime-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
       - name: (DOCS) Download the docs artifacts
