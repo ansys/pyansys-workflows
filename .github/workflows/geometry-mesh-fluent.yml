@@ -89,8 +89,10 @@ jobs:
           path: geometry-mesh-fluent/outputs
 
       - name: (DOCS) Check if docs should be built
+        env:
+          BUILD_DOCS_INPUT: ${{ github.event.inputs.build-docs }}
         run: |
-          if ("${{ github.event.inputs.build-docs }}"-eq "true") {
+          if ("${{ env.BUILD_DOCS_INPUT }}"-eq "true") {
             if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
               Write-Host "Building docs"
               echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
@@ -194,8 +196,10 @@ jobs:
           fi
 
       - name: (DOCS) Check if docs should be built
+        env:
+          BUILD_DOCS_INPUT: ${{ github.event.inputs.build-docs }}
         run: |
-          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
+          if [ "${{ env.BUILD_DOCS_INPUT }}" == "true" ]; then
             if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
               echo "Building docs"
               echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
@@ -300,8 +304,10 @@ jobs:
           fi
 
       - name: (DOCS) Check if docs should be built
+        env:
+          BUILD_DOCS_INPUT: ${{ github.event.inputs.build-docs }}
         run: |
-          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
+          if [ "${{ env.BUILD_DOCS_INPUT }}" == "true" ]; then
             if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
               echo "Building docs"
               echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
