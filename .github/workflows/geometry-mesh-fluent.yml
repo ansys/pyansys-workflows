@@ -2,17 +2,7 @@ name: Geometry Mesh Fluent Workflow
 
 on:
   workflow_dispatch:
-    inputs:
-      build-docs:
-        description: 'Build the documentation'
-        type: boolean
-        default: false
   workflow_call:
-    inputs:
-      build-docs:
-        description: 'Build the documentation'
-        type: boolean
-        default: false
   push:
     branches:
       - main
@@ -89,13 +79,14 @@ jobs:
           path: geometry-mesh-fluent/outputs
 
       - name: (DOCS) Check if docs should be built
-        if: github.event.inputs.build-docs
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         run: |
           if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
             Write-Host "Building docs"
             echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
           } else {
             Write-Host "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
           }
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
@@ -191,13 +182,14 @@ jobs:
           fi
 
       - name: (DOCS) Check if docs should be built
-        if: github.event.inputs.build-docs
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         run: |
           if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
             echo "Building docs"
             echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
           else
             echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
           fi
 
       - name: (DOCS) Download the docs artifacts
@@ -294,13 +286,14 @@ jobs:
           fi
 
       - name: (DOCS) Check if docs should be built
-        if: github.event.inputs.build-docs
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         run: |
           if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
             echo "Building docs"
             echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
           else
             echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
           fi
 
       - name: (DOCS) Download the docs artifacts

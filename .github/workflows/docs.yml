@@ -8,18 +8,15 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'jubilant-adventure-4kp1jwo.pages.github.io'
+  RUN_DOC_BUILD: true
 
 jobs:
   geometry-mesh:
     uses: ./.github/workflows/geometry-mesh.yml
-    with:
-      build-docs: true
     secrets: inherit
 
   geometry-mesh-fluent:
     uses: ./.github/workflows/geometry-mesh-fluent.yml
-    with:
-      build-docs: true
     secrets: inherit
 
   # TODO: reactivated once the documentation is ready
