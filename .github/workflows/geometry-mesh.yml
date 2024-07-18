@@ -88,7 +88,7 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         env:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mesh/01_geometry.py'
@@ -99,7 +99,7 @@ jobs:
           ./make.bat html
 
       - name: (DOCS) Upload docs artifacts
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mesh-docs
@@ -173,17 +173,17 @@ jobs:
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         with:
           name: geometry-mesh-docs
           path: doc
 
       - name: (DOCS) Setup headless display
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         uses: pyvista/setup-headless-display-action@v2
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         env:
           PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mesh/02_mesh.py'
@@ -194,7 +194,7 @@ jobs:
           make html
 
       - name: (DOCS) Upload docs artifacts
-        if: matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true'
+        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS }} && ${{ github.event.inputs.build-docs == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mesh-docs
