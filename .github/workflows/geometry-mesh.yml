@@ -89,18 +89,13 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: (DOCS) Check if docs should be built
-        env:
-          BUILD_DOCS_INPUT: ${{ github.event.inputs.build-docs }}
+        if: github.event.inputs.build-docs
         run: |
-          if ("${{ env.BUILD_DOCS_INPUT }}"-eq "true") {
-            if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
-              Write-Host "Building docs"
-              echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
-            } else {
-              Write-Host "Not building docs - since not primary release"
-            }
+          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
+            Write-Host "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
           } else {
-            Write-Host "Not building docs - since not requested"
+            Write-Host "Not building docs - since not primary release"
           }
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
@@ -188,18 +183,13 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: (DOCS) Check if docs should be built
-        env:
-          BUILD_DOCS_INPUT: ${{ github.event.inputs.build-docs }}
+        if: github.event.inputs.build-docs
         run: |
-          if [ "${{ env.BUILD_DOCS_INPUT }}" == "true" ]; then
-            if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-              echo "Building docs"
-              echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-            else
-              echo "Not building docs - since not primary release"
-            fi
+          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
           else
-            echo "Not building docs - since not requested"
+            echo "Not building docs - since not primary release"
           fi
 
       - name: (DOCS) Download the docs artifacts
