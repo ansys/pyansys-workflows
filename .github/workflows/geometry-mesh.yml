@@ -90,16 +90,16 @@ jobs:
 
       - name: (DOCS) Check if docs should be built
         run: |
-          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
-            if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-              echo "Building docs"
-              echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-            else
-              echo "Not building docs - since not primary release"
-            fi
-          else
-            echo "Not building docs - since not requested"
-          fi
+          if ("${{ github.event.inputs.build-docs }}"-eq "true") {
+            if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
+              Write-Host "Building docs"
+              echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
+            } else {
+              Write-Host "Not building docs - since not primary release"
+            }
+          } else {
+            Write-Host "Not building docs - since not requested"
+          }
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
