@@ -8,21 +8,26 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'jubilant-adventure-4kp1jwo.pages.github.io'
-  RUN_DOC_BUILD: true
 
 jobs:
   geometry-mesh:
     uses: ./.github/workflows/geometry-mesh.yml
     secrets: inherit
+    with:
+      doc-build: true
 
   geometry-mesh-fluent:
     uses: ./.github/workflows/geometry-mesh-fluent.yml
     secrets: inherit
-
+    with:
+      doc-build: true
+  
   # TODO: reactivated once the documentation is ready
   # geometry-mechanical-dpf:
   #   uses: ./.github/workflows/geometry-mechanical-dpf.yml
   #   secrets: inherit
+  #   with:
+  #     doc-build: true
 
   compile-docs:
     runs-on: ubuntu-latest

@@ -2,7 +2,19 @@ name: Geometry Mesh Workflow
 
 on:
   workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: true
+        type: boolean
+        description: 'Whether to build the documentation'
   workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: true
+        type: boolean
+        description: 'Whether to build the documentation'
   push:
     branches:
       - main
@@ -79,7 +91,7 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: (DOCS) Check if docs should be built
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: ${{ github.event.inputs.doc-build == 'true' }} || ${{ github.event.workflow_run.event.inputs.doc-build == 'true' }}
         run: |
           if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
             Write-Host "Building docs"
@@ -174,7 +186,7 @@ jobs:
           path: geometry-mesh/outputs
 
       - name: (DOCS) Check if docs should be built
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: ${{ github.event.inputs.doc-build == 'true' }} || ${{ github.event.workflow_run.event.inputs.doc-build == 'true' }}
         run: |
           if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
             echo "Building docs"
