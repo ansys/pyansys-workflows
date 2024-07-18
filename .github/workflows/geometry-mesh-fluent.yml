@@ -29,6 +29,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 24.2
+  RUN_DOC_BUILD: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,8 +88,21 @@ jobs:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
+      - name: (DOCS) Check if docs should be built
+        run: |
+          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
+            if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+              echo "Building docs"
+              echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+            else
+              echo "Not building docs - since not primary release"
+            fi
+          else
+            echo "Not building docs - since not requested"
+          fi
+
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/01_geometry.py'
@@ -99,7 +113,7 @@ jobs:
           ./make.bat html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mesh-fluent-docs
@@ -179,15 +193,28 @@ jobs:
               docker rm -f $(docker ps -a -q)
           fi
 
+      - name: (DOCS) Check if docs should be built
+        run: |
+          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
+            if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+              echo "Building docs"
+              echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+            else
+              echo "Not building docs - since not primary release"
+            fi
+          else
+            echo "Not building docs - since not requested"
+          fi
+
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mesh-fluent-docs
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/02_fluent_meshing.py'
@@ -198,7 +225,7 @@ jobs:
           make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mesh-fluent-docs
@@ -272,15 +299,28 @@ jobs:
               docker rm -f $(docker ps -a -q)
           fi
 
+      - name: (DOCS) Check if docs should be built
+        run: |
+          if [ "${{ github.event.inputs.build-docs }}" == "true" ]; then
+            if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+              echo "Building docs"
+              echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+            else
+              echo "Not building docs - since not primary release"
+            fi
+          else
+            echo "Not building docs - since not requested"
+          fi
+
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mesh-fluent-docs
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/03_fluent_solver.py'
@@ -290,7 +330,7 @@ jobs:
           make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS && github.event.inputs.build-docs == 'true' }}
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mesh-fluent-docs
