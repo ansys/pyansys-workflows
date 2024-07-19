@@ -83,8 +83,8 @@ To run the workflows, users need to have Ansys installed on their machine. The s
 
 5. Run the Python scripts in the expected order. For example, to run the geometry and meshing workflow:
     ```bash
-    python 01_geometry.py
-    python 02_mesh.py
+    python wf_gm_01_geometry.py
+    python wf_gm_02_mesh.py
     ```
 
     The scripts will generate the geometry and mesh files in the `outputs` folder. This behavior is consistent

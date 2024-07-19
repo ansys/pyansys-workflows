@@ -44,7 +44,7 @@ import ansys.fluent.core as pyfluent
 from pathlib import Path  # isort:skip
 
 if "__file__" not in locals():
-    __file__ = Path(os.getcwd(), "02_fluent_meshing.py")
+    __file__ = Path(os.getcwd(), "wf_gmf_02_fluent_meshing.py")
 # sphinx_gallery_end_ignore
 
 ###############################################################################

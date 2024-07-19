@@ -40,7 +40,7 @@ from ansys.meshing.prime.graphics import Graphics
 # Check if the __file__ variable is defined. If not, set it.
 # This is a workaround to run the script in Sphinx-Gallery.
 if "__file__" not in locals():
-    __file__ = Path(os.getcwd(), "01_geometry.py")
+    __file__ = Path(os.getcwd(), "wf_gm_02_mesh.py")
 # sphinx_gallery_end_ignore
 
 ###############################################################################

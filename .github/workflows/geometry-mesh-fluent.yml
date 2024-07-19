@@ -82,7 +82,7 @@ jobs:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
         run: |
           .venv/Scripts/activate
-          python geometry-mesh-fluent/01_geometry.py
+          python geometry-mesh-fluent/wf_gmf_01_geometry.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -107,7 +107,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
-          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/01_geometry.py'
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_01_geometry.py'
         run: |
           .venv/Scripts/activate
           cd doc
@@ -179,7 +179,7 @@ jobs:
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
-          python geometry-mesh-fluent/02_fluent_meshing.py
+          python geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -219,7 +219,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
-          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/02_fluent_meshing.py'
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py'
         run: |
           cd doc
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples/geometry-mesh-fluent\\images\\|./images/|g' {} +
@@ -283,7 +283,7 @@ jobs:
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
-          python geometry-mesh-fluent/03_fluent_solver.py
+          python geometry-mesh-fluent/wf_gmf_03_fluent_solver.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -325,7 +325,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
-          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/03_fluent_solver.py'
+          BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_03_fluent_solver.py'
         run: |
           cd doc
           pip install -r requirements.txt

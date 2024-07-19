@@ -82,7 +82,7 @@ jobs:
           ANSYS_GEOMETERY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
         run: |
           .venv/Scripts/activate
-          python geometry-mesh/01_geometry.py
+          python geometry-mesh/wf_gm_01_geometry.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -107,7 +107,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
-          BUILD_DOCS_SCRIPT: 'geometry-mesh/01_geometry.py'
+          BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_01_geometry.py'
         run: |
           .venv/Scripts/activate
           cd doc
@@ -179,7 +179,7 @@ jobs:
         env:
           PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
         run: |
-          python geometry-mesh/02_mesh.py
+          python geometry-mesh/wf_gm_02_mesh.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -215,7 +215,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           PYPRIMEMESH_IMAGE_TAG: ${{ matrix.ansys-release }}
-          BUILD_DOCS_SCRIPT: 'geometry-mesh/02_mesh.py'
+          BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_02_mesh.py'
         run: |
           cd doc
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples/geometry-mesh\\images\\|./images/|g' {} +
