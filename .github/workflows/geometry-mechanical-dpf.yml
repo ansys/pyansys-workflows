@@ -207,6 +207,12 @@ jobs:
             echo "Not building docs - since not primary release"
             echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
           fi
+          
+      - name: Set environment variable
+        run: echo "MY_VAR=some_value" >> $GITHUB_ENV
+
+      - name: Verify environment variable
+        run: echo "MY_VAR is $MY_VAR"
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
