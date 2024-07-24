@@ -110,6 +110,7 @@ jobs:
         run: |
           . .venv/Scripts/activate
           cd doc
+          pip install -r requirements.txt
           ./make.bat html
 
       - name: (DOCS) Upload docs artifacts
@@ -225,6 +226,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
           . .venv/bin/activate
+          pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
 
@@ -240,6 +242,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
           . .venv/bin/activate
+          pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat dpf-docs-logs${{ matrix.ansys-release }}.txt
 
