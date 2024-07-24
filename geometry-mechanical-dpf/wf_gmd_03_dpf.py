@@ -19,7 +19,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry_mech_dpf_03-dpf:
 
+Post-processing
+###############
+
+This examples shows how dataprocessing framework can be used to extract results
+and analyze them.
+
+"""  # noqa: D400, D415
 import os
 from pathlib import Path
 

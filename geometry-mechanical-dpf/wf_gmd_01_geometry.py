@@ -19,6 +19,18 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry_mech_dpf_01-geometry:
+
+Geometry generation
+###################
+
+This example shows how to generate a simple PCB using PyAnsys Geometry via
+the Ansys Geometry Service. The example demonstrates how to create a sketch,
+perform modeling operations, and export the file in different formats (in this
+specific case, PMDB).
+
+"""  # noqa: D400, D415
 
 import os
 from pathlib import Path

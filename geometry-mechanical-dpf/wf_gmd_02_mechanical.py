@@ -19,6 +19,16 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry_mech_dpf_02-mechanical:
+
+Mechanical - Thermal analysis
+#############################
+
+This examples shows meshing and performing of steady-state and transient thermal analysis.
+These analyses are used to study the resulting temperatures caused by the heat developed in chips.
+
+"""  # noqa: D400, D415
 
 import os
 from pathlib import Path
