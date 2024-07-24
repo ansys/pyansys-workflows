@@ -45,6 +45,13 @@ if "ANSYS_MECHANICAL_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
     version = int(image_tag.replace(".", ""))
 
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "wf_gmd_02_mechanical.py")
+# sphinx_gallery_end_ignore
+
 # -- Start PyMechanical app --
 #
 app = mech.App(version=version)
