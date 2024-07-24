@@ -29,6 +29,9 @@ env:
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  PYANSYS_WORKFLOWS_CI: true
+  ANSYS_RELEASE_FOR_DOCS: 24.2
+  RUN_DOC_BUILD: false
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -87,6 +90,38 @@ jobs:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
+      - name: (DOCS) Check if docs should be built
+        if: github.event_name == 'workflow_dispatch' && inputs.doc-build
+        run: |
+          Write-Host "Requested to build docs..."
+          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
+            Write-Host "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
+          }
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_01_geometry.py'
+        run: |
+          .venv/Scripts/activate
+          cd doc
+          pip install -r requirements_${{ matrix.ansys-release }}.txt
+          ./make.bat html
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mechanical-dpf-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mechanical-dpf/
+
       - name: Stop any remaining containers
         if: always()
         run: |
@@ -123,11 +158,11 @@ jobs:
             apt install software-properties-common -y
             add-apt-repository ppa:deadsnakes/ppa -y
             apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv
-            python${{ env.MAIN_PYTHON_VERSION }} -m venv /env
+            python${{ env.MAIN_PYTHON_VERSION }} -m venv .venv
 
       - name: Install dependencies
         run: |
-         . /env/bin/activate
+          . .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
@@ -145,13 +180,13 @@ jobs:
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
           ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
-          . /env/bin/activate
+          . .venv/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Run the PyDPF script
         run: |
-          . /env/bin/activate
+          . .venv/bin/activate
           xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
@@ -160,3 +195,65 @@ jobs:
         with:
           name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
+
+      - name: (DOCS) Check if docs should be built
+        if: github.event_name == 'workflow_dispatch' && inputs.doc-build
+        run: |
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        with:
+          name: geometry-mechanical-dpf-docs
+          path: doc
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
+        run: |
+          . .venv/bin/activate
+          cd doc
+          pip install -r requirements_${{ matrix.ansys-release }}.txt
+          xvfb-run mechanical-env make html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymech-docs-logs${{ matrix.ansys-release }}.txt
+
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
+        run: |
+          . .venv/bin/activate
+          cd doc
+          pip install -r requirements_${{ matrix.ansys-release }}.txt
+          xvfb-run make html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat dpf-docs-logs${{ matrix.ansys-release }}.txt
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mechanical-dpf-docs
+          path: |
+            doc/_build/
+            doc/source/examples/geometry-mech-dpf/
+          overwrite: true
