@@ -25,8 +25,9 @@
 Mechanical - Thermal analysis
 #############################
 
-This examples shows meshing and performing of steady-state and transient thermal analysis.
-These analyses are used to study the resulting temperatures caused by the heat developed in chips.
+This examples performs meshing, steady-state and transient thermal analysis of PCB.
+Objective of this example is to study or examine resulting temperatures caused by
+the heat developed in chips.
 
 """  # noqa: D400, D415
 
@@ -49,6 +50,7 @@ version = None
 if "ANSYS_MECHANICAL_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
     version = int(image_tag.replace(".", ""))
+    print(f"Using {image_tag}")
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -76,7 +78,7 @@ if "DOC_BUILD" in os.environ:
 # ------------------------
 #
 app = mech.App(version=version)
-globals().update(mech.global_variables(app, True))
+app.update_globals(globals)
 print(app)
 
 
@@ -123,11 +125,9 @@ if GRAPHICS_BOOL:
 
 
 ###############################################################################
-# Setup steady steate and transient analysis
-# ------------------------------------------
+# Create named selections
+# -----------------------
 #
-steady = Model.AddSteadyStateThermalAnalysis()
-transient = Model.AddTransientThermalAnalysis()
 
 ExtAPI.Application.ActiveUnitSystem = MechanicalUnitSystem.StandardMKS
 
@@ -171,7 +171,10 @@ if GRAPHICS_BOOL:
 ###############################################################################
 # Analysis
 # --------
-# Steady state thermal analysis setup
+# Setup steady state thermal analysis
+
+steady = Model.AddSteadyStateThermalAnalysis()
+transient = Model.AddTransientThermalAnalysis()
 
 internal_heat_generation = steady.AddInternalHeatGeneration()
 NSall = ExtAPI.DataModel.Project.Model.NamedSelections.GetChildren[
@@ -205,8 +208,8 @@ internal_heat_generation2.Location = ic1
 internal_heat_generation2.Magnitude.Output.SetDiscreteValue(0, Quantity(5e7, "W m^-1 m^-1 m^-1"))
 
 ###############################################################################
-# Add result objects for post processing
-# --------------------------------------
+# Add result objects
+# ------------------
 #
 transient_solution = transient.Solution
 transient_temperature_result = transient_solution.AddTemperature()
@@ -215,18 +218,17 @@ temperature_probe1.GeometryLocation = ic6
 temperature_probe2 = transient_solution.AddTemperatureProbe()
 temperature_probe2.GeometryLocation = ic1
 
-
 ###############################################################################
 # Solve
 # -----
-
+#
 transient_solution.Solve(True)
 
 ###############################################################################
 # Save files and close Mechanical
 # -------------------------------
 # Mechanical file (mechdb) contains results for each analysis
-
+#
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
 project_directory = ExtAPI.DataModel.Project.ProjectDirectory
 app.exit()

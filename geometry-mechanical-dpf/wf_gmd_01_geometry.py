@@ -94,7 +94,6 @@ print(modeler)
 ###############################################################################
 # Create PCB geometry
 # -----------------------
-# Create and plot a sketch
 #
 
 # Define default length units
@@ -143,7 +142,7 @@ sketch_ic_8 = Sketch(plane=plane)
 sketch_ic_8.box(Point2D([21, 59]), 10, 18)
 
 ###############################################################################
-# Perform some modeling operations
+# Modeling operations
 # -------------------------
 # Now that the sketch is ready to be extruded, perform some modeling operations,
 # including creating the design, creating the body directly on the design, and
@@ -175,7 +174,6 @@ ic_6.translate(direction=UnitVector3D([1, 0, 0]), distance=17)
 
 ic_7 = component.extrude_sketch("ic-7", sketch=sketch_ic_7, distance=2)
 ic_8 = component.extrude_sketch("ic-8", sketch=sketch_ic_8, distance=2)
-
 
 capacitor_1 = component.extrude_sketch("capacitor_1", sketch_capacitor, distance=20)
 capacitor_2 = capacitor_1.copy(parent=component, name="capacitor_2")

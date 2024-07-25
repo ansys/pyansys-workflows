@@ -58,7 +58,7 @@ if "DOC_BUILD" in os.environ:
 
 ###############################################################################
 # Finding necessary files for dpf
-# ------------------------
+# -------------------------------
 #
 def find_files(directory, extension):
     rst_files = []
