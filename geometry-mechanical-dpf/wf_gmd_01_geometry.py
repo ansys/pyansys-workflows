@@ -42,9 +42,13 @@ from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS
 from ansys.geometry.core.sketch import Sketch
 
-# Check env vars to see which image to launch
+###############################################################################
+# Preparing the environment
+# -------------------------
+# This section is only necessary for workflow runs and docs generation. It checks
+# the environment variables to determine which image to use for the geometry service.
+# If you are running this script outside of a workflow, you can ignore this section.
 #
-# --- ONLY FOR WORKFLOW RUNS ---
 image = None
 if "ANSYS_GEOMETRY_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
@@ -61,18 +65,38 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_gmd_01_geometry.py")
 # sphinx_gallery_end_ignore
 
-# -- Parameters --
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
 #
+
 GRAPHICS_BOOL = False  # Set to True to display the graphics
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
-# -- Start a modeler session --
+# sphinx_gallery_start_ignore
+if "DOC_BUILD" in os.environ:
+    GRAPHICS_BOOL = True
+# sphinx_gallery_end_ignore
+
+###############################################################################
+# Start a modeler session
+# -----------------------
+# Start a modeler session to interact with the Ansys Geometry Service. The
+# modeler object is used to create designs, sketches, and perform modeling
+# operations.
 #
+
 modeler = launch_modeler(image=image)
 print(modeler)
 
-# -- Create and plot a sketch --
+###############################################################################
+# Create PCB geometry
+# -----------------------
+# Create and plot a sketch
 #
+
 # Define default length units
 DEFAULT_UNITS.LENGTH = UNITS.cm
 
@@ -118,11 +142,13 @@ sketch_ic_7.box(Point2D([25, 108]), 18, 24)
 sketch_ic_8 = Sketch(plane=plane)
 sketch_ic_8.box(Point2D([21, 59]), 10, 18)
 
-# -- Perform some modeling operations --
-#
+###############################################################################
+# Perform some modeling operations
+# -------------------------
 # Now that the sketch is ready to be extruded, perform some modeling operations,
 # including creating the design, creating the body directly on the design, and
 # plotting the body.
+#
 
 # Start by creating the Design
 design = modeler.create_design("pcb_design")
@@ -167,23 +193,26 @@ for body in component.bodies:
 if GRAPHICS_BOOL:
     design.plot()
 
-# -- Export file --
-#
+###############################################################################
+# Export the design
+# -----------------
 # Once modeling operations are finalized, you can export files
 # in different formats. For the formats supported by DMS, see the
 # ``DesignFileFormat`` class in the ``Design`` module documentation.
 #
-# Export files in PMDB format for Mechanical.
 
-# Download the design in FMD format
+# Export files in PMDB format for Mechanical.
 OUTPUT_DIR.mkdir(exist_ok=True)
 download_file = Path(OUTPUT_DIR, "pcb.pmdb")
 design.download(file_location=download_file, format=DesignFileFormat.PMDB)
 
-# -- Close session --
+###############################################################################
+# Close session
+# -------------
 #
 # When you finish interacting with your modeling service, you should close the active
 # server session. This frees resources wherever the service is running.
 #
+
 # Close the server session.
 modeler.close()
