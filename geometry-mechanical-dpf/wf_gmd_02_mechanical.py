@@ -37,9 +37,14 @@ import ansys.mechanical.core as mech
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
 
-# Check env vars to see which image to launch
+###############################################################################
+# Preparing the environment
+# -------------------------
+# This section is only necessary for workflow runs and docs generation. It checks
+# the environment variables to determine which image to use for the mechanical service.
+# If you are running this script outside of a workflow, you can ignore this section.
 #
-# --- ONLY FOR WORKFLOW RUNS ---
+
 version = None
 if "ANSYS_MECHANICAL_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
@@ -52,16 +57,27 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_gmd_02_mechanical.py")
 # sphinx_gallery_end_ignore
 
-# -- Start PyMechanical app --
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
+#
+GRAPHICS_BOOL = False  # Set to True to display the graphics
+OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
+
+# sphinx_gallery_start_ignore
+if "DOC_BUILD" in os.environ:
+    GRAPHICS_BOOL = True
+# sphinx_gallery_end_ignore
+
+###############################################################################
+# Start a PyMechanical app
+# ------------------------
 #
 app = mech.App(version=version)
 globals().update(mech.global_variables(app, True))
 print(app)
-
-# -- Parameters --
-#
-GRAPHICS_BOOL = False  # Set to True to display the graphics
-OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 
 def display_image(image_name):
@@ -73,7 +89,9 @@ def display_image(image_name):
     plt.show()
 
 
-# -- Configure graphics for image export --
+###############################################################################
+# Configure graphics for image export
+# -----------------------------------
 #
 ExtAPI.Graphics.Camera.SetSpecificViewOrientation(ViewOrientationType.Iso)
 ExtAPI.Graphics.Camera.SetFit()
@@ -85,9 +103,12 @@ settings_720p.Width = 1280
 settings_720p.Height = 720
 settings_720p.CurrentGraphicsDisplay = False
 
-# -- Import geometry --
-#
+
+###############################################################################
 # Import geometry
+# ---------------
+# Import geometry which is generated with pyansys-geometry
+#
 geometry_path = Path(OUTPUT_DIR, "pcb.pmdb")
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
@@ -100,7 +121,10 @@ geometry_import.Import(str(geometry_path), geometry_import_format, geometry_impo
 if GRAPHICS_BOOL:
     app.plot()
 
-# -- Setup steady steate and transient analysis --
+
+###############################################################################
+# Setup steady steate and transient analysis
+# ------------------------------------------
 #
 steady = Model.AddSteadyStateThermalAnalysis()
 transient = Model.AddTransientThermalAnalysis()
@@ -126,10 +150,11 @@ ns2 = Model.AddNamedSelection()
 ns2.Name = "all_except_board"
 ns2.Location = selection
 
-# -- Meshing --
+###############################################################################
+# Meshing
+# -------
 #
 mesh = Model.Mesh
-
 mesh.GenerateMesh()
 
 # Export mesh image
@@ -142,9 +167,12 @@ ExtAPI.Graphics.ExportImage(
 if GRAPHICS_BOOL:
     display_image("mesh.png")
 
-# -- Analysis --
-#
+
+###############################################################################
+# Analysis
+# --------
 # Steady state thermal analysis setup
+
 internal_heat_generation = steady.AddInternalHeatGeneration()
 NSall = ExtAPI.DataModel.Project.Model.NamedSelections.GetChildren[
     Ansys.ACT.Automation.Mechanical.NamedSelection
@@ -176,7 +204,9 @@ ic1 = [i for i in NSall if i.Name == "ic-1"][0]
 internal_heat_generation2.Location = ic1
 internal_heat_generation2.Magnitude.Output.SetDiscreteValue(0, Quantity(5e7, "W m^-1 m^-1 m^-1"))
 
-# -- Add result objects for post processing --
+###############################################################################
+# Add result objects for post processing
+# --------------------------------------
 #
 transient_solution = transient.Solution
 transient_temperature_result = transient_solution.AddTemperature()
@@ -185,13 +215,18 @@ temperature_probe1.GeometryLocation = ic6
 temperature_probe2 = transient_solution.AddTemperatureProbe()
 temperature_probe2.GeometryLocation = ic1
 
-# -- Solve --
-#
+
+###############################################################################
+# Solve
+# -----
+
 transient_solution.Solve(True)
 
-# -- Save files and close Mechanical --
-#
+###############################################################################
+# Save files and close Mechanical
+# -------------------------------
 # Mechanical file (mechdb) contains results for each analysis
+
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
 project_directory = ExtAPI.DataModel.Project.ProjectDirectory
 app.exit()
