@@ -50,7 +50,6 @@ version = None
 if "ANSYS_MECHANICAL_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
     version = int(image_tag.replace(".", ""))
-    print(f"Using {image_tag}")
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -78,7 +77,7 @@ if "DOC_BUILD" in os.environ:
 # ------------------------
 #
 app = mech.App(version=version)
-app.update_globals(globals)
+app.update_globals(globals())
 print(app)
 
 
