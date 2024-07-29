@@ -63,7 +63,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m venv .venv
-          . .venv/Scripts/activate
+          .venv/Scripts/activate
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
@@ -102,7 +102,7 @@ jobs:
             echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
           }
 
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
@@ -180,13 +180,13 @@ jobs:
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
           ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
-          . .venv/bin/activate
+          .venv/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Run the PyDPF script
         run: |
-          . .venv/bin/activate
+          .venv/bin/activate
           xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 

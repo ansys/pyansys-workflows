@@ -115,8 +115,8 @@ if GRAPHICS_BOOL:
 
 
 ###############################################################################
-# Transien thermal results
-# ------------------------
+# Transient thermal results
+# -------------------------
 # Create model
 
 model = dpf.Model(transient_rth_file[0])
