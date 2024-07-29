@@ -22,12 +22,11 @@ jobs:
     with:
       doc-build: true
 
-  # TODO: reactivated once the documentation is ready
-  # geometry-mechanical-dpf:
-  #   uses: ./.github/workflows/geometry-mechanical-dpf.yml
-  #   secrets: inherit
-  #   with:
-  #     doc-build: true
+  geometry-mechanical-dpf:
+    uses: ./.github/workflows/geometry-mechanical-dpf.yml
+    secrets: inherit
+    with:
+      doc-build: true
 
   compile-docs:
     runs-on: ubuntu-latest
