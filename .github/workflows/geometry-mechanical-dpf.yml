@@ -117,7 +117,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-docs
+          name: geometry-mechanical-dpf-docs
           path: |
             doc/_build/
             doc/source/examples/geometry-mechanical-dpf/
@@ -212,7 +212,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
-          name: geometry-docs
+          name: geometry-mechanical-dpf-docs
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
