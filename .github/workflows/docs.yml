@@ -30,7 +30,7 @@ jobs:
 
   compile-docs:
     runs-on: ubuntu-latest
-    needs: [geometry-mesh, geometry-mesh-fluent] #, geometry-mechanical-dpf]
+    needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
