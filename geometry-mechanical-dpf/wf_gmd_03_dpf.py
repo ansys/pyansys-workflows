@@ -19,19 +19,46 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_geometry_mech_dpf_03-dpf:
 
+Post-processing
+###############
+
+This examples shows how dataprocessing framework can be used to extract results
+and analyze them.
+
+"""  # noqa: D400, D415
 import os
 from pathlib import Path
 
 from ansys.dpf import core as dpf
 
-# -- Parameters --
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "wf_gmd_03_dpf.py")
+# sphinx_gallery_end_ignore
+
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
 #
 GRAPHICS_BOOL = False  # Set to True to display the graphics
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
+# sphinx_gallery_start_ignore
+if "DOC_BUILD" in os.environ:
+    GRAPHICS_BOOL = True
+# sphinx_gallery_end_ignore
 
-# -- Finding necessary files for dpf --
+
+###############################################################################
+# Finding necessary files for dpf
+# -------------------------------
 #
 def find_files(directory, extension):
     rst_files = []
@@ -62,14 +89,20 @@ else:
 print(steady_state_rth_file)
 print(transient_rth_file)
 
-# -- DPF workflow --
+
+###############################################################################
+# DPF workflow
+# ------------
 #
+
 # Result precision
 decimal_precision = 6
 
-# -- Steady state thermal results --
-#
+###############################################################################
+# Steady state thermal results
+# ----------------------------
 # Create model
+
 steady_state_model = dpf.Model(steady_state_rth_file[0])
 print(steady_state_model)
 
@@ -80,9 +113,12 @@ temp = steady_state_model.results.temperature.on_last_time_freq.eval()[0]
 if GRAPHICS_BOOL:
     temp.plot()
 
-# -- Transien thermal results --
-#
+
+###############################################################################
+# Transient thermal results
+# -------------------------
 # Create model
+
 model = dpf.Model(transient_rth_file[0])
 print(steady_state_model)
 
