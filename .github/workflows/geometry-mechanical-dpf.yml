@@ -249,5 +249,5 @@ jobs:
           name: geometry-mechanical-dpf-docs
           path: |
             doc/_build/
-            doc/source/examples/geometry-mech-dpf/
+            doc/source/examples/geometry-mechanical-dpf/
           overwrite: true
