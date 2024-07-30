@@ -108,7 +108,7 @@ jobs:
           ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_01_geometry.py'
         run: |
-          . .venv/Scripts/activate
+          .venv/Scripts/activate
           cd doc
           pip install -r requirements.txt
           ./make.bat html
