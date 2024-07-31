@@ -33,10 +33,6 @@ env:
   ANSYS_RELEASE_FOR_DOCS: 24.2
   RUN_DOC_BUILD: false
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: ${{ !contains(github.ref, 'main')}}
-
 jobs:
   geometry:
     name: Geometry
