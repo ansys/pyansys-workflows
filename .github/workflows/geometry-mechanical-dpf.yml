@@ -211,7 +211,7 @@ jobs:
           name: geometry-mechanical-dpf-docs
           path: doc
 
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation for the Mechanical script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           NUM_CORES: 1
@@ -228,7 +228,7 @@ jobs:
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
 
 
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
@@ -238,6 +238,11 @@ jobs:
           pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat dpf-docs-logs${{ matrix.ansys-release }}.txt
+
+      - name: (DOCS) Adapt the documentation paths
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        run: |
+          find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/examples/geometry-mechanical-dpf/images|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
