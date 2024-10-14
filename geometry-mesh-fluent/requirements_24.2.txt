@@ -1,3 +1,2 @@
-ansys-geometry-core[all]==0.6.5
-ansys-fluent-core==0.20.1
-requests>2,<2.32 # Caused by Python 3.11 compatibility
+ansys-geometry-core[all]==0.7.4
+ansys-fluent-core==0.26.1

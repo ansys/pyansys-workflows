@@ -68,6 +68,7 @@ extensions = [
     "sphinx_design",
     "sphinx_gallery.gen_gallery",
     "pyvista.ext.viewer_directive",
+    "myst_parser",
 ]
 
 # Intersphinx mapping
@@ -165,6 +166,4 @@ sphinx_gallery_conf = {
 
 
 # Suppress warnings
-suppress_warnings = [
-    "toc.not_readable",
-]
+suppress_warnings = ["toc.not_readable", "myst.header"]

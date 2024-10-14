@@ -7,7 +7,7 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
-  DOCUMENTATION_CNAME: 'jubilant-adventure-4kp1jwo.pages.github.io'
+  DOCUMENTATION_CNAME: 'workflows.docs.pyansys.com'
 
 jobs:
   geometry-mesh:
