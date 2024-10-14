@@ -129,7 +129,7 @@ jobs:
 
   mech-dpf:
     name: Mechanical - Dpf
-    runs-on: ubuntu-latest-8-cores
+    runs-on: public-ubuntu-latest-8-cores
     needs: geometry
     strategy:
       fail-fast: false

@@ -129,7 +129,7 @@ jobs:
 
   fluent-mesh:
     name: Fluent Meshing
-    runs-on: ubuntu-latest-4-cores
+    runs-on: public-ubuntu-latest-8-cores
     needs: geometry
     strategy:
       fail-fast: false
@@ -232,7 +232,7 @@ jobs:
 
   fluent-solve:
     name: Fluent Solver
-    runs-on: ubuntu-latest-8-cores # Potential memory issues with 24.1 otherwise
+    runs-on: public-ubuntu-latest-8-cores # Potential memory issues with 24.1 otherwise
     needs: fluent-mesh
     strategy:
       fail-fast: false
