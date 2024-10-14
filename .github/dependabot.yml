@@ -1,0 +1,31 @@
+version: 2
+updates:
+  - package-ecosystem: "pip"
+    directory: "/doc"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "maintenance"
+      - "dependencies"
+    assignees:
+      - "pyansys-ci-bot"
+    commit-message:
+      prefix: "build"
+    groups:
+       docs-deps:
+          patterns:
+            - "*"
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "maintenance"
+    assignees:
+      - "pyansys-ci-bot"
+    commit-message:
+      prefix: "ci"
+    groups:
+       actions:
+          patterns:
+            - "*"
