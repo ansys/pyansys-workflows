@@ -2,13 +2,6 @@
 
 This repository holds examples of how to use PyAnsys to automate Ansys simulations.
 
-Table of contents:
-- [Introduction](#introduction)
-- [Available workflows](#available-workflows)
-- [How to run the workflows](#how-to-run-the-workflows)
-- [Ansys versions supported](#ansys-versions-supported)
-- [Contributing](#contributing)
-
 ## Introduction
 
 As PyAnsys grows in adoption, we want to provide users with examples of how to use the ecosystem libraries
@@ -21,19 +14,19 @@ Within this repository, users can find multiphysics examples that demonstrate ho
 to automate Ansys simulations. The workflows are organized by folders, each containing Python scripts
 for every part of the simulation process. The available workflows are:
 
-- [Geometry and meshing](./geometry-mesh): this workflow demonstrates how to create a geometry and mesh
+- [Geometry and meshing](https://github.com/ansys/pyansys-workflows/tree/main//geometry-mesh): this workflow demonstrates how to create a geometry and mesh
   it using PyAnsys. The geometry is a simple CAD structure. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For meshing: Ansys PRIME Server
 
-- [Geometry, meshing and fluids simulation](./geometry-mesh-fluent): this workflow demonstrates how to
+- [Geometry, meshing and fluids simulation](https://github.com/ansys/pyansys-workflows/tree/main/geometry-mesh-fluent): this workflow demonstrates how to
   create a geometry, mesh it, and run a fluid simulation using PyAnsys. The geometry generated is a NACA
   airfoil, which is prepared for a fluid simulation. The exported CAD file is then consumed by Ansys Fluent
   to run a compressible flow simulation over the airfoil. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For meshing: Ansys Fluent Meshing
     - For simulation: Ansys Fluent Solver
-- [Geometry, mechanical and post-processing](./geometry-mechanical-dpf): this workflow demonstrates how to
+- [Geometry, mechanical and post-processing](https://github.com/ansys/pyansys-workflows/tree/main/geometry-mechanical-dpf): this workflow demonstrates how to
   create a printed circuit board (PCB) geometry, mesh, run steady state and transient thermal analysis,
   and post-process using DPF. The geometry generated is a simple PCB with multiple chips.
   The exported CAD file (PMDB format) is then imported inside Ansys Mechanical

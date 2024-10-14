@@ -1,5 +1,6 @@
 # Documentation dependencies
 ansys-sphinx-theme==1.1.3
+myst-parser==4.0.0
 sphinx_design==0.6.1
 sphinx==8.1.3
 sphinx-autobuild==2024.10.3

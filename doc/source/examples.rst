@@ -1,7 +1,7 @@
 .. _examples:
 
-Examples
-########
+Workflow examples
+#################
 
 .. toctree::
    :hidden:
