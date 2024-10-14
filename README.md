@@ -43,7 +43,7 @@ To run the workflows, users need to have Ansys installed on their machine. The s
 
 1. Download the repository to your local machine:
     ```bash
-    git clone https://github.com/ansys-internal/pyansys-workflows.git
+    git clone https://github.com/ansys/pyansys-workflows.git
     ```
 
 2. Navigate to the desired workflow folder:

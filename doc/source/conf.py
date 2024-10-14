@@ -53,7 +53,7 @@ html_short_title = html_title = "PyAnsys Workflows"
 
 # specify the location of your github repo
 html_theme_options = {
-    "github_url": "https://github.com/ansys-internal/pyansys-workflows",
+    "github_url": "https://github.com/ansys/pyansys-workflows",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
