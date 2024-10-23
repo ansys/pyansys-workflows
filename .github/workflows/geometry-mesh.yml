@@ -113,7 +113,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-docs
+          name: geometry-mesh-docs-stage-geometry
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh/
@@ -198,7 +198,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
-          name: geometry-mesh-docs
+          name: geometry-mesh-docs-stage-geometry
           path: doc
 
       - name: (DOCS) Setup headless display

@@ -113,7 +113,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-fluent-docs
+          name: geometry-mesh-fluent-docs-stage-geometry
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh-fluent/
@@ -206,7 +206,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
-          name: geometry-mesh-fluent-docs
+          name: geometry-mesh-fluent-docs-stage-geometry
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
@@ -224,7 +224,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-fluent-docs
+          name: geometry-mesh-fluent-docs-stage-mesh
           path: |
             doc/_build/
             doc/source/examples/geometry-mesh-fluent/
@@ -311,7 +311,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
-          name: geometry-mesh-fluent-docs
+          name: geometry-mesh-fluent-docs-stage-mesh
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})

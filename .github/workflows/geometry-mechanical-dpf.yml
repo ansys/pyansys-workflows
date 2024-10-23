@@ -113,7 +113,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mechanical-dpf-docs
+          name: geometry-mechanical-dpf-docs-stage-geometry
           path: |
             doc/_build/
             doc/source/examples/geometry-mechanical-dpf/
@@ -208,7 +208,7 @@ jobs:
         uses: actions/download-artifact@v4
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
-          name: geometry-mechanical-dpf-docs
+          name: geometry-mechanical-dpf-docs-stage-geometry
           path: doc
 
       - name: (DOCS) Build the documentation for the Mechanical script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
