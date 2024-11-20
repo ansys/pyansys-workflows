@@ -1,3 +1,2 @@
-ansys-geometry-core[all]==0.7.5
+ansys-geometry-core[all]==0.7.6
 ansys-fluent-core==0.26.1
-flexparser<0.4 # To be removed in ansys-geometry-core 0.7.6 or above
