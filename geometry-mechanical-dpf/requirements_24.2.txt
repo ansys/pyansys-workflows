@@ -1,4 +1,4 @@
-ansys-geometry-core[all,doc]==0.7.5
-ansys-mechanical-core==0.11.7
-ansys-dpf-core[plotting]==0.12.2
-flexparser<0.4 # To be removed in ansys-geometry-core 0.7.6 or above
+ansys-geometry-core[all,doc]==0.7.6
+ansys-mechanical-core==0.11.10
+ansys-dpf-core[plotting]==0.13.2
+flexparser<0.5 # To be removed in ansys-geometry-core 0.7.6 or above
