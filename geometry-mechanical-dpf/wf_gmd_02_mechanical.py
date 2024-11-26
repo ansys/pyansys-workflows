@@ -193,7 +193,7 @@ temperature_result = steady_solution.AddTemperature()
 steady_solution.Solve(True)
 
 # Transient analysis setup
-initial_condition = steady_solution.Children[0]
+initial_condition = transient.InitialConditions[0]
 initial_condition.InitialTemperature = InitialTemperatureType.NonUniform
 initial_condition.InitialEnvironment = steady
 
