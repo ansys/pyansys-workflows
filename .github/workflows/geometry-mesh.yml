@@ -149,6 +149,9 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@v3
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
@@ -200,10 +203,6 @@ jobs:
         with:
           name: geometry-mesh-docs-stage-geometry
           path: doc
-
-      - name: (DOCS) Setup headless display
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        uses: pyvista/setup-headless-display-action@v2
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
