@@ -1,0 +1,548 @@
+[
+    {
+        "objectID": "examples/geometry-mesh/index",
+        "href": "examples/geometry-mesh/index.html#geometry-and-meshing-workflow",
+        "title": "Workflow examples > Geometry and meshing workflow",
+        "section": "Geometry and meshing workflow",
+        "text": "Below is an example of a geometry and meshing workflow using\nPyAnsys Geometry and PyPrimeMesh.\nsphx_glr_examples_geometry-mesh_wf_gm_01_geometry.py\nsphx_glr_examples_geometry-mesh_wf_gm_02_mesh.py\nGeometry and meshing workflow"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/sg_execution_times",
+        "href": "examples/geometry-mechanical-dpf/sg_execution_times.html#computation-times",
+        "title": "Workflow examples > Computation times",
+        "section": "Computation times",
+        "text": "00:06.016 total execution time for 3 files from examples/geometry-mechanical-dpf:\nExample\nTime\nMem (MB)\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_03_dpf.py (wf_gmd_03_dpf.py)\n00:06.016\n0.0\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_01_geometry.py (wf_gmd_01_geometry.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_02_mechanical.py (wf_gmd_02_mechanical.py)\n00:00.000\n0.0\nComputation times\nwf_gmd_03_dpf.py\nwf_gmd_01_geometry.py\nwf_gmd_02_mechanical.py"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#mesh-generation",
+        "title": "Workflow examples > Mesh generation",
+        "section": "Mesh generation",
+        "text": "This example shows how to generate a mesh from a CAD model. The CAD model is\nimported from a file, and the mesh is generated using the Ansys PRIME API.\nMesh generation"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#parameters-for-the-script",
+        "title": "Workflow examples > Mesh generation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#start-a-prime-session",
+        "title": "Workflow examples > Mesh generation > Start a PRIME session",
+        "section": "Start a PRIME session",
+        "text": "Start a PRIME session and get the model from the client.\nStart a PRIME session"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#load-the-cad-file",
+        "title": "Workflow examples > Mesh generation > Load the CAD file",
+        "section": "Load the CAD file",
+        "text": "Load the CAD file from the previous example. The file is loaded into the\nmodel, and the part is extracted. The part is then summarized to get the\ndetails of the part.\nLoad the CAD file"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#mesh-generation",
+        "title": "Workflow examples > Mesh generation",
+        "section": "Mesh generation",
+        "text": "The mesh is generated using the Ansys PRIME API. The mesh is generated using\nthe following steps:\nInitialize the connection tolerance and other parameters.\nScaffold the part.\nMesh the surfaces.\nWrite the mesh to a file.\nMesh generation"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#surface-meshing",
+        "title": "Workflow examples > Mesh generation > Surface meshing",
+        "section": "Surface meshing",
+        "text": "The surface mesh is generated using the previous element size and the\ntopological faces of the part.\nSurface meshing"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#export-the-mesh",
+        "title": "Workflow examples > Mesh generation > Export the mesh",
+        "section": "Export the mesh",
+        "text": "The mesh is exported to a CDB file. The CDB file can be used to create a\nMAPDL case.\nExport the mesh"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_02_mesh",
+        "href": "examples/geometry-mesh/wf_gm_02_mesh.html#close-the-prime-session",
+        "title": "Workflow examples > Mesh generation > Close the PRIME session",
+        "section": "Close the PRIME session",
+        "text": "Close the PRIME session to release the resources. This is important to\nprevent memory leaks.\nTotal running time of the script: (0 minutes 31.217 seconds)\nDownload Jupyter notebook: wf_gm_02_mesh.ipynb\nDownload Python source code: wf_gm_02_mesh.py\nDownload zipped: wf_gm_02_mesh.zip\nClose the PRIME session\nDownload Jupyter notebook: wf_gm_02_mesh.ipynb\nDownload Python source code: wf_gm_02_mesh.py\nDownload zipped: wf_gm_02_mesh.zip"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/index",
+        "href": "examples/geometry-mesh-fluent/index.html#geometry-meshing-and-fluids-workflow",
+        "title": "Workflow examples > Geometry, meshing and fluids workflow",
+        "section": "Geometry, meshing and fluids workflow",
+        "text": "Below is an example of a workflow that demonstrates how to create a geometry, mesh it, and run a\nfluid simulation using PyAnsys. The geometry generated is a NACA airfoil, which is prepared for a fluid\nsimulation. The exported CAD file is then consumed by Ansys Fluent to run a compressible flow simulation\nover the airfoil.\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_01_geometry.py\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_02_fluent_meshing.py\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_03_fluent_solver.py\nGeometry, meshing and fluids workflow"
+    },
+    {
+        "objectID": "examples/geometry-mesh/sg_execution_times",
+        "href": "examples/geometry-mesh/sg_execution_times.html#computation-times",
+        "title": "Workflow examples > Computation times",
+        "section": "Computation times",
+        "text": "00:31.217 total execution time for 2 files from examples/geometry-mesh:\nExample\nTime\nMem (MB)\nsphx_glr_examples_geometry-mesh_wf_gm_02_mesh.py (wf_gm_02_mesh.py)\n00:31.217\n0.0\nsphx_glr_examples_geometry-mesh_wf_gm_01_geometry.py (wf_gm_01_geometry.py)\n00:00.000\n0.0\nComputation times\nwf_gm_02_mesh.py\nwf_gm_01_geometry.py"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#getting-started",
+        "title": "Getting started",
+        "section": "Getting started",
+        "text": "This repository holds examples of how to use PyAnsys to automate Ansys simulations.\nGetting started"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#introduction",
+        "title": "Getting started > Introduction",
+        "section": "Introduction",
+        "text": "As PyAnsys grows in adoption, we want to provide users with examples of how to use the ecosystem libraries\nto automate Ansys simulations. This repository contains workflows that demonstrate how to use PyAnsys to\nautomate different parts of the simulation process, such as geometry creation, meshing, simulation setup and post-processing.\nIntroduction"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#available-workflows",
+        "title": "Getting started > Available workflows",
+        "section": "Available workflows",
+        "text": "Within this repository, users can find multiphysics examples that demonstrate how to use PyAnsys\nto automate Ansys simulations. The workflows are organized by folders, each containing Python scripts\nfor every part of the simulation process. The available workflows are:\nGeometry and meshing: this workflow demonstrates how to create a geometry and mesh\nit using PyAnsys. The geometry is a simple CAD structure. The involved Ansys products are:\nFor geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service\nFor meshing: Ansys PRIME Server\nGeometry, meshing and fluids simulation: this workflow demonstrates how to\ncreate a geometry, mesh it, and run a fluid simulation using PyAnsys. The geometry generated is a NACA\nairfoil, which is prepared for a fluid simulation. The exported CAD file is then consumed by Ansys Fluent\nto run a compressible flow simulation over the airfoil. The involved Ansys products are:\nFor geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service\nFor meshing: Ansys Fluent Meshing\nFor simulation: Ansys Fluent Solver\nGeometry, mechanical and post-processing: this workflow demonstrates how to\ncreate a printed circuit board (PCB) geometry, mesh, run steady state and transient thermal analysis,\nand post-process using DPF. The geometry generated is a simple PCB with multiple chips.\nThe exported CAD file (PMDB format) is then imported inside Ansys Mechanical\nto run a steady-state thermal analysis followed by transient analysis.\nAll temperature results in different chips are displayed using DPF. The involved Ansys products are:\nFor geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service\nFor simulation: Ansys Mechanical\nFor post-procesing: Ansys Data Processing Framework\nAvailable workflows"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#how-to-run-the-workflows",
+        "title": "Getting started > How to run the workflows",
+        "section": "How to run the workflows",
+        "text": "All workflows are structured in the same way, with a Python script for each part of the simulation process.\nTo run the workflows, users need to have Ansys installed on their machine. The setup process is the following:\nDownload the repository to your local machine:\nNavigate to the desired workflow folder:\nCreate a virtual environment and install the required packages:\nDepending on the Ansys version you have installed, select the appropriate requirements file to install:\nFor Ansys 2024 R1:\nFor Ansys 2024 R2:\nRun the Python scripts in the expected order. For example, to run the geometry and meshing workflow:\nThe scripts will generate the geometry and mesh files in the outputs folder. This behavior is consistent\nacross all workflows.\nHow to run the workflows\noutputs"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#ansys-versions-supported",
+        "title": "Getting started > Ansys versions supported",
+        "section": "Ansys versions supported",
+        "text": "The workflows in this repository are tested with the following Ansys releases:\nAnsys 2024 R1\nAnsys 2024 R2\nEach workflow is ran on our CI/CD pipelines to ensure compatibility with the supported Ansys versions.\nAnsys versions supported"
+    },
+    {
+        "objectID": "getting_started/index",
+        "href": "getting_started/index.html#contributing",
+        "title": "Getting started > Contributing",
+        "section": "Contributing",
+        "text": "This repository is open for contributions. If you have a workflow that you would like to share with the community,\nplease open a pull request with the new content. The workflow should be organized in a similar way to the existing\nones, with Python scripts for each part of the simulation process.\nContributing"
+    },
+    {
+        "objectID": "sg_execution_times",
+        "href": "sg_execution_times.html#computation-times",
+        "title": "Computation times",
+        "section": "Computation times",
+        "text": "00:00.000 total execution time for 8 files from all galleries:\nExample\nTime\nMem (MB)\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_01_geometry.py (../../geometry-mechanical-dpf/wf_gmd_01_geometry.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_02_mechanical.py (../../geometry-mechanical-dpf/wf_gmd_02_mechanical.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_03_dpf.py (../../geometry-mechanical-dpf/wf_gmd_03_dpf.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_01_geometry.py (../../geometry-mesh-fluent/wf_gmf_01_geometry.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_02_fluent_meshing.py (../../geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_03_fluent_solver.py (../../geometry-mesh-fluent/wf_gmf_03_fluent_solver.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh_wf_gm_01_geometry.py (../../geometry-mesh/wf_gm_01_geometry.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh_wf_gm_02_mesh.py (../../geometry-mesh/wf_gm_02_mesh.py)\n00:00.000\n0.0\nComputation times\n../../geometry-mechanical-dpf/wf_gmd_01_geometry.py\n../../geometry-mechanical-dpf/wf_gmd_02_mechanical.py\n../../geometry-mechanical-dpf/wf_gmd_03_dpf.py\n../../geometry-mesh-fluent/wf_gmf_01_geometry.py\n../../geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py\n../../geometry-mesh-fluent/wf_gmf_03_fluent_solver.py\n../../geometry-mesh/wf_gm_01_geometry.py\n../../geometry-mesh/wf_gm_02_mesh.py"
+    },
+    {
+        "objectID": "examples",
+        "href": "examples.html#workflow-examples",
+        "title": "Workflow examples",
+        "section": "Workflow examples",
+        "text": "Workflow examples"
+    },
+    {
+        "objectID": "examples",
+        "href": "examples.html#geometry-mechanical-and-post-processing",
+        "title": "Workflow examples > Geometry, mechanical and post-processing",
+        "section": "Geometry, mechanical and post-processing",
+        "text": "This workflow demonstrates how to create a printed circuit board (PCB) geometry, mesh,\nrun steady state and transient thermal analysis, and post-process using DPF. The geometry\ngenerated is a simple PCB with multiple chips. The exported CAD file (PMDB format) is then\nimported inside Ansys Mechanical to run a steady-state thermal analysis followed by transient\nanalysis.\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_01_geometry.py\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_02_mechanical.py\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_03_dpf.py\nGeometry, mechanical and post-processing"
+    },
+    {
+        "objectID": "examples",
+        "href": "examples.html#geometry-and-meshing-workflow",
+        "title": "Workflow examples > Geometry and meshing workflow",
+        "section": "Geometry and meshing workflow",
+        "text": "Below is an example of a geometry and meshing workflow using\nPyAnsys Geometry and PyPrimeMesh.\nsphx_glr_examples_geometry-mesh_wf_gm_01_geometry.py\nsphx_glr_examples_geometry-mesh_wf_gm_02_mesh.py\nGeometry and meshing workflow"
+    },
+    {
+        "objectID": "examples",
+        "href": "examples.html#geometry-meshing-and-fluids-workflow",
+        "title": "Workflow examples > Geometry, meshing and fluids workflow",
+        "section": "Geometry, meshing and fluids workflow",
+        "text": "Below is an example of a workflow that demonstrates how to create a geometry, mesh it, and run a\nfluid simulation using PyAnsys. The geometry generated is a NACA airfoil, which is prepared for a fluid\nsimulation. The exported CAD file is then consumed by Ansys Fluent to run a compressible flow simulation\nover the airfoil.\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_01_geometry.py\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_02_fluent_meshing.py\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_03_fluent_solver.py\nGeometry, meshing and fluids workflow"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing.html#mesh-generation",
+        "title": "Workflow examples > Mesh generation",
+        "section": "Mesh generation",
+        "text": "This example demonstrates how to generate a mesh for a NACA airfoil using Fluent Meshing.\nStarting from the geometry created in the previous example, the script generates a mesh\nusing Fluent Meshing. The parameters are set to generate a mesh with a surface mesh size\nof 2 and 1000, and a volume mesh size of 512. It leverages the Fluent Meshing Workflow\nAPI to create the mesh.\nMesh generation"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing.html#parameters-for-the-script",
+        "title": "Workflow examples > Mesh generation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing.html#generate-the-mesh",
+        "title": "Workflow examples > Mesh generation > Generate the mesh",
+        "section": "Generate the mesh",
+        "text": "The function generate_mesh generates a mesh for a NACA airfoil using Fluent Meshing.\nThe function takes the following parameters:\nnaca_airfoil: NACA 4-digits airfoil number.\ndata_dir: Directory to save the mesh file.\nui_mode: User interface mode. The default is None.\ncontainer_dict: Configuration for the Fluent container. The default is None.\nThe function launches Fluent Meshing and initializes the workflow for watertight geometry.\nIt imports the geometry, generates the surface mesh, describes the geometry, updates\nboundaries and regions, adds boundary layers, generates the volume mesh, checks the mesh,\nwrites the mesh, and closes Fluent Meshing.\nGenerate the mesh"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing.html#executing-the-mesh-generation",
+        "title": "Workflow examples > Mesh generation > Executing the mesh generation",
+        "section": "Executing the mesh generation",
+        "text": "The previous function is called to generate the mesh for the NACA airfoil.\nThe mesh is saved in the outputs directory. Depending on the environment,\nthe script will run in a container or locally.\nDepending on the environment, the script will run in a container or locally.\nTotal running time of the script: (5 minutes 39.867 seconds)\nDownload Jupyter notebook: wf_gmf_02_fluent_meshing.ipynb\nDownload Python source code: wf_gmf_02_fluent_meshing.py\nDownload zipped: wf_gmf_02_fluent_meshing.zip\nExecuting the mesh generation\nDownload Jupyter notebook: wf_gmf_02_fluent_meshing.ipynb\nDownload Python source code: wf_gmf_02_fluent_meshing.py\nDownload zipped: wf_gmf_02_fluent_meshing.zip"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#mechanical---thermal-analysis",
+        "title": "Workflow examples > Mechanical - Thermal analysis",
+        "section": "Mechanical - Thermal analysis",
+        "text": "This examples performs meshing, steady-state and transient thermal analysis of PCB.\nObjective of this example is to study or examine resulting temperatures caused by\nthe heat developed in chips.\nMechanical - Thermal analysis"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#preparing-the-environment",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Preparing the environment",
+        "section": "Preparing the environment",
+        "text": "This section is only necessary for workflow runs and docs generation. It checks\nthe environment variables to determine which image to use for the mechanical service.\nIf you are running this script outside of a workflow, you can ignore this section.\nPreparing the environment"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#parameters-for-the-script",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#start-a-pymechanical-app",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Start a PyMechanical app",
+        "section": "Start a PyMechanical app",
+        "text": "Start a PyMechanical app"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#configure-graphics-for-image-export",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Configure graphics for image export",
+        "section": "Configure graphics for image export",
+        "text": "Configure graphics for image export"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#import-geometry",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Import geometry",
+        "section": "Import geometry",
+        "text": "Import geometry which is generated with pyansys-geometry\nImport geometry"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#create-named-selections",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Create named selections",
+        "section": "Create named selections",
+        "text": "Create named selections"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#meshing",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Meshing",
+        "section": "Meshing",
+        "text": "Meshing"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#analysis",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Analysis",
+        "section": "Analysis",
+        "text": "Setup steady state thermal analysis\nAnalysis"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#add-result-objects",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Add result objects",
+        "section": "Add result objects",
+        "text": "Add result objects"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#solve",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Solve",
+        "section": "Solve",
+        "text": "Solve"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_02_mechanical.html#save-files-and-close-mechanical",
+        "title": "Workflow examples > Mechanical - Thermal analysis > Save files and close Mechanical",
+        "section": "Save files and close Mechanical",
+        "text": "Mechanical file (mechdb) contains results for each analysis\nTotal running time of the script: (0 minutes 36.127 seconds)\nDownload Jupyter notebook: wf_gmd_02_mechanical.ipynb\nDownload Python source code: wf_gmd_02_mechanical.py\nDownload zipped: wf_gmd_02_mechanical.zip\nSave files and close Mechanical\nDownload Jupyter notebook: wf_gmd_02_mechanical.ipynb\nDownload Python source code: wf_gmd_02_mechanical.py\nDownload zipped: wf_gmd_02_mechanical.zip"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#geometry-generation",
+        "title": "Workflow examples > Geometry generation",
+        "section": "Geometry generation",
+        "text": "This example shows how to generate a simple PCB using PyAnsys Geometry via\nthe Ansys Geometry Service. The example demonstrates how to create a sketch,\nperform modeling operations, and export the file in different formats (in this\nspecific case, PMDB).\nGeometry generation"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#preparing-the-environment",
+        "title": "Workflow examples > Geometry generation > Preparing the environment",
+        "section": "Preparing the environment",
+        "text": "This section is only necessary for workflow runs and docs generation. It checks\nthe environment variables to determine which image to use for the geometry service.\nIf you are running this script outside of a workflow, you can ignore this section.\nPreparing the environment"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#parameters-for-the-script",
+        "title": "Workflow examples > Geometry generation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#start-a-modeler-session",
+        "title": "Workflow examples > Geometry generation > Start a modeler session",
+        "section": "Start a modeler session",
+        "text": "Start a modeler session to interact with the Ansys Geometry Service. The\nmodeler object is used to create designs, sketches, and perform modeling\noperations.\nStart a modeler session"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#create-pcb-geometry",
+        "title": "Workflow examples > Geometry generation > Create PCB geometry",
+        "section": "Create PCB geometry",
+        "text": "Create PCB geometry"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#modeling-operations",
+        "title": "Workflow examples > Geometry generation > Modeling operations",
+        "section": "Modeling operations",
+        "text": "Now that the sketch is ready to be extruded, perform some modeling operations,\nincluding creating the design, creating the body directly on the design, and\nplotting the body.\nModeling operations"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#export-the-design",
+        "title": "Workflow examples > Geometry generation > Export the design",
+        "section": "Export the design",
+        "text": "Once modeling operations are finalized, you can export files\nin different formats. For the formats supported by DMS, see the\nDesignFileFormat class in the Design module documentation.\nExport the design\nDesignFileFormat\nDesign"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_01_geometry.html#close-session",
+        "title": "Workflow examples > Geometry generation > Close session",
+        "section": "Close session",
+        "text": "When you finish interacting with your modeling service, you should close the active\nserver session. This frees resources wherever the service is running.\nTotal running time of the script: (1 minutes 11.970 seconds)\nDownload Jupyter notebook: wf_gmd_01_geometry.ipynb\nDownload Python source code: wf_gmd_01_geometry.py\nDownload zipped: wf_gmd_01_geometry.zip\nClose session\nDownload Jupyter notebook: wf_gmd_01_geometry.ipynb\nDownload Python source code: wf_gmd_01_geometry.py\nDownload zipped: wf_gmd_01_geometry.zip"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/sg_execution_times",
+        "href": "examples/geometry-mesh-fluent/sg_execution_times.html#computation-times",
+        "title": "Workflow examples > Computation times",
+        "section": "Computation times",
+        "text": "17:31.438 total execution time for 3 files from examples/geometry-mesh-fluent:\nExample\nTime\nMem (MB)\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_03_fluent_solver.py (wf_gmf_03_fluent_solver.py)\n17:31.438\n0.0\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_01_geometry.py (wf_gmf_01_geometry.py)\n00:00.000\n0.0\nsphx_glr_examples_geometry-mesh-fluent_wf_gmf_02_fluent_meshing.py (wf_gmf_02_fluent_meshing.py)\n00:00.000\n0.0\nComputation times\nwf_gmf_03_fluent_solver.py\nwf_gmf_01_geometry.py\nwf_gmf_02_fluent_meshing.py"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver.html#fluids-simulation",
+        "title": "Workflow examples > Fluids simulation",
+        "section": "Fluids simulation",
+        "text": "This example demonstrates how to solve the flow around a NACA airfoil using Fluent.\nStarting from the mesh created in the previous example, the script solves the\nflow around a NACA airfoil using Fluent. The parameters are set to solve the flow\nwith a Mach number of 0.3, a temperature of 255.56 K, an angle of attack of 3.06 degrees,\nand a pressure of 80600 Pa. Overall, these are the conditions for a compressible flow.\nFluids simulation"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver.html#parameters-for-the-script",
+        "title": "Workflow examples > Fluids simulation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver.html#solve-the-flow-around-the-airfoil",
+        "title": "Workflow examples > Fluids simulation > Solve the flow around the airfoil",
+        "section": "Solve the flow around the airfoil",
+        "text": "The function solve_airfoil_flow solves the flow around a NACA airfoil using Fluent.\nThe function takes the following parameters:\nnaca_airfoil: NACA 4-digits airfoil number.\nsim_mach: Mach number.\nsim_temperature: Temperature in Kelvin.\nsim_aoa: Angle of attack in degrees.\nsim_pressure: Pressure in Pascal.\ndata_dir: Directory to save the mesh file.\ncontainer_dict: Configuration for the Fluent container. The default is None.\niter_count: Number of iterations to solve. The default is 25.\nui_mode: User interface mode. The default is None.\nThe function switches to the Fluent solver and loads the mesh. It defines the model,\nmaterial, boundary conditions, operating conditions, initializes the flow field,\nsaves the case file, solves for the requested iterations, and exits Fluent.\nSolve the flow around the airfoil\n25"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver.html#executing-the-mesh-generation",
+        "title": "Workflow examples > Fluids simulation > Executing the mesh generation",
+        "section": "Executing the mesh generation",
+        "text": "The previous function is called to generate the mesh for the NACA airfoil.\nThe mesh is saved in the outputs directory. Depending on the environment,\nthe script will run in a container or locally.\nDepending on the environment, the script will run in a container or locally.\nTotal running time of the script: (17 minutes 31.438 seconds)\nDownload Jupyter notebook: wf_gmf_03_fluent_solver.ipynb\nDownload Python source code: wf_gmf_03_fluent_solver.py\nDownload zipped: wf_gmf_03_fluent_solver.zip\nExecuting the mesh generation\nDownload Jupyter notebook: wf_gmf_03_fluent_solver.ipynb\nDownload Python source code: wf_gmf_03_fluent_solver.py\nDownload zipped: wf_gmf_03_fluent_solver.zip"
+    },
+    {
+        "objectID": "index",
+        "href": "index.html#pyansys-workflows",
+        "title": "PyAnsys workflows",
+        "section": "PyAnsys workflows",
+        "text": "This is the landing page of PyAnsys workflows repository. This repository\ncontains a collection of examples that demonstrate how to use PyAnsys libraries\nchained together to solve complex engineering problems. The examples are\norganized by the type of workflow and the physics involved.\nLearn how the PyAnsys workflows repository is organized and how to\nget started running the examples.\nExplore examples that demonstrate how to use PyAnsys libraries\nchained together to solve complex engineering problems.\nDo you have a workflow you would like to share?\nSubmit an issue with your suggestion\n(and ideally the involved libraries and scripts) and we will work with you to add it to the repository.\nPyAnsys workflows"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/index",
+        "href": "examples/geometry-mechanical-dpf/index.html#geometry-mechanical-and-post-processing",
+        "title": "Workflow examples > Geometry, mechanical and post-processing",
+        "section": "Geometry, mechanical and post-processing",
+        "text": "This workflow demonstrates how to create a printed circuit board (PCB) geometry, mesh,\nrun steady state and transient thermal analysis, and post-process using DPF. The geometry\ngenerated is a simple PCB with multiple chips. The exported CAD file (PMDB format) is then\nimported inside Ansys Mechanical to run a steady-state thermal analysis followed by transient\nanalysis.\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_01_geometry.py\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_02_mechanical.py\nsphx_glr_examples_geometry-mechanical-dpf_wf_gmd_03_dpf.py\nGeometry, mechanical and post-processing"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#post-processing",
+        "title": "Workflow examples > Post-processing",
+        "section": "Post-processing",
+        "text": "This examples shows how dataprocessing framework can be used to extract results\nand analyze them.\nPost-processing"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#parameters-for-the-script",
+        "title": "Workflow examples > Post-processing > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#finding-necessary-files-for-dpf",
+        "title": "Workflow examples > Post-processing > Finding necessary files for dpf",
+        "section": "Finding necessary files for dpf",
+        "text": "Finding necessary files for dpf"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#dpf-workflow",
+        "title": "Workflow examples > Post-processing > DPF workflow",
+        "section": "DPF workflow",
+        "text": "DPF workflow"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#steady-state-thermal-results",
+        "title": "Workflow examples > Post-processing > Steady state thermal results",
+        "section": "Steady state thermal results",
+        "text": "Create model\nSteady state thermal results"
+    },
+    {
+        "objectID": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf",
+        "href": "examples/geometry-mechanical-dpf/wf_gmd_03_dpf.html#transient-thermal-results",
+        "title": "Workflow examples > Post-processing > Transient thermal results",
+        "section": "Transient thermal results",
+        "text": "Create model\nTotal running time of the script: (0 minutes 6.016 seconds)\nDownload Jupyter notebook: wf_gmd_03_dpf.ipynb\nDownload Python source code: wf_gmd_03_dpf.py\nDownload zipped: wf_gmd_03_dpf.zip\nTransient thermal results\nDownload Jupyter notebook: wf_gmd_03_dpf.ipynb\nDownload Python source code: wf_gmd_03_dpf.py\nDownload zipped: wf_gmd_03_dpf.zip"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#geometry-generation",
+        "title": "Workflow examples > Geometry generation",
+        "section": "Geometry generation",
+        "text": "Generate a NACA airfoil and the surrounding fluid domain using PyAnsys Geometry.\nThis example demonstrates how to create a sketch, perform modeling operations,\nand export the file in different formats (in this specific case, FMD). The example\nalso shows how to generate a NACA 4-digits airfoil and the surrounding fluid domain\nusing PyAnsys Geometry. The airfoil is extruded to create a 3D model, and the fluid\ndomain is created as a box around the airfoil.\nGeometry generation"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#preparing-the-environment",
+        "title": "Workflow examples > Geometry generation > Preparing the environment",
+        "section": "Preparing the environment",
+        "text": "This section is only necessary for workflow runs and docs generation. It checks\nthe environment variables to determine which image to use for the geometry service.\nIf you are running this script outside of a workflow, you can ignore this section.\nPreparing the environment"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#parameters-for-the-script",
+        "title": "Workflow examples > Geometry generation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#defining-the-naca-airfoil",
+        "title": "Workflow examples > Geometry generation > Defining the NACA airfoil",
+        "section": "Defining the NACA airfoil",
+        "text": "The NACA airfoil is defined by a 4-digit number. The first digit represents the\nmaximum camber in percentage of the chord, the second digit represents the\nposition of the maximum camber in tenths of the chord, and the last two digits\nrepresent the maximum thickness in percentage of the chord.\nThe NACA airfoil is generated using the following formulae:\nwhere:\nx is the x-coordinate of the point,\ny_c is the camber line,\ny_t is the thickness,\n\\theta is the angle of the camber line.\nThe camber line is defined as:\nwhere:\nm is the maximum camber,\np is the position of the maximum camber.\nThe thickness is defined as:\nwhere:\nt is the maximum thickness.\nThe NACA 4-digits airfoil is generated using the following function. The function\ngenerates the points of the airfoil using the formulae above and returns\na list of points that define the airfoil.\nDefining the NACA airfoil"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#start-a-modeler-session",
+        "title": "Workflow examples > Geometry generation > Start a modeler session",
+        "section": "Start a modeler session",
+        "text": "Start a modeler session to interact with the Ansys Geometry Service. The\nmodeler object is used to create designs, sketches, and perform modeling\noperations.\nStart a modeler session"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#define-the-airfoil-points",
+        "title": "Workflow examples > Geometry generation > Define the airfoil points",
+        "section": "Define the airfoil points",
+        "text": "The airfoil points are generated using the function defined above. The points\nare used to create a sketch of the airfoil.\nDefine the airfoil points"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#extrude-the-airfoil",
+        "title": "Workflow examples > Geometry generation > Extrude the airfoil",
+        "section": "Extrude the airfoil",
+        "text": "The airfoil is extruded to create a 3D model by a given length. This will\ncreate a 3D model of the airfoil.\nExtrude the airfoil"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#create-the-fluid-domain",
+        "title": "Workflow examples > Geometry generation > Create the fluid domain",
+        "section": "Create the fluid domain",
+        "text": "In this section, the surrounding fluid domain is created as a box around the\nairfoil.\nThe airfoil has the following dimensions:\n- Chord length: 1 (X-axis)\n- Thickness: depends on NACA value (Y-axis)\nThe fluid domain will be a large box with the following dimensions:\n- Length  (X-axis)\n- Width   (Z-axis)\n- Height  (Y-axis)\nThe airfoil will be placed at the center of the fluid domain\nCreate the sketch\nCreate the fluid domain"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#export-the-design",
+        "title": "Workflow examples > Geometry generation > Export the design",
+        "section": "Export the design",
+        "text": "The design is exported to a file in PMDB format. The PMDB file can be used\nin Ansys Fluent to generate the mesh, since it contains the geometry and the\nnamed selections.\nExport the design"
+    },
+    {
+        "objectID": "examples/geometry-mesh-fluent/wf_gmf_01_geometry",
+        "href": "examples/geometry-mesh-fluent/wf_gmf_01_geometry.html#close-session",
+        "title": "Workflow examples > Geometry generation > Close session",
+        "section": "Close session",
+        "text": "When you finish interacting with your modeling service, you should close the active\nserver session. This frees resources wherever the service is running.\nTotal running time of the script: (1 minutes 11.818 seconds)\nDownload Jupyter notebook: wf_gmf_01_geometry.ipynb\nDownload Python source code: wf_gmf_01_geometry.py\nDownload zipped: wf_gmf_01_geometry.zip\nClose session\nDownload Jupyter notebook: wf_gmf_01_geometry.ipynb\nDownload Python source code: wf_gmf_01_geometry.py\nDownload zipped: wf_gmf_01_geometry.zip"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#geometry-generation",
+        "title": "Workflow examples > Geometry generation",
+        "section": "Geometry generation",
+        "text": "This example shows how to generate a CAD file using PyAnsys Geometry via\nthe Ansys Geometry Service. The example demonstrates how to create a sketch,\nperform modeling operations, and export the file in different formats (in this\nspecific case, FMD).\nGeometry generation"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#preparing-the-environment",
+        "title": "Workflow examples > Geometry generation > Preparing the environment",
+        "section": "Preparing the environment",
+        "text": "This section is only necessary for workflow runs and docs generation. It checks\nthe environment variables to determine which image to use for the geometry service.\nIf you are running this script outside of a workflow, you can ignore this section.\nPreparing the environment"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#parameters-for-the-script",
+        "title": "Workflow examples > Geometry generation > Parameters for the script",
+        "section": "Parameters for the script",
+        "text": "The following parameters are used to control the script execution. You can\nmodify these parameters to suit your needs.\nParameters for the script"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#start-a-modeler-session",
+        "title": "Workflow examples > Geometry generation > Start a modeler session",
+        "section": "Start a modeler session",
+        "text": "Start a modeler session to interact with the Ansys Geometry Service. The\nmodeler object is used to create designs, sketches, and perform modeling\noperations.\nStart a modeler session"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#create-a-sketch",
+        "title": "Workflow examples > Geometry generation > Create a sketch",
+        "section": "Create a sketch",
+        "text": "Create a sketch to define the geometry. The sketch is created in the XY plane\nand contains a rectangle and four circles.\nCreate a sketch"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#modeling-operations",
+        "title": "Workflow examples > Geometry generation > Modeling operations",
+        "section": "Modeling operations",
+        "text": "Now that the sketch is ready to be extruded, perform some modeling operations,\nincluding creating the design, creating the body directly on the design, and\nplotting the body.\nModeling operations"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#export-the-design",
+        "title": "Workflow examples > Geometry generation > Export the design",
+        "section": "Export the design",
+        "text": "Once modeling operations are finalized, you can export files\nin different formats. For the formats supported by DMS, see the\nDesignFileFormat class in the Design module documentation.\nIn this example, we will export files in SCDOCX and FMD formats.\nExport the design\nDesignFileFormat\nDesign"
+    },
+    {
+        "objectID": "examples/geometry-mesh/wf_gm_01_geometry",
+        "href": "examples/geometry-mesh/wf_gm_01_geometry.html#close-session",
+        "title": "Workflow examples > Geometry generation > Close session",
+        "section": "Close session",
+        "text": "When you finish interacting with your modeling service, you should close the active\nserver session. This frees resources wherever the service is running.\nTotal running time of the script: (1 minutes 16.854 seconds)\nDownload Jupyter notebook: wf_gm_01_geometry.ipynb\nDownload Python source code: wf_gm_01_geometry.py\nDownload zipped: wf_gm_01_geometry.zip\nClose session\nDownload Jupyter notebook: wf_gm_01_geometry.ipynb\nDownload Python source code: wf_gm_01_geometry.py\nDownload zipped: wf_gm_01_geometry.zip"
+    }
+]
