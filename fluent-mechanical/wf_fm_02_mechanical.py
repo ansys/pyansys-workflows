@@ -796,7 +796,7 @@ Temp.DisplayTime = Quantity("680 [s]")
 
 # Run Solution: Transient Thermal Simulation
 
-#TRANS_THERM_SOLN.Solve(True)
+TRANS_THERM_SOLN.Solve(True)
 TRANS_THERM_SS = TRANS_THERM_SOLN.Status
 
 # Export temperature image
