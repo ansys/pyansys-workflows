@@ -1,2 +1,2 @@
 ansys-geometry-core[all]==0.7.6
-ansys-fluent-core==0.26.1
+ansys-fluent-core==0.27.0
