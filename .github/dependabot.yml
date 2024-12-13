@@ -15,6 +15,24 @@ updates:
        docs-deps:
           patterns:
             - "*"
+  - package-ecosystem: "pip"
+    directories:
+      - "/geometry-mechanical-dpf"
+      - "/geometry-mesh"
+      - "/geometry-mesh-fluent"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "maintenance"
+      - "dependencies"
+    assignees:
+      - "pyansys-ci-bot"
+    commit-message:
+      prefix: "build"
+    groups:
+       build-deps:
+          patterns:
+            - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
