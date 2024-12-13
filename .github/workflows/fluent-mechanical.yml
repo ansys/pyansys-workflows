@@ -1,0 +1,236 @@
+name: Geometry Mesh Fluent Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'fluent-mechanical/**'
+
+env:
+  MAIN_PYTHON_VERSION: '3.12'
+  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
+  MECHANICAL_DOCKER_IMAGE: 'ghcr.io/ansys/mechanical'
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  PYANSYS_WORKFLOWS_CI: true
+  ANSYS_RELEASE_FOR_DOCS: 24.2
+  RUN_DOC_BUILD: false
+
+jobs:
+  fluent:
+    name: Fluent
+    runs-on: public-ubuntu-latest-8-cores
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            fluent-mechanical
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download Fluent service container
+        run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
+
+      - name: Check out the geometry outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
+          path: fluent-mechanical/outputs
+
+      - name: Run the Fluent meshing script
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
+        run: |
+          python fluent-mechanical/wf_fm_01_fluent.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
+          path: |
+            fluent-mechanical/outputs/htc_temp_mapping_LOW_TEMP
+            fluent-mechanical/outputs/htc_temp_mapping_MEDIUM_TEMP.csv
+            fluent-mechanical/outputs/htc_temp_mapping_HIGH_TEMP.csv
+
+      - name: Stop all containers (if any)
+        run: |
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker rm -f $(docker ps -a -q)
+          fi
+
+      - name: (DOCS) Check if docs should be built
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        run: |
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        with:
+          name: fluent-mechanical-docs-stage-fluent
+          path: doc
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
+          BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
+        run: |
+          cd doc
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\fluent-mechanical\\images\\|./images/|g' {} +
+          pip install -r requirements.txt
+          make html
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluent-mechanical-docs-stage-fluent
+          path: |
+            doc/_build/
+            doc/source/examples/fluent-mechanical/
+          overwrite: true
+
+  geometry:
+    name: Mechanical
+    runs-on: [public-ubuntu-latest-8-cores]
+    needs: fluent
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2]
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            fluent-mechanical
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y nodejs npm graphviz
+          npm install -g @mermaid-js/mermaid-cli
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          .venv/bin/activate
+          pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download (if needed) and run Mechanical container
+        run: |
+          docker pull ${{ env.MECHANICAL_DOCKER_IMAGE }}
+
+      - name: Run the PyMechanical script
+        env:
+          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
+        run: |
+          .venv/Scripts/activate
+          python fluent-mechanical/wf_fm_01_fluent.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluent-mechanical-workflow-mechanical-outputs-${{ matrix.ansys-release }}
+          path: fluent-mechanical/outputs
+
+      - name: (DOCS) Check if docs should be built
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        run: |
+          Write-Host "Requested to build docs..."
+          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
+            Write-Host "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
+          }
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          ANSYS_GEOMETRY_RELEASE: ${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
+        run: |
+          .venv/bin/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: fluent-mechanical-docs-stage-mechanical
+          path: |
+            doc/_build/
+            doc/source/examples/fluent-mechanical/
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }

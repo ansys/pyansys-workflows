@@ -92,3 +92,6 @@ geometry_path = download_file(
 material_path = download_file(
     "Nonlinear_Material.xml", "pyansys-workflow", "exhaust-manifold", "pymechanical"
 )
+
+
+print("Hello World")
