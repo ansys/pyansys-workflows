@@ -161,29 +161,24 @@ settings_720p.CurrentGraphicsDisplay = False
 # ---------------
 #
 
-mechanical.run_python_script(
-    """
+
 import os
+
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
-geometry_import_format = (
-    Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic
-)
+geometry_import_format = Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic
 geometry_import_preferences = Ansys.ACT.Mechanical.Utilities.GeometryImportPreferences()
 geometry_import_preferences.ProcessNamedSelections = True
 geometry_import_preferences.NamedSelectionKey = ""
 geometry_import_preferences.ProcessMaterialProperties = True
 geometry_import_preferences.ProcessCoordinateSystems = True
-geometry_import.Import(
-    geometry_path, geometry_import_format, geometry_import_preferences
-)
+geometry_import.Import(geometry_path, geometry_import_format, geometry_import_preferences)
 project_directory = ExtAPI.DataModel.Project.ProjectDirectory
 ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
 )
-"""
-)
+
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
 display_image("geometry.png")
 
@@ -193,8 +188,7 @@ display_image("geometry.png")
 # --------------------------------------------------------------------
 #
 
-mechanical.run_python_script(
-    """
+
 materials = ExtAPI.DataModel.Project.Model.Materials
 materials.Import(material_path)
 materials.RefreshMaterials()
@@ -207,7 +201,7 @@ PRT1.Material = nmat
 
 
 # Select MKS units
-ExtAPI.Application.ActiveUnitSystem = (Ansys.ACT.Interfaces.Common.MechanicalUnitSystem.StandardMKS)
+ExtAPI.Application.ActiveUnitSystem = Ansys.ACT.Interfaces.Common.MechanicalUnitSystem.StandardMKS
 
 # Store all main tree nodes as variables
 GEOM = Model.Geometry
@@ -230,16 +224,7 @@ SPACERS_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "spacers"
 EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "em_outer_surface"][
     0
 ]
-"""
-)
 
-###############################################################################
-# Set up the mesh and generate
-# ----------------------------
-#
-
-mechanical.run_python_script(
-    """
 MESH = Model.Mesh
 MESH.ElementSize = Quantity(0.004, "m")
 MESH.UseAdaptiveSizing = False
@@ -249,9 +234,9 @@ body_sizing = MESH.AddSizing()
 selection = NS_GRP.Children[5]
 body_sizing.Location = selection
 body_sizing.ElementSize = Quantity(4e-3, "m")
-#body_sizing.CaptureCurvature = True
-#body_sizing.CurvatureNormalAngle = Quantity(0.31, "rad")
-#body_sizing.LocalMinimumSize = Quantity(0.00025, "m")
+# body_sizing.CaptureCurvature = True
+# body_sizing.CurvatureNormalAngle = Quantity(0.31, "rad")
+# body_sizing.LocalMinimumSize = Quantity(0.00025, "m")
 
 Tree.Activate([MESH])
 MESH.GenerateMesh()
@@ -262,8 +247,7 @@ ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "mesh.png"), image_export_format, settings_720p
 )
-"""
-)
+
 mechanical.download(files=os.path.join(project_directory, "mesh.png"), target_dir=OUTPUT_DIR)
 display_image("mesh.png")
 
@@ -272,8 +256,7 @@ display_image("mesh.png")
 # ---------------------------------------------------------------
 #
 
-mechanical.run_python_script(
-    """
+
 Model.AddTransientThermalAnalysis()
 
 # Store all main tree nodes as variables
@@ -284,32 +267,31 @@ ANA_SETTINGS = TRANS_THERM.Children[1]
 
 # Setup transient thermal analysis settings
 
-#ANA_SETTINGS.AutomaticTimeStepping = AutomaticTimeStepping.On
+# ANA_SETTINGS.AutomaticTimeStepping = AutomaticTimeStepping.On
 ANA_SETTINGS.SolverType = SolverType.Direct
 ANA_SETTINGS.NonLinearFormulation = NonLinearFormulationType.Full
 
 ANA_SETTINGS.NumberOfSteps = 1
-ANA_SETTINGS.SetStepEndTime(1, Quantity('720[s]'))
+ANA_SETTINGS.SetStepEndTime(1, Quantity("720[s]"))
 ANA_SETTINGS.NumberOfSteps = 14
 analysis_step = (
-    (1, Quantity('1e-3[s]')),
-    (2, Quantity('2e-3[s]')),
-    (3, Quantity('20[s]')),
-    (4, Quantity('30[s]')),
-    (5, Quantity('320[s]')),
-    (6, Quantity('330[s]')),
-    (7, Quantity('350[s]')),
-    (8, Quantity('360[s]')),
-    (9, Quantity('380[s]')),
-    (10, Quantity('390[s]')),
-    (11, Quantity('680[s]')),
-    (12, Quantity('690[s]')),
-    (13, Quantity('710[s]')),
-    (14, Quantity('720[s]'))
+    (1, Quantity("1e-3[s]")),
+    (2, Quantity("2e-3[s]")),
+    (3, Quantity("20[s]")),
+    (4, Quantity("30[s]")),
+    (5, Quantity("320[s]")),
+    (6, Quantity("330[s]")),
+    (7, Quantity("350[s]")),
+    (8, Quantity("360[s]")),
+    (9, Quantity("380[s]")),
+    (10, Quantity("390[s]")),
+    (11, Quantity("680[s]")),
+    (12, Quantity("690[s]")),
+    (13, Quantity("710[s]")),
+    (14, Quantity("720[s]")),
 )
-
 for i, q in analysis_step:
-    ANA_SETTINGS.SetStepEndTime(i,q)
+    ANA_SETTINGS.SetStepEndTime(i, q)
 
 # Applied External HTCs and Temperature data
 
@@ -543,18 +525,15 @@ External_Convection_Load_3.AmbientTemperature.Output.DiscreteValues = [
     Quantity("373.15[K]"),
 ]
 
-group_list = [External_Convection_Load_1,External_Convection_Load_2,External_Convection_Load_3]
+group_list = [External_Convection_Load_1, External_Convection_Load_2, External_Convection_Load_3]
 grouping_folder = Tree.Group(group_list)
 tree_grouping_folder_70 = DataModel.GetObjectsByName("New Folder")
-"""
-)
+
 
 ###############################################################################
 # Use the ouput from Fluent to import the temperature and HTC data
 # ---------------------------------------------------------------
 #
-mechanical.run_python_script(
-    """
 
 # Import HTCs and Temperature data From Fluent run
 
@@ -569,7 +548,7 @@ external_data_files.Add(external_data_file_1)
 external_data_file_1.Identifier = "File1"
 external_data_file_1.Description = "High"
 external_data_file_1.IsMainFile = True
-external_data_file_1.FilePath= temp_htc_data_high_path
+external_data_file_1.FilePath = temp_htc_data_high_path
 external_data_file_1.ImportSettings = (
     Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(
         MechanicalEnums.ExternalData.ImportFormat.Delimited
@@ -604,7 +583,7 @@ external_data_files.Add(external_data_file_2)
 external_data_file_2.Identifier = "File2"
 external_data_file_2.Description = "Med"
 external_data_file_2.IsMainFile = False
-external_data_file_2.FilePath= temp_htc_data_med_path
+external_data_file_2.FilePath = temp_htc_data_med_path
 external_data_file_2.ImportSettings = (
     Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(
         MechanicalEnums.ExternalData.ImportFormat.Delimited
@@ -615,6 +594,7 @@ import_settings.SkipRows = 1
 import_settings.SkipFooter = 0
 import_settings.Delimiter = ","
 import_settings.AverageCornerNodesToMidsideNodes = False
+import_settings.UseColumn(0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A")
 import_settings.UseColumn(
     1, MechanicalEnums.ExternalData.VariableType.XCoordinate, "m", "X Coordinate@B"
 )
@@ -638,7 +618,7 @@ external_data_files.Add(external_data_file_3)
 external_data_file_3.Identifier = "File3"
 external_data_file_3.Description = "Low"
 external_data_file_3.IsMainFile = False
-external_data_file_3.FilePath= temp_htc_data_low_path
+external_data_file_3.FilePath = temp_htc_data_low_path
 external_data_file_3.ImportSettings = (
     Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(
         MechanicalEnums.ExternalData.ImportFormat.Delimited
@@ -668,6 +648,7 @@ import_settings.UseColumn(
     "W m^-2 K^-1",
     "Heat Transfer Coefficient@F",
 )
+
 imported_load_group_61.ImportExternalDataFiles(external_data_files)
 
 table = imported_load_group_61.Children[0].GetTableByName("Film Coefficient")
@@ -677,7 +658,7 @@ Film_Coeff = [
     "File2:Heat Transfer Coefficient@F",
     "File3:Heat Transfer Coefficient@F",
 ]
-Amb_Temp = ["File1:Temperature@E","File2:Temperature@E","File3:Temperature@E"]
+Amb_Temp = ["File1:Temperature@E", "File2:Temperature@E", "File3:Temperature@E"]
 Ana_time = [
     "0",
     "1e-3",
@@ -696,7 +677,7 @@ Ana_time = [
     "720",
 ]
 
-for i in range(numofsteps-1):
+for i in range(numofsteps - 1):
     table.Add(None)
 
 table[0][0] = Film_Coeff[2]
@@ -775,8 +756,7 @@ ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "imported_temperature.png"), image_export_format, settings_720p
 )
-"""
-)
+
 mechanical.download(
     files=os.path.join(project_directory, "imported_temperature.png"), target_dir=OUTPUT_DIR
 )
@@ -787,8 +767,7 @@ if GRAPHICS_BOOL:
 # Solve and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
+
 # Insert results objects
 
 Temp = TRANS_THERM_SOLN.AddTemperature()
@@ -796,7 +775,7 @@ Temp.DisplayTime = Quantity("680 [s]")
 
 # Run Solution: Transient Thermal Simulation
 
-#TRANS_THERM_SOLN.Solve(True)
+# TRANS_THERM_SOLN.Solve(True)
 TRANS_THERM_SS = TRANS_THERM_SOLN.Status
 
 # Export temperature image
@@ -808,8 +787,7 @@ ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "temperature.png"), image_export_format, settings_720p
 )
-"""
-)
+
 mechanical.download(files=os.path.join(project_directory, "temperature.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("temperature.png")
@@ -819,8 +797,7 @@ if GRAPHICS_BOOL:
 # Setup Structural Analysis
 # -------------------------
 #
-mechanical.run_python_script(
-    """
+
 Model.AddStaticStructuralAnalysis()
 
 # Define analysis settings
@@ -831,27 +808,27 @@ STAT_STRUC_SOLN = STAT_STRUC.Solution
 STAT_STRUC_ANA_SETTING = STAT_STRUC.Children[0]
 
 STAT_STRUC_ANA_SETTING.NumberOfSteps = 1
-STAT_STRUC_ANA_SETTING.SetStepEndTime(1, Quantity('720[s]'))
+STAT_STRUC_ANA_SETTING.SetStepEndTime(1, Quantity("720[s]"))
 STAT_STRUC_ANA_SETTING.NumberOfSteps = 14
 
 analysis_step = (
-    (1, Quantity('1e-3[s]')),
-    (2, Quantity('2e-3[s]')),
-    (3, Quantity('20[s]')),
-    (4, Quantity('30[s]')),
-    (5, Quantity('320[s]')),
-    (6, Quantity('330[s]')),
-    (7, Quantity('350[s]')),
-    (8, Quantity('360[s]')),
-    (9, Quantity('380[s]')),
-    (10, Quantity('390[s]')),
-    (11, Quantity('680[s]')),
-    (12, Quantity('690[s]')),
-    (13, Quantity('710[s]')),
-    (14, Quantity('720[s]'))
+    (1, Quantity("1e-3[s]")),
+    (2, Quantity("2e-3[s]")),
+    (3, Quantity("20[s]")),
+    (4, Quantity("30[s]")),
+    (5, Quantity("320[s]")),
+    (6, Quantity("330[s]")),
+    (7, Quantity("350[s]")),
+    (8, Quantity("360[s]")),
+    (9, Quantity("380[s]")),
+    (10, Quantity("390[s]")),
+    (11, Quantity("680[s]")),
+    (12, Quantity("690[s]")),
+    (13, Quantity("710[s]")),
+    (14, Quantity("720[s]")),
 )
 for i, q in analysis_step:
-    STAT_STRUC_ANA_SETTING.SetStepEndTime(i,q)
+    STAT_STRUC_ANA_SETTING.SetStepEndTime(i, q)
 STAT_STRUC_ANA_SETTING.Activate()
 
 
@@ -863,9 +840,24 @@ imported_load = DataModel.GetObjectsByName("Imported Body Temperature")[0]
 table = imported_load.GetTableByName("Source Time")
 numofsteps = 14
 nCol = 2
-Ana_time = ["1e-3","2e-3","20","30","320","330","350","360","380","390","680","690","710","720"]
+Ana_time = [
+    "1e-3",
+    "2e-3",
+    "20",
+    "30",
+    "320",
+    "330",
+    "350",
+    "360",
+    "380",
+    "390",
+    "680",
+    "690",
+    "710",
+    "720",
+]
 
-for i in range(numofsteps-1):
+for i in range(numofsteps - 1):
     table.Add(None)
 
 for i in range(numofsteps):
@@ -879,15 +871,12 @@ imported_load.ImportLoad()
 Fixed_Support = STAT_STRUC.AddFixedSupport()
 selection = NS_GRP.Children[3]
 Fixed_Support.Location = selection
-"""
-)
 
 ###############################################################################
 # Sovle and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
+
 SOLN = STAT_STRUC.Solution
 
 TOT_DEF1 = SOLN.AddTotalDeformation()
@@ -904,7 +893,7 @@ THERM_STRN1.DisplayTime = Quantity("680 [s]")
 
 # Solve Nonlinear Static Simulation
 
-#SOLN.Solve(True)
+# SOLN.Solve(True)
 STAT_STRUC_SS = SOLN.Status
 
 # Export results images
@@ -926,8 +915,7 @@ Tree.Activate([EQV_PLAS_STRN1])
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "plastic_strain.png"), image_export_format, settings_720p
 )
-"""
-)
+
 mechanical.download(files=os.path.join(project_directory, "deformation.png"), target_dir=OUTPUT_DIR)
 mechanical.download(files=os.path.join(project_directory, "stress.png"), target_dir=OUTPUT_DIR)
 mechanical.download(
