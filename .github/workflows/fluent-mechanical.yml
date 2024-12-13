@@ -175,7 +175,7 @@ jobs:
         run: |
           docker pull ${{ env.MECHANICAL_DOCKER_IMAGE }}
 
-      - name: Check out the geometry outputs
+      - name: Check out the fluent outputs
         uses: actions/download-artifact@v4
         with:
           name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
