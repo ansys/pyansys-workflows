@@ -68,13 +68,7 @@ jobs:
       - name: Download Fluent service container
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
-      - name: Check out the geometry outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
-          path: fluent-mechanical/outputs
-
-      - name: Run the Fluent meshing script
+      - name: Run the Fluent script
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
@@ -135,7 +129,7 @@ jobs:
             doc/source/examples/fluent-mechanical/
           overwrite: true
 
-  geometry:
+  mechanical:
     name: Mechanical
     runs-on: [public-ubuntu-latest-8-cores]
     needs: fluent
@@ -167,7 +161,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m venv .venv
-          .venv/bin/activate
+          . .venv/bin/activate
           pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
@@ -181,12 +175,18 @@ jobs:
         run: |
           docker pull ${{ env.MECHANICAL_DOCKER_IMAGE }}
 
+      - name: Check out the geometry outputs
+        uses: actions/download-artifact@v4
+        with:
+          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
+          path: fluent-mechanical/outputs
+
       - name: Run the PyMechanical script
         env:
           ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
-          .venv/Scripts/activate
-          python fluent-mechanical/wf_fm_01_fluent.py
+          . .venv/bin/activate
+          xvfb-run python fluent-mechanical
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -197,25 +197,25 @@ jobs:
       - name: (DOCS) Check if docs should be built
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
-          Write-Host "Requested to build docs..."
-          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
-            Write-Host "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
-          } else {
-            Write-Host "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
-          }
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          ANSYS_GEOMETRY_RELEASE: ${{ matrix.ansys-release }}
-          BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
+          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
+          BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
-          .venv/bin/activate
-          cd doc
-          pip install -r requirements.txt
-          ./make.bat html
+          . .venv/bin/activate
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\fluent-mechanical\\images\\|./images/|g' {} +
+          pip install -r ./doc/requirements.txt
+          xvfb-run make -C doc html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
@@ -225,12 +225,3 @@ jobs:
           path: |
             doc/_build/
             doc/source/examples/fluent-mechanical/
-
-      - name: Stop any remaining containers
-        if: always()
-        run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
