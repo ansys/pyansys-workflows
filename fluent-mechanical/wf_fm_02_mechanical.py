@@ -904,7 +904,7 @@ THERM_STRN1.DisplayTime = Quantity("680 [s]")
 
 # Solve Nonlinear Static Simulation
 
-#SOLN.Solve(True)
+SOLN.Solve(True)
 STAT_STRUC_SS = SOLN.Status
 
 # Export results images
