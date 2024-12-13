@@ -1,4 +1,4 @@
-name: Geometry Mesh Fluent Workflow
+name: Fluent - Mechanical Exhaust Manifold Workflow
 
 on:
   workflow_dispatch:
