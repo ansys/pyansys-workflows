@@ -112,13 +112,29 @@ import_mesh_file = examples.download_file(
 # -------------
 # Launch Fluent as a service in solver mode with double precision running on
 # four processors and print Fluent version.
+if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+    container_dict = {
+        "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
+        "host_mount_path": WORKING_DIR,
+        "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
+        "timeout": 300,
+    }
+    # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
+    solver = pyfluent.launch_fluent(
+        precision="double",
+        processor_count=4,
+        mode="solver",
+        cwd=WORKING_DIR,
+        container_dict=container_dict,
+    )
+else:
+    solver = pyfluent.launch_fluent(
+        precision="double",
+        processor_count=4,
+        mode="solver",
+        cwd=WORKING_DIR,
+    )
 
-solver = pyfluent.launch_fluent(
-    precision="double",
-    processor_count=4,
-    mode="solver",
-    cwd=WORKING_DIR,
-)
 print(solver.get_fluent_version())
 
 
