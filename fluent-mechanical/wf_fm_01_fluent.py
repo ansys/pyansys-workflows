@@ -77,12 +77,16 @@ This workflow will generate the following files as output:
 # Perform required imports, which includes downloading the mesh file from the
 # examples.
 
+import os
+
 import ansys.fluent.core as pyfluent
 from ansys.fluent.core import examples
 
 import_mesh_file = examples.download_file(
     "exhaust_manifold_conf.msh.h5", "pyansys-workflow/exhaust-manifold/pyfluent"
 )
+
+WORKING_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 
 ###############################################################################
 # Launch Fluent
@@ -94,6 +98,7 @@ solver = pyfluent.launch_fluent(
     precision="double",
     processor_count=4,
     mode="solver",
+    cwd=WORKING_DIR,
 )
 print(solver.get_fluent_version())
 
