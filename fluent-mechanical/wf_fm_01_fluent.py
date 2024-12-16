@@ -77,8 +77,31 @@ This workflow will generate the following files as output:
 # Perform required imports, which includes downloading the mesh file from the
 # examples.
 
+import os
+
 import ansys.fluent.core as pyfluent
 from ansys.fluent.core import examples
+from matplotlib import image as mpimg
+from matplotlib import pyplot as plt
+
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+from pathlib import Path  # isort:skip
+
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "wf_fm_01_fluent.py")
+# sphinx_gallery_end_ignore
+
+GRAPHICS_BOOL = False  # Set to True to display the graphics
+WORKING_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
+os.makedirs(WORKING_DIR, exist_ok=True)
+
+# sphinx_gallery_start_ignore
+if "DOC_BUILD" in os.environ:
+    GRAPHICS_BOOL = True
+# sphinx_gallery_end_ignore
+
 
 import_mesh_file = examples.download_file(
     "exhaust_manifold_conf.msh.h5", "pyansys-workflow/exhaust-manifold/pyfluent"
@@ -94,8 +117,19 @@ solver = pyfluent.launch_fluent(
     precision="double",
     processor_count=4,
     mode="solver",
+    cwd=WORKING_DIR,
 )
 print(solver.get_fluent_version())
+
+
+def display_image(image_name):
+    plt.figure(figsize=(16, 9))
+    plt.imshow(mpimg.imread(os.path.join(OUTPUT_DIR, image_name)))
+    plt.xticks([])
+    plt.yticks([])
+    plt.axis("off")
+    plt.show()
+
 
 ###############################################################################
 # Read the mesh file
@@ -262,6 +296,10 @@ for temp_name, temp_value in temperature_values:
 
     solver.settings.file.write_case_data(file_name=f"exhaust_manifold_results_{temp_name}.cas.h5")
 
+# Display the resilts
+if GRAPHICS_BOOL:
+    for temp_name, temp_value in temperature_values:
+        display_image(f"temp_interface_contour_{temp_name}.png")
 ###############################################################################
 # Exit the Solver
 # ---------------
