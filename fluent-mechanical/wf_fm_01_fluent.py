@@ -107,8 +107,6 @@ import_mesh_file = examples.download_file(
     "exhaust_manifold_conf.msh.h5", "pyansys-workflow/exhaust-manifold/pyfluent"
 )
 
-WORKING_DIR = os.path.join(os.path.dirname(__file__), "outputs")
-
 ###############################################################################
 # Launch Fluent
 # -------------
@@ -126,7 +124,7 @@ print(solver.get_fluent_version())
 
 def display_image(image_name):
     plt.figure(figsize=(16, 9))
-    plt.imshow(mpimg.imread(os.path.join(OUTPUT_DIR, image_name)))
+    plt.imshow(mpimg.imread(os.path.join(WORKING_DIR, image_name)))
     plt.xticks([])
     plt.yticks([])
     plt.axis("off")
