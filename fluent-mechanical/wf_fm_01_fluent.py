@@ -152,8 +152,6 @@ def display_image(image_name):
 solver.settings.file.read_mesh(file_name=import_mesh_file)
 solver.mesh.check()
 
-import sys
-sys.exit(0)
 ###############################################################################
 # Define the Physics
 # ------------------
