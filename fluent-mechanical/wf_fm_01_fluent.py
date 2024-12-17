@@ -108,7 +108,7 @@ if "DOC_BUILD" in os.environ:
 
 import_mesh_file = examples.download_file(
     "exhaust_manifold_conf.msh.h5",
-    "pyansys-workflow/exhaust-manifold/pyfluent",
+    WORKING_DIR,
 )
 print(import_mesh_file)
 
