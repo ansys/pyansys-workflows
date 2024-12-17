@@ -138,6 +138,9 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     )
     # From here on, the working directory is the mounted directory
     WORKING_DIR = "/mnt/pyfluent"
+    
+    # Fix the path to the mesh file
+    import_mesh_file = os.path.join(WORKING_DIR, "exhaust_manifold_conf.msh.h5")
 else:
     solver = pyfluent.launch_fluent(
         precision="double",
@@ -149,9 +152,9 @@ print(solver.get_fluent_version())
 print(f"Working directory: {WORKING_DIR}")
 
 
-def display_image(image_name):
+def display_image(work_dir, image_name):
     plt.figure(figsize=(16, 9))
-    plt.imshow(mpimg.imread(os.path.join(WORKING_DIR, image_name)))
+    plt.imshow(mpimg.imread(os.path.join(work_dir, image_name)))
     plt.xticks([])
     plt.yticks([])
     plt.axis("off")
@@ -325,7 +328,7 @@ for temp_name, temp_value in temperature_values:
 # Display the resilts
 if GRAPHICS_BOOL:
     for temp_name, temp_value in temperature_values:
-        display_image(f"temp_interface_contour_{temp_name}.png")
+        display_image(WORKING_DIR, f"temp_interface_contour_{temp_name}.png")
 ###############################################################################
 # Exit the Solver
 # ---------------
