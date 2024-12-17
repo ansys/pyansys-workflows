@@ -93,8 +93,11 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_fm_01_fluent.py")
 # sphinx_gallery_end_ignore
 
-GRAPHICS_BOOL = False  # Set to True to display the graphics
-WORKING_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
+# Set to True to display the graphics
+GRAPHICS_BOOL = False
+
+# Output directory
+WORKING_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 os.makedirs(WORKING_DIR, exist_ok=True)
 
 # sphinx_gallery_start_ignore
@@ -114,9 +117,6 @@ print(import_mesh_file)
 # -------------
 # Launch Fluent as a service in solver mode with double precision running on
 # four processors and print Fluent version.
-
-container_dict = None
-
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
         "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
@@ -124,14 +124,23 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
         "timeout": 300,
     }
-
-solver = pyfluent.launch_fluent(
-    precision="double",
-    processor_count=4,
-    mode="solver",
-    cwd=WORKING_DIR,
-    container_dict=container_dict,
-)
+    solver = pyfluent.launch_fluent(
+        precision="double",
+        processor_count=4,
+        mode="solver",
+        cwd="/mnt/pyfluent",
+        container_dict=container_dict,
+        start_container=True,
+        ui_mode="no_gui_or_graphics",
+        cleanup_on_exit=False,
+    )
+else:
+    solver = pyfluent.launch_fluent(
+        precision="double",
+        processor_count=4,
+        mode="solver",
+        cwd=WORKING_DIR,
+    )
 print(solver.get_fluent_version())
 
 
