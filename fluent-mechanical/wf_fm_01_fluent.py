@@ -134,6 +134,8 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         ui_mode="no_gui_or_graphics",
         cleanup_on_exit=False,
     )
+    # From here on, the working directory is the mounted directory
+    WORKING_DIR = "/mnt/pyfluent"
 else:
     solver = pyfluent.launch_fluent(
         precision="double",
