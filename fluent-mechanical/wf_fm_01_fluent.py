@@ -118,6 +118,7 @@ print(import_mesh_file)
 # Launch Fluent as a service in solver mode with double precision running on
 # four processors and print Fluent version.
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
+    print("Configuring Fluent for CI")
     container_dict = {
         "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
         "mount_source": WORKING_DIR,
@@ -144,6 +145,7 @@ else:
         cwd=WORKING_DIR,
     )
 print(solver.get_fluent_version())
+print(f"Working directory: {WORKING_DIR}")
 
 
 def display_image(image_name):
