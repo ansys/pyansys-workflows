@@ -58,6 +58,8 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/bin/activate
           pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
@@ -74,6 +76,7 @@ jobs:
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
+          source .venv/bin/activate
           python fluent-mechanical/wf_fm_01_fluent.py
 
       - name: Store the outputs
@@ -116,6 +119,7 @@ jobs:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
         run: |
+          source .venv/bin/activate
           cd doc
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\fluent-mechanical\\images\\|./images/|g' {} +
           pip install -r requirements.txt
