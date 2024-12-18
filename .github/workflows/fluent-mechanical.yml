@@ -34,7 +34,9 @@ env:
 jobs:
   fluent:
     name: Fluent
-    runs-on: public-ubuntu-latest-8-cores
+    runs-on:
+      group: pyansys-self-hosted
+      labels:  [self-hosted, Linux, pyfluent]
     strategy:
       fail-fast: false
       matrix:
