@@ -138,7 +138,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     )
     # From here on, the working directory is the mounted directory
     WORKING_DIR = "/mnt/pyfluent"
-    
+
     # Fix the path to the mesh file
     import_mesh_file = os.path.join(WORKING_DIR, "exhaust_manifold_conf.msh.h5")
 else:
@@ -204,9 +204,14 @@ solid_mat.specific_heat.value = 502.4
 solid_mat.thermal_conductivity.value = 60.5
 
 # Assign Material to Cell Zones
-solver.settings.setup.cell_zone_conditions.fluid["*fluid*"].general.material = "fluid-material"
-solver.settings.setup.materials.print_state()
-solver.settings.setup.cell_zone_conditions.solid["*solid*"].general.material = "solid-material"
+if solver.get_fluent_version() < pyfluent.FluentVersion.v242:
+    solver.settings.setup.cell_zone_conditions.fluid["fluid"].material = "fluid-material"
+    solver.settings.setup.materials.print_state()
+    solver.settings.setup.cell_zone_conditions.solid["solid"].material = "solid-material"
+else:
+    solver.settings.setup.cell_zone_conditions.fluid["*fluid*"].general.material = "fluid-material"
+    solver.settings.setup.materials.print_state()
+    solver.settings.setup.cell_zone_conditions.solid["*solid*"].general.material = "solid-material"
 
 # Print the material properties for verification
 solver.settings.setup.materials.print_state()
@@ -238,11 +243,25 @@ solver.settings.setup.named_expressions["temperature_out"].definition = "in_temp
 # Define the boundary conditions for the problem.
 
 # Convection Boundary Condition
-solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.thermal_condition = "Convection"
-solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.heat_transfer_coeff.value = 60
 
+# Reference temperature for the convection boundary condition
 ref_temp = 200 + 273.15
-solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.free_stream_temp.value = ref_temp
+
+if solver.get_fluent_version() < pyfluent.FluentVersion.v242:
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.thermal_bc = "Convection"
+
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.h.value = 60
+
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.tinf.value = ref_temp
+else:
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.thermal_condition = (
+        "Convection"
+    )
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.heat_transfer_coeff.value = 60
+
+    solver.settings.setup.boundary_conditions.wall["solid:1"].thermal.free_stream_temp.value = (
+        ref_temp
+    )
 
 # Inlet Boundary Conditions
 solver.settings.setup.boundary_conditions.mass_flow_inlet.list()
@@ -260,9 +279,17 @@ solver.settings.setup.boundary_conditions.pressure_outlet.list()
 solver.settings.setup.boundary_conditions.pressure_outlet[
     "pressure_outlet"
 ].momentum.gauge_pressure.value = "pressure_out"
-solver.settings.setup.boundary_conditions.pressure_outlet[
-    "pressure_outlet"
-].thermal.backflow_total_temperature.value = "temperature_out"
+
+
+if solver.get_fluent_version() < pyfluent.FluentVersion.v242:
+    solver.settings.setup.boundary_conditions.pressure_outlet[
+        "pressure_outlet"
+    ].thermal.t0.value = "temperature_out"
+
+else:
+    solver.settings.setup.boundary_conditions.pressure_outlet[
+        "pressure_outlet"
+    ].thermal.backflow_total_temperature.value = "temperature_out"
 
 ###############################################################################
 # Define the Solution Methods and Solver Settings
