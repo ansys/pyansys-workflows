@@ -79,7 +79,7 @@ jobs:
         with:
           name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
           path: |
-            fluent-mechanical/outputs/htc_temp_mapping_LOW_TEMP
+            fluent-mechanical/outputs/htc_temp_mapping_LOW_TEMP.csv
             fluent-mechanical/outputs/htc_temp_mapping_MEDIUM_TEMP.csv
             fluent-mechanical/outputs/htc_temp_mapping_HIGH_TEMP.csv
 
