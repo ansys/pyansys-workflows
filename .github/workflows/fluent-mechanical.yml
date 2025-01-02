@@ -26,6 +26,8 @@ env:
   MAIN_PYTHON_VERSION: '3.12'
   FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
   MECHANICAL_DOCKER_IMAGE: 'ghcr.io/ansys/mechanical'
+  DOCKER_MECH_CONTAINER_NAME: mechanical
+  PYMECHANICAL_PORT: 10000
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 24.2
@@ -171,9 +173,13 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download (if needed) and run Mechanical container
+      - name: Download (if needed) launch, and validate Mechanical service
+        env:
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
         run: |
           docker pull ${{ env.MECHANICAL_DOCKER_IMAGE }}
+          docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_DOCKER_IMAGE }} > log.txt &
+          grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
 
       - name: Check out the fluent outputs
         uses: actions/download-artifact@v4
