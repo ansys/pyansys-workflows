@@ -186,7 +186,7 @@ jobs:
           ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
           . .venv/bin/activate
-          xvfb-run python fluent-mechanical
+          xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
