@@ -177,7 +177,6 @@ jobs:
           ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
           . .venv/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
@@ -214,14 +213,13 @@ jobs:
           name: geometry-mechanical-dpf-docs-stage-geometry
           path: doc
 
-      - name: (DOCS) Build the documentation for the Mechanical script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation for the Mechanical script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           NUM_CORES: 1
           ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
           . .venv/bin/activate
@@ -231,10 +229,9 @@ jobs:
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
 
 
-      - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
           . .venv/bin/activate
