@@ -32,6 +32,7 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 24.2
   RUN_DOC_BUILD: false
+  PYMECHANICAL_START_INSTANCE: false
 
 jobs:
   fluent:
