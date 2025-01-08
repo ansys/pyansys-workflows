@@ -122,9 +122,7 @@ print(import_mesh_file)
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     print("Configuring Fluent for CI")
     container_dict = {
-        "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
         "mount_source": WORKING_DIR,
-        "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
         "timeout": 300,
     }
     solver = pyfluent.launch_fluent(
