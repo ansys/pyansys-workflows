@@ -128,7 +128,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     }
     solver = pyfluent.launch_fluent(
         precision="double",
-        processor_count=4,
+        processor_count=2,
         mode="solver",
         cwd="/mnt/pyfluent",
         container_dict=container_dict,
@@ -144,7 +144,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
 else:
     solver = pyfluent.launch_fluent(
         precision="double",
-        processor_count=4,
+        processor_count=2,
         mode="solver",
         cwd=WORKING_DIR,
     )
