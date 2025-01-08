@@ -131,11 +131,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         precision="double",
         processor_count=2,
         mode="solver",
-        cwd="/mnt/pyfluent",
         container_dict=container_dict,
-        start_container=True,
-        ui_mode="no_gui_or_graphics",
-        cleanup_on_exit=False,
     )
     # From here on, the working directory is the mounted directory
     WORKING_DIR = "/mnt/pyfluent"
