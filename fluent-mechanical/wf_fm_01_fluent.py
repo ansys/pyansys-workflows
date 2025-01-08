@@ -78,6 +78,7 @@ This workflow will generate the following files as output:
 # examples.
 
 import os
+from pathlib import PurePosixPath
 
 import ansys.fluent.core as pyfluent
 from ansys.fluent.core import examples
@@ -140,7 +141,8 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     WORKING_DIR = "/mnt/pyfluent"
 
     # Fix the path to the mesh file
-    import_mesh_file = os.path.join(WORKING_DIR, "exhaust_manifold_conf.msh.h5")
+    import_mesh_file = PurePosixPath(WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
+    print(f"\nImport mesh path for container: {import_mesh_file}\n")
 else:
     solver = pyfluent.launch_fluent(
         precision="double",
