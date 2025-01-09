@@ -38,19 +38,6 @@ import ansys.mechanical.core as mech
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
 
-###############################################################################
-# Preparing the environment
-# -------------------------
-# This section is only necessary for workflow runs and docs generation. It checks
-# the environment variables to determine which image to use for the mechanical service.
-# If you are running this script outside of a workflow, you can ignore this section.
-#
-
-version = None
-if "ANSYS_MECHANICAL_RELEASE" in os.environ:
-    image_tag = os.environ["ANSYS_MECHANICAL_RELEASE"]
-    version = int(image_tag.replace(".", ""))
-
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
 # This is a workaround to run the script in Sphinx-Gallery.
@@ -76,7 +63,7 @@ if "DOC_BUILD" in os.environ:
 # Start a PyMechanical app
 # ------------------------
 #
-app = mech.App(version=version)
+app = mech.App()
 app.update_globals(globals())
 print(app)
 
