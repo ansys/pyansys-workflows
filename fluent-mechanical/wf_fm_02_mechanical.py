@@ -228,17 +228,20 @@ EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == 
 mechanical.run_python_script(
     """
 MESH = Model.Mesh
-MESH.ElementSize = Quantity(0.004, "m")
-MESH.UseAdaptiveSizing = False
-MESH.MaximumSize = Quantity(0.004, "m")
-MESH.ShapeChecking = 0
-body_sizing = MESH.AddSizing()
-selection = NS_GRP.Children[5]
-body_sizing.Location = selection
-body_sizing.ElementSize = Quantity(4e-3, "m")
-#body_sizing.CaptureCurvature = True
-#body_sizing.CurvatureNormalAngle = Quantity(0.31, "rad")
-#body_sizing.LocalMinimumSize = Quantity(0.00025, "m")
+# MESH.ElementSize = Quantity(0.004, "m")
+# MESH.UseAdaptiveSizing = False
+# MESH.MaximumSize = Quantity(0.004, "m")
+# MESH.ShapeChecking = 0
+# body_sizing = MESH.AddSizing()
+# selection = NS_GRP.Children[5]
+# body_sizing.Location = selection
+# body_sizing.ElementSize = Quantity(4e-3, "m")
+# #body_sizing.CaptureCurvature = True
+# #body_sizing.CurvatureNormalAngle = Quantity(0.31, "rad")
+# #body_sizing.LocalMinimumSize = Quantity(0.00025, "m")
+
+MESH.UseAdaptiveSizing = True
+MESH.TransitionOption = 1
 
 Tree.Activate([MESH])
 MESH.GenerateMesh()
