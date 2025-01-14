@@ -177,9 +177,10 @@ jobs:
       - name: Download (if needed) launch, and validate Mechanical service
         env:
           LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+          MECHANICAL_IMAGE: ${{ env.MECHANICAL_DOCKER_IMAGE }}:${{ matrix.ansys-release }}.0
         run: |
-          docker pull ${{ env.MECHANICAL_DOCKER_IMAGE }}
-          docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_DOCKER_IMAGE }} > log.txt &
+          docker pull ${{ env.MECHANICAL_IMAGE }}
+          docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_IMAGE }} > log.txt &
           grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
 
       - name: Check out the fluent outputs
