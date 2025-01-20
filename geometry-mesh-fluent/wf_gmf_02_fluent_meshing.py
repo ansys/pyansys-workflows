@@ -195,9 +195,7 @@ def generate_mesh(
 
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
-        "fluent_image": f"{os.environ['FLUENT_DOCKER_IMAGE']}:{os.environ['FLUENT_IMAGE_TAG']}",
         "host_mount_path": DATA_DIR,
-        "license_server": os.environ["ANSYSLMD_LICENSE_FILE"],
         "timeout": 300,
     }
     # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
