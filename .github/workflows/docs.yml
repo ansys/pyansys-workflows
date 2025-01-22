@@ -20,13 +20,13 @@ jobs:
     uses: ./.github/workflows/geometry-mesh-fluent.yml
     secrets: inherit
     with:
-      doc-build: false #testing
+      doc-build: true
 
   geometry-mechanical-dpf:
     uses: ./.github/workflows/geometry-mechanical-dpf.yml
     secrets: inherit
     with:
-      doc-build: false #testing
+      doc-build: true
 
   fluent-mechanical:
     uses: ./.github/workflows/fluent-mechanical.yml
