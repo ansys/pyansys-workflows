@@ -214,6 +214,13 @@ jobs:
             echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
           fi
 
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v4
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        with:
+          name: fluent-mechanical-docs-stage-fluent
+          path: doc
+
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
@@ -225,11 +232,17 @@ jobs:
           pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html
 
+      - name: (DOCS) Adapt the documentation paths
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        run: |
+          find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/examples/fluent-mechanical/images|./images/|g' {} +
+
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: fluent-mechanical-docs-stage-mechanical
+          name: fluent-mechanical-docs
           path: |
             doc/_build/
             doc/source/examples/fluent-mechanical/
+          overwrite: true
