@@ -179,14 +179,14 @@ display_image("geometry.png")
 # Import material, assign it to the bodies and create Named Selections
 # --------------------------------------------------------------------
 #
-
+print("Importing material and creating Named Selections")
 mechanical.run_python_script(
     """
 materials = ExtAPI.DataModel.Project.Model.Materials
 materials.Import(material_path)
 materials.RefreshMaterials()
 
-PRT1 = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "Geom-2\Geom-1\solid"][0]
+PRT1 = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == r"Geom-2\Geom-1\solid"][0]
 
 # Assign it to the bodies
 nmat = "1_HiSi_Model3_Exhaust Manifold updated"
@@ -224,7 +224,7 @@ EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == 
 # Set up the mesh and generate
 # ----------------------------
 #
-
+print("Setting up the mesh and generating it")
 mechanical.run_python_script(
     """
 MESH = Model.Mesh
