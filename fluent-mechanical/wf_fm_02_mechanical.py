@@ -25,8 +25,7 @@
 Thermo-mechanical assessment of representative exhaust manifold model
 #####################################################################
 
-MultiPhysics example: Thermo-Mechanical simulation on a representative exhuast manifold
-model.
+# TODO - Add a brief description of the workflow
 
 """  # noqa: D400, D415
 
@@ -172,7 +171,7 @@ ExtAPI.Graphics.ExportImage(
 """
 )
 
-# Download the geomtry image and display it
+# Download the geometry image and display it
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("geometry.png")
@@ -725,7 +724,7 @@ Fixed_Support.Location = selection
 )
 
 ###############################################################################
-# Sovle and post-process the results
+# Solve and post-process the results
 # ----------------------------------
 #
 mechanical.run_python_script(
