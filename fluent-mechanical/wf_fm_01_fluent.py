@@ -25,21 +25,6 @@
 Conjugate Heat Transfer Workflow for Exhaust Manifold
 #####################################################
 
-This workflow demonstrates the typical solver setup involved in performing a CFD
-simulation for the conjugate heat transfer (CHT) analysis of an exhaust manifold.
-A conjugate heat transfer analysis is a type of simulation that involves the
-simultaneous solution of heat transfer in both solid and fluid domains. In this
-case, the exhaust manifold is a solid domain, and the fluid domain is the gas
-flowing through the manifold. The heat transfer between the solid and fluid domains
-is modeled using the heat transfer coefficient (HTC) at the interface between the two
-domains.
-This workflow provides a step-by-step guide to set up a CHT analysis for an exhaust
-manifold using Ansys Flueent Pyfluetn API's. The workflow includes usage of API's to
-setup the physics, material properties, boundary conditions, solver settings, and
-exporting the results to a CSV file for further use in a Thermo-Mechanical Analysis.
-
-Problem Description:
--------------------
 
 The geometry is an exhaust manifold with a fluid domain (gas) and a solid domain(metal)
 meshed with a conformal Polyhedral mesh.The hot gas flows through the manifold,
@@ -47,6 +32,7 @@ and the heat is transferred to the solid domain. The objective is to calculate t
 heat transfer coefficient (HTC) at the interface between the fluid and solid domains,
 the temperature distribution in the solid domain, and export the results to a CSV
 file for further use in a Thermo-Mechanical Analysis.
+
 The workflow includes the following steps:
 - Launch Fluent
 - Load the mesh file
@@ -57,6 +43,7 @@ The workflow includes the following steps:
 - Run the solver
 - Export the results to CSV file
 - Close Fluent
+
 This workflow will generate the following files as output:
 - exhaust_manifold_results_HIGH_TEMP.cas.h5
 - exhaust_manifold_results_MEDIUM_TEMP.cas.h5
@@ -119,6 +106,7 @@ print(import_mesh_file)
 # -------------
 # Launch Fluent as a service in solver mode with double precision running on
 # four processors and print Fluent version.
+#
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     print("Configuring Fluent for CI")
     container_dict = {
@@ -131,10 +119,9 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         mode="solver",
         container_dict=container_dict,
     )
-    # From here on, the working directory is the mounted directory
+
     WORKING_DIR = "/mnt/pyfluent"
 
-    # Fix the path to the mesh file
     import_mesh_file = PurePosixPath(WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
     print(f"\nImport mesh path for container: {import_mesh_file}\n")
 else:
@@ -161,6 +148,7 @@ def display_image(work_dir, image_name):
 # Read the mesh file
 # ------------------
 # Read the mesh file into the Fluent solver and check the mesh information.
+#
 
 solver.settings.file.read_mesh(file_name=import_mesh_file)
 solver.mesh.check()
@@ -169,6 +157,7 @@ solver.mesh.check()
 # Define the Physics
 # ------------------
 # Define the physics of the problem by setting energy and turbulence models.
+#
 
 solver.settings.setup.models.energy.enabled = True
 solver.settings.setup.models.viscous.model.allowed_values()
@@ -216,6 +205,7 @@ solver.settings.setup.materials.print_state()
 # Define the Named Expressions
 # ----------------------------
 # Define the named expressions for the boundary conditions.
+#
 
 solver.settings.setup.named_expressions.create("in_temperature")
 solver.settings.setup.named_expressions["in_temperature"].definition = "1023.15 [K]"
@@ -305,7 +295,6 @@ solver.settings.solution.run_calculation.iter_count = 200
 # Run the Solver & Export the Results to CSV
 # ------------------------------------------
 # Run the solver to solve the problem and export the results to a CSV file.
-
 # Define a tuple with temperature values
 temperature_values = (
     ("HIGH_TEMP", 1023.15),
@@ -352,9 +341,10 @@ for temp_name, temp_value in temperature_values:
 if GRAPHICS_BOOL:
     for temp_name, temp_value in temperature_values:
         display_image(WORKING_DIR, f"temp_interface_contour_{temp_name}.png")
+
 ###############################################################################
 # Exit the Solver
 # ---------------
 # Close the Fluent solver.
-
+#
 solver.exit()

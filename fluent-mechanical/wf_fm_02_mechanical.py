@@ -172,7 +172,7 @@ ExtAPI.Graphics.ExportImage(
 """
 )
 
-# Download the image and display it
+# Download the geomtry image and display it
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("geometry.png")
@@ -246,7 +246,7 @@ ExtAPI.Graphics.ExportImage(
 """
 )
 
-# Download the image and display it
+# Download the mesh image and display it
 mechanical.download(files=os.path.join(project_directory, "mesh.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("mesh.png")
@@ -444,10 +444,10 @@ tree_grouping_folder_70 = DataModel.GetObjectsByName("New Folder")
 )
 
 ###############################################################################
-# Use the ouput from Fluent to import the temperature and HTC data
-# ---------------------------------------------------------------
+# Use the output from Fluent to import the temperature and HTC data
+# -----------------------------------------------------------------
 #
-
+# Add imported convection
 result = mechanical.run_python_script(
     """
 Imported_Load_Group = TRANS_THERM.AddImportedLoadExternalData()
@@ -605,9 +605,7 @@ imported_load_id = imported_convection_62.ObjectId
 imported_load = DataModel.GetObjectById(imported_load_id)
 """
 )
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-# imported_convection_62.InternalObject.ExternalLoadSteppingType = 1
-# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 mechanical.run_python_script(
     """
 imported_load.ImportLoad()
@@ -628,7 +626,7 @@ if GRAPHICS_BOOL:
 ###############################################################################
 # Solve and post-process the results
 # ----------------------------------
-
+#
 mechanical.run_python_script(
     """
 # Insert results objects
@@ -652,6 +650,8 @@ ExtAPI.Graphics.ExportImage(
 )
 """
 )
+
+# Download the temperature image and display it
 mechanical.download(files=os.path.join(project_directory, "temperature.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("temperature.png")
@@ -783,7 +783,7 @@ if GRAPHICS_BOOL:
     display_image("plastic_strain.png")
 
 # ###############################################################################
-# # Close the Mechanical
-# # --------------------
-# #
+# Close the Mechanical
+# --------------------
+#
 mechanical.exit()
