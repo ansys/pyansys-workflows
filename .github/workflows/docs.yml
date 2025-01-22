@@ -14,7 +14,7 @@ jobs:
     uses: ./.github/workflows/geometry-mesh.yml
     secrets: inherit
     with:
-      doc-build: false #testing
+      doc-build: true
 
   geometry-mesh-fluent:
     uses: ./.github/workflows/geometry-mesh-fluent.yml
