@@ -25,8 +25,42 @@
 Thermo-mechanical assessment of representative exhaust manifold model
 #####################################################################
 
-# TODO - Add a brief description of the workflow
+Background
+----------
 
+The turbine housing/exhaust manifold is a critical component as it is subjected to extreme
+temperature cycling. This induces fatigue in the housing material and leads to early
+failure. Simulation helps to design housing and other parts for extended service life.
+
+Thermo-mechanical workflow
+--------------------------
+
+A comprehensive CFD analysis of the exhaust manifold component is executed as a
+steady-state examination, focusing on the specified duty cycle. This process involves
+two recurring duty cycles, during which the temperature and other crucial operating
+parameters, such as mass flow and pressure, maintain a consistent pseudo-steady state.
+
+Three unique operating conditions are chosen from the duty cycle, and steady-state
+calculations are performed corresponding to the exhaust gas temperature in each case.
+The resulting Heat Transfer Coefficients (HTCs) and temperatures at the solid-fluid
+interface are exported to a CSV file, which serves as the input for subsequent thermal
+calculations in the Mechanical run.
+
+The Mechanical run encompasses Structural Transient Thermal and Non-linear (NL) Static
+analyses, employing temperature-dependent Bilinear Kinematic hardening material
+properties for a thorough structural evaluation.
+
+In the Transient Thermal run, imported HTCs and reference temperatures from the
+CFD runs are mapped onto the structural mesh of the exhaust manifold assembly. External
+convection loads and other boundary conditions are applied to calculate the temperature
+distribution across the exhaust manifold assembly.
+
+Subsequently, a non-linear static analysis is conducted to determine the plastic strain,
+taking into account the temperature distribution calculated in the Transient Thermal
+solve and other relevant structural boundary conditions.
+
+This approach leads to a more impactful and precise understanding of the exhaust
+manifold's performance subjected to thermal cycling.
 """  # noqa: D400, D415
 
 import os
