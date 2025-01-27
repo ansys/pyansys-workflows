@@ -135,9 +135,9 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         container_dict=container_dict,
     )
 
-    WORKING_DIR = "/mnt/pyfluent"
+    FLUENT_WORKING_DIR = "/mnt/pyfluent"
 
-    import_mesh_file = PurePosixPath(WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
+    import_mesh_file = PurePosixPath(FLUENT_WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
     print(f"\nImport mesh path for container: {import_mesh_file}\n")
 else:
     solver = pyfluent.launch_fluent(
