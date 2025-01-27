@@ -28,9 +28,15 @@ jobs:
     with:
       doc-build: true
 
+  fluent-mechanical:
+    uses: ./.github/workflows/fluent-mechanical.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   compile-docs:
     runs-on: ubuntu-latest
-    needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf]
+    needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical]
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -64,6 +70,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: geometry-mechanical-dpf-docs
+          path: doc/
+
+      - name: Download artifacts for fluent-mechanical
+        uses: actions/download-artifact@v4
+        with:
+          name: fluent-mechanical-docs
           path: doc/
 
       - name: Build the documentation
