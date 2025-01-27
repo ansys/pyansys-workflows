@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+
 """
 .. _ref_fluent_mechanical_02-mechanical:
 
@@ -61,6 +62,7 @@ solve and other relevant structural boundary conditions.
 
 This approach leads to a more impactful and precise understanding of the exhaust
 manifold's performance subjected to thermal cycling.
+
 """  # noqa: D400, D415
 
 import os

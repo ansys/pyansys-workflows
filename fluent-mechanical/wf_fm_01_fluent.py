@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _exhaust_manifold_cfd_workflow:
+"""
+.. _ref_fluent_mechanical_01-fluent:
 
 Conjugate Heat Transfer Workflow for Exhaust Manifold
 #####################################################
@@ -352,7 +353,7 @@ for temp_name, temp_value in temperature_values:
 
     solver.settings.file.write_case_data(file_name=f"exhaust_manifold_results_{temp_name}.cas.h5")
 
-# Display the resilts
+# Display the results
 if GRAPHICS_BOOL:
     for temp_name, temp_value in temperature_values:
         display_image(WORKING_DIR, f"temp_interface_contour_{temp_name}.png")
