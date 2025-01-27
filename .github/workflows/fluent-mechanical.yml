@@ -104,13 +104,6 @@ jobs:
             echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
           fi
 
-      - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        with:
-          name: fluent-mechanical-docs-stage-fluent
-          path: doc
-
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
@@ -118,7 +111,6 @@ jobs:
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
         run: |
           cd doc
-          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\fluent-mechanical\\images\\|./images/|g' {} +
           pip install -r requirements.txt
           make html
 
@@ -228,14 +220,8 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
           . .venv/bin/activate
-          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\fluent-mechanical\\images\\|./images/|g' {} +
           pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html
-
-      - name: (DOCS) Adapt the documentation paths
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        run: |
-          find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/examples/fluent-mechanical/images|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
