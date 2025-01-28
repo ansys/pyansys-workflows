@@ -20,7 +20,8 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-""".. _exhaust_manifold_cfd_workflow:
+"""
+.. _ref_fluent_mechanical_01-fluent:
 
 Conjugate Heat Transfer Workflow for Exhaust Manifold
 #####################################################
@@ -135,9 +136,9 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         container_dict=container_dict,
     )
 
-    WORKING_DIR = "/mnt/pyfluent"
+    FLUENT_WORKING_DIR = "/mnt/pyfluent"
 
-    import_mesh_file = PurePosixPath(WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
+    import_mesh_file = PurePosixPath(FLUENT_WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
     print(f"\nImport mesh path for container: {import_mesh_file}\n")
 else:
     solver = pyfluent.launch_fluent(
@@ -352,7 +353,7 @@ for temp_name, temp_value in temperature_values:
 
     solver.settings.file.write_case_data(file_name=f"exhaust_manifold_results_{temp_name}.cas.h5")
 
-# Display the resilts
+# Display the results
 if GRAPHICS_BOOL:
     for temp_name, temp_value in temperature_values:
         display_image(WORKING_DIR, f"temp_interface_contour_{temp_name}.png")
