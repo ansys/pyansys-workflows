@@ -220,8 +220,9 @@ jobs:
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
           . .venv/bin/activate
-          pip install -r ./doc/requirements.txt
-          xvfb-run make -C doc html
+          cd doc
+          pip install -r requirements.txt
+          xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
