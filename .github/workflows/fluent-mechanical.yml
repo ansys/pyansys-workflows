@@ -222,8 +222,6 @@ jobs:
           . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
-          unset PYMECHANICAL_PORT
-          unset PYMECHANICAL_START_INSTANCE
           make html
 
       - name: (DOCS) Upload docs artifacts
