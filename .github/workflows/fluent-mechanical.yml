@@ -96,13 +96,13 @@ jobs:
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
           echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
+          # if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+          echo "Building docs"
+          echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          # else
+          #   echo "Not building docs - since not primary release"
+          #   echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          # fi
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
@@ -198,13 +198,13 @@ jobs:
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
           echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
+          #if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+          echo "Building docs"
+          echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          # else
+          #   echo "Not building docs - since not primary release"
+          #   echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          # fi
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v4
@@ -222,7 +222,7 @@ jobs:
           . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
-          xvfb-run make html
+          make html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
