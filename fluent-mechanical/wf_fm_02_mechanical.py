@@ -98,7 +98,7 @@ if "DOC_BUILD" in os.environ:
 # Start a PyMechanical app
 # ------------------------
 #
-mechanical = launch_mechanical(batch=True, cleanup_on_exit=True)
+mechanical = launch_mechanical(batch=True, cleanup_on_exit=False)
 print(mechanical)
 
 
