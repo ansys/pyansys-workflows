@@ -205,9 +205,12 @@ ExtAPI.Graphics.Camera.SetFit()
 )
 mechanical.run_python_script(
     """
-ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
-)
+try:
+    ExtAPI.Graphics.ExportImage(
+        os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
+    )
+except Exception as e:
+    print(f"Error exporting image: {e}"
 """
 )
 

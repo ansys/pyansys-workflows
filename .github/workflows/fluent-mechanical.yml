@@ -30,7 +30,7 @@ env:
   PYMECHANICAL_PORT: 10000
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 24.1
+  ANSYS_RELEASE_FOR_DOCS: 24.2
   RUN_DOC_BUILD: false
   PYMECHANICAL_START_INSTANCE: false
 
@@ -219,7 +219,7 @@ jobs:
           . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
-          make html
+          xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
