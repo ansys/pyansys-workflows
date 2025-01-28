@@ -182,8 +182,6 @@ jobs:
           path: fluent-mechanical/outputs
 
       - name: Run the PyMechanical script
-        env:
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
           . .venv/bin/activate
           xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
@@ -216,7 +214,6 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
           . .venv/bin/activate
