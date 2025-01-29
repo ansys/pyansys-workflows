@@ -201,16 +201,9 @@ geometry_import.Import(
 )
 project_directory = ExtAPI.DataModel.Project.ProjectDirectory
 ExtAPI.Graphics.Camera.SetFit()
-"""
+ExtAPI.Graphics.ExportImage(
+    os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
 )
-mechanical.run_python_script(
-    """
-try:
-    ExtAPI.Graphics.ExportImage(
-        os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
-    )
-except Exception as e:
-    print(f"Error exporting image: {e}"
 """
 )
 
