@@ -95,7 +95,7 @@ BOX_SIZE_HEIGHT = 2
 DATA_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 
 # sphinx_gallery_start_ignore
-if "DOC_BUILD" in os.environ:
+if "RUN_DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 

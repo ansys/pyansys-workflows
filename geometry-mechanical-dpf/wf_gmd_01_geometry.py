@@ -76,7 +76,7 @@ GRAPHICS_BOOL = False  # Set to True to display the graphics
 OUTPUT_DIR = Path(Path(__file__).parent, "outputs")  # Output directory
 
 # sphinx_gallery_start_ignore
-if "DOC_BUILD" in os.environ:
+if "RUN_DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 

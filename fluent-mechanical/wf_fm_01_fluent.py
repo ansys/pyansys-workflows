@@ -105,7 +105,7 @@ WORKING_DIR = os.path.join(os.path.dirname(__file__), "outputs")
 os.makedirs(WORKING_DIR, exist_ok=True)
 
 # sphinx_gallery_start_ignore
-if "DOC_BUILD" in os.environ:
+if "RUN_DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 
