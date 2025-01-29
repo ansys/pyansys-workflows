@@ -33,7 +33,7 @@ import pyvista as pv
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 
 # Env vars
-os.environ["RUN_DOC_BUILD"] = "true"
+os.environ["DOC_BUILD"] = "true"
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 pv.OFF_SCREEN = True
 pv.BUILDING_GALLERY = True
