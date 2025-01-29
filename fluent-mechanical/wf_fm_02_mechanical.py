@@ -206,11 +206,19 @@ ExtAPI.Graphics.ExportImage(
 )
 """
 )
+print("geometry image export is done")
+print(f"{project_directory}")
+print(mechanical.list_files())
 
 # Download the geometry image and display it
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
+print(f"downloaded geometry image to {OUTPUT_DIR}")
+if os.path.exists(os.path.join(OUTPUT_DIR, "geometry.png")):
+    print("geometry image exists")
 if GRAPHICS_BOOL:
+    print("displaying geometry image")
     display_image("geometry.png")
+    print("displayed geometry image")
 
 
 ###############################################################################
