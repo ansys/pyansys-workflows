@@ -149,7 +149,7 @@ jobs:
       - name: Install system dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y nodejs npm graphviz
+          sudo apt-get install -y nodejs npm graphviz xvfb
           npm install -g @mermaid-js/mermaid-cli
 
       - name: Install dependencies
@@ -182,8 +182,6 @@ jobs:
           path: fluent-mechanical/outputs
 
       - name: Run the PyMechanical script
-        env:
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
         run: |
           . .venv/bin/activate
           xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
@@ -216,12 +214,12 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          ANSYS_MECHANICAL_RELEASE: ${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
           . .venv/bin/activate
-          pip install -r ./doc/requirements.txt
-          xvfb-run make -C doc html
+          cd doc
+          pip install -r requirements.txt
+          xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
