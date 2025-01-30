@@ -93,7 +93,7 @@ jobs:
           fi
 
       - name: (DOCS) Check if docs should be built
-        # if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
           echo "Requested to build docs..."
           if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
@@ -193,7 +193,7 @@ jobs:
           path: fluent-mechanical/outputs
 
       - name: (DOCS) Check if docs should be built
-        # if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
           echo "Requested to build docs..."
           if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then

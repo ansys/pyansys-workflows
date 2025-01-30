@@ -25,8 +25,8 @@
 from datetime import datetime
 import os
 import re
-import ansys.mechanical.core as pymechanical
 
+import ansys.mechanical.core as pymechanical
 from ansys_sphinx_theme import ansys_favicon
 from ansys_sphinx_theme import pyansys_logo_black as logo
 from ansys_sphinx_theme import pyansys_logo_white
