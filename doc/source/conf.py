@@ -26,7 +26,6 @@ from datetime import datetime
 import os
 import re
 
-import ansys.mechanical.core as pymechanical
 from ansys_sphinx_theme import ansys_favicon
 from ansys_sphinx_theme import pyansys_logo_black as logo
 from ansys_sphinx_theme import pyansys_logo_white
@@ -38,7 +37,14 @@ os.environ["DOC_BUILD"] = "true"
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 pv.OFF_SCREEN = True
 pv.BUILDING_GALLERY = True
-pymechanical.BUILDING_GALLERY = True
+
+# If PyMechanical is installed, enable building gallery
+try:
+    import ansys.mechanical.core as pymechanical
+
+    pymechanical.BUILDING_GALLERY = True
+except ImportError:
+    pass
 
 # Project information
 project = "pyansys-workflows"
