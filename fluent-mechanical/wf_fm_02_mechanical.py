@@ -206,19 +206,11 @@ ExtAPI.Graphics.ExportImage(
 )
 """
 )
-print("geometry image export is done")
-print(f"{project_directory}")
-print(mechanical.list_files())
 
 # Download the geometry image and display it
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
-print(f"downloaded geometry image to {OUTPUT_DIR}")
-if os.path.exists(os.path.join(OUTPUT_DIR, "geometry.png")):
-    print("geometry image exists")
 if GRAPHICS_BOOL:
-    print("displaying geometry image")
     display_image("geometry.png")
-    print("displayed geometry image")
 
 
 ###############################################################################
@@ -813,17 +805,28 @@ ExtAPI.Graphics.ExportImage(
 )
 """
 )
+
+# Download the results images to local directory
 mechanical.download(files=os.path.join(project_directory, "deformation.png"), target_dir=OUTPUT_DIR)
 mechanical.download(files=os.path.join(project_directory, "stress.png"), target_dir=OUTPUT_DIR)
 mechanical.download(
     files=os.path.join(project_directory, "plastic_strain.png"), target_dir=OUTPUT_DIR
 )
 
-# Display the results
+# Deformation
 if GRAPHICS_BOOL:
     display_image("deformation.png")
+
+
+# Stress
+if GRAPHICS_BOOL:
     display_image("stress.png")
+
+
+# Plastic strain
+if GRAPHICS_BOOL:
     display_image("plastic_strain.png")
+
 
 # ###############################################################################
 # Close the Mechanical
