@@ -823,7 +823,7 @@ if GRAPHICS_BOOL:
     display_image("stress.png")
 
 
-# Plastics strain
+# Plastic strain
 if GRAPHICS_BOOL:
     display_image("plastic_strain.png")
 
