@@ -1,6 +1,6 @@
 # Documentation dependencies
 ansys-sphinx-theme==1.3.1
-myst-parser==4.0.0
+myst-parser==4.0.1
 sphinx_design==0.6.1
 sphinx==8.1.3
 sphinx-autobuild==2024.10.3
@@ -8,14 +8,14 @@ sphinx-autodoc-typehints==3.0.1
 sphinxcontrib-websupport==2.0.0
 sphinx-copybutton==0.5.2
 sphinxemoji==0.3.1
-sphinx-gallery==0.18.0
+sphinx-gallery==0.19.0
 sphinx-notfound-page==1.1.0
 imageio==2.37.0
 imageio-ffmpeg==0.6.0
 jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
 matplotlib==3.10.0
-panel==1.6.0
+panel==1.6.1
 plotly==6.0.0
 pythreejs==2.4.2
 pillow==11.1.0
