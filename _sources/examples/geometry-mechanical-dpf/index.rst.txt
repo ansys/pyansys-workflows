@@ -1,0 +1,84 @@
+:orphan:
+
+Geometry, mechanical and post-processing
+========================================
+
+This workflow demonstrates how to create a printed circuit board (PCB) geometry, mesh,
+run steady state and transient thermal analysis, and post-process using DPF. The geometry
+generated is a simple PCB with multiple chips. The exported CAD file (PMDB format) is then
+imported inside Ansys Mechanical to run a steady-state thermal analysis followed by transient
+analysis.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to generate a simple PCB using PyAnsys Geometry via the Ansys Geometry Service. The example demonstrates how to create a sketch, perform modeling operations, and export the file in different formats (in this specific case, PMDB).">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mechanical-dpf/images/thumb/sphx_glr_wf_gmd_01_geometry_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_geometry-mechanical-dpf_wf_gmd_01_geometry.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Geometry generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This examples performs meshing, steady-state and transient thermal analysis of PCB. Objective of this example is to study or examine resulting temperatures caused by the heat developed in chips.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mechanical-dpf/images/thumb/sphx_glr_wf_gmd_02_mechanical_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_geometry-mechanical-dpf_wf_gmd_02_mechanical.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mechanical - Thermal analysis</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This examples shows how dataprocessing framework can be used to extract results and analyze them.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mechanical-dpf/images/thumb/sphx_glr_wf_gmd_03_dpf_thumb.png
+    :alt:
+
+  :ref:`sphx_glr_examples_geometry-mechanical-dpf_wf_gmd_03_dpf.py`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Post-processing</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/geometry-mechanical-dpf/wf_gmd_01_geometry
+   /examples/geometry-mechanical-dpf/wf_gmd_02_mechanical
+   /examples/geometry-mechanical-dpf/wf_gmd_03_dpf
+
