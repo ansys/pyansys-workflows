@@ -75,7 +75,7 @@ jobs:
       - name: Download (if needed) and run Geometry service container
         run: |
           # If we are on 25.1 or above - the tag name is different - remember we are on powershell
-          if (${{ matrix.ansys-release }} -ge 25.1) {
+          if (${{ matrix.ansys-release }} -ge 25.2) {
             $env:ANSYS_GEOMETERY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:core-windows-${{ matrix.ansys-release }}"
           } else {
             $env:ANSYS_GEOMETERY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}"
