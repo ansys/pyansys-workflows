@@ -1,0 +1,3 @@
+ansys-mechanical-core==0.11.13
+ansys-fluent-core==0.29.0
+matplotlib==3.10.1
