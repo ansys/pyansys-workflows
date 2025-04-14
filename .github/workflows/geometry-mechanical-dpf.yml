@@ -30,7 +30,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 24.2
+  ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: false
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2]
+        ansys-release: [24.1, 24.2, 25.1]
     steps:
 
       - name: Checkout code
@@ -74,11 +74,19 @@ jobs:
 
       - name: Download (if needed) and run Geometry service container
         run: |
-          docker pull ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
+          # If we are on 25.1 or above - the tag name is different - remember we are on powershell
+          if (${{ matrix.ansys-release }} -ge 25.2) {
+            $env:ANSYS_GEOMETRY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:core-windows-${{ matrix.ansys-release }}"
+          } else {
+            $env:ANSYS_GEOMETRY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}"
+          }
+          Write-Host "Running Geometry service container: $env:ANSYS_GEOMETRY_RELEASE"
+          # Pull the container image
+          docker pull $env:ANSYS_GEOMETRY_RELEASE
+          # Define the ANSYS_GEOMETRY_RELEASE environment variable to be used in the next stages
+          echo "ANSYS_GEOMETRY_RELEASE=$env:ANSYS_GEOMETRY_RELEASE" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Run the PyAnsys Geometry script
-        env:
-          ANSYS_GEOMETERY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
         run: |
           .venv/Scripts/activate
           python geometry-mechanical-dpf/wf_gmd_01_geometry.py
@@ -104,7 +112,6 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          ANSYS_GEOMETRY_RELEASE: ${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_01_geometry.py'
         run: |
           .venv/Scripts/activate
@@ -137,7 +144,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2]
+        ansys-release: [24.1, 24.2, 25.1]
     container:
         image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
         options: --entrypoint /bin/bash

@@ -30,7 +30,7 @@ env:
   PYMECHANICAL_PORT: 10000
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 24.2
+  ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: false
   PYMECHANICAL_START_INSTANCE: false
 
@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2]
+        ansys-release: [24.1, 24.2, 25.1]
     steps:
 
       - name: Checkout code
@@ -131,7 +131,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2]
+        ansys-release: [24.1, 24.2, 25.1]
     steps:
 
       - name: Checkout code
