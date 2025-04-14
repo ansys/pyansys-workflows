@@ -76,15 +76,15 @@ jobs:
         run: |
           # If we are on 25.1 or above - the tag name is different - remember we are on powershell
           if (${{ matrix.ansys-release }} -ge 25.2) {
-            $env:ANSYS_GEOMETERY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:core-windows-${{ matrix.ansys-release }}"
+            $env:ANSYS_GEOMETRY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:core-windows-${{ matrix.ansys-release }}"
           } else {
-            $env:ANSYS_GEOMETERY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}"
+            $env:ANSYS_GEOMETRY_RELEASE = "${{ env.GEOMETRY_DOCKER_IMAGE }}:windows-${{ matrix.ansys-release }}"
           }
-          Write-Host "Running Geometry service container: $env:ANSYS_GEOMETERY_RELEASE"
+          Write-Host "Running Geometry service container: $env:ANSYS_GEOMETRY_RELEASE"
           # Pull the container image
-          docker pull $env:ANSYS_GEOMETERY_RELEASE
-          # Define the ANSYS_GEOMETERY_RELEASE environment variable to be used in the next stages
-          echo "ANSYS_GEOMETERY_RELEASE=$env:ANSYS_GEOMETERY_RELEASE" | Out-File -FilePath $env:GITHUB_ENV -Append
+          docker pull $env:ANSYS_GEOMETRY_RELEASE
+          # Define the ANSYS_GEOMETRY_RELEASE environment variable to be used in the next stages
+          echo "ANSYS_GEOMETRY_RELEASE=$env:ANSYS_GEOMETRY_RELEASE" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       - name: Run the PyAnsys Geometry script
         run: |
