@@ -21,4 +21,4 @@ pythreejs==2.4.2
 pillow==11.2.1
 ipyvtklink==0.2.3
 ipykernel==6.29.5
-pyvista[jupyter]==0.44.2
+pyvista[jupyter]==0.45.0
