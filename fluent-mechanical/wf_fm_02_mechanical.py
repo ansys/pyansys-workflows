@@ -68,7 +68,8 @@ manifold's performance subjected to thermal cycling.
 import os
 from pathlib import Path
 
-from ansys.mechanical.core import launch_mechanical
+from ansys.mechanical.core import App
+from ansys.mechanical.core.embedding import AddinConfiguration
 from ansys.mechanical.core.examples import download_file
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
@@ -98,7 +99,9 @@ if "DOC_BUILD" in os.environ:
 # Start a PyMechanical app
 # ------------------------
 #
-mechanical = launch_mechanical(batch=True, cleanup_on_exit=False)
+config = AddinConfiguration("WorkBench")
+config.no_act_addins = True
+mechanical = App(globals=globals(), config=config)
 print(mechanical)
 
 
@@ -129,39 +132,11 @@ temp_htc_data_high_path = os.path.join(OUTPUT_DIR, "htc_temp_mapping_HIGH_TEMP.c
 temp_htc_data_med_path = os.path.join(OUTPUT_DIR, "htc_temp_mapping_MEDIUM_TEMP.csv")
 temp_htc_data_low_path = os.path.join(OUTPUT_DIR, "htc_temp_mapping_LOW_TEMP.csv")
 
-all_input_files = {
-    "geometry_path": geometry_path,
-    "material_path": material_path,
-    "temp_htc_data_high_path": temp_htc_data_high_path,
-    "temp_htc_data_med_path": temp_htc_data_med_path,
-    "temp_htc_data_low_path": temp_htc_data_low_path,
-}
-
-# Upload to Mechanical Remote session server and get the file paths
-
-project_directory = mechanical.project_directory
-print(f"project directory = {project_directory}")
-for input_file_name, input_file_path in all_input_files.items():
-
-    # Upload the file to the project directory.
-    mechanical.upload(file_name=input_file_path, file_location_destination=project_directory)
-
-    # Build the path relative to project directory.
-    base_name = os.path.basename(input_file_path)
-    combined_path = os.path.join(project_directory, base_name)
-    server_file_path = combined_path.replace("\\", "\\\\")
-    mechanical.run_python_script(f"{input_file_name} = '{server_file_path}'")
-    result = mechanical.run_python_script(f"{input_file_name}")
-    print(f"path of {input_file_name} on server: {result}")
-
 
 ###############################################################################
 # Configure graphics for image export
 # -----------------------------------
 #
-
-mechanical.run_python_script(
-    """
 ExtAPI.Graphics.Camera.SetSpecificViewOrientation(
     Ansys.Mechanical.DataModel.Enums.ViewOrientationType.Iso
 )
@@ -175,40 +150,30 @@ settings_720p.Background = Ansys.Mechanical.DataModel.Enums.GraphicsBackgroundTy
 settings_720p.Width = 1280
 settings_720p.Height = 720
 settings_720p.CurrentGraphicsDisplay = False
-"""
-)
+
 
 ###############################################################################
 # Import geometry
 # ---------------
 #
 
-mechanical.run_python_script(
-    """
 import os
+
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
-geometry_import_format = (
-    Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic
-)
+geometry_import_format = Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic
 geometry_import_preferences = Ansys.ACT.Mechanical.Utilities.GeometryImportPreferences()
 geometry_import_preferences.ProcessNamedSelections = True
 geometry_import_preferences.NamedSelectionKey = ""
 geometry_import_preferences.ProcessMaterialProperties = True
 geometry_import_preferences.ProcessCoordinateSystems = True
-geometry_import.Import(
-    geometry_path, geometry_import_format, geometry_import_preferences
-)
-project_directory = ExtAPI.DataModel.Project.ProjectDirectory
+geometry_import.Import(geometry_path, geometry_import_format, geometry_import_preferences)
 ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
-)
-"""
+    os.path.join(OUTPUT_DIR, "geometry.png"), image_export_format, settings_720p
 )
 
-# Download the geometry image and display it
-mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
+
 if GRAPHICS_BOOL:
     display_image("geometry.png")
 
@@ -217,8 +182,6 @@ if GRAPHICS_BOOL:
 # Import material, assign it to the bodies and create Named Selections
 # --------------------------------------------------------------------
 #
-mechanical.run_python_script(
-    """
 materials = ExtAPI.DataModel.Project.Model.Materials
 materials.Import(material_path)
 materials.RefreshMaterials()
@@ -255,15 +218,11 @@ SPACERS_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "spacers"
 EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "em_outer_surface"][
     0
 ]
-"""
-)
 
 ###############################################################################
 # Set up the mesh and generate
 # ----------------------------
 #
-mechanical.run_python_script(
-    """
 MESH = Model.Mesh
 
 MESH.UseAdaptiveSizing = True
@@ -276,13 +235,9 @@ MESH.GenerateMesh()
 
 ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "mesh.png"), image_export_format, settings_720p
-)
-"""
+    os.path.join(OUTPUT_DIR, "mesh.png"), image_export_format, settings_720p
 )
 
-# Download the mesh image and display it
-mechanical.download(files=os.path.join(project_directory, "mesh.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("mesh.png")
 
@@ -290,9 +245,6 @@ if GRAPHICS_BOOL:
 # Add Transient Thermal Analysis and set up the analysis settings
 # ---------------------------------------------------------------
 #
-
-mechanical.run_python_script(
-    """
 Model.AddTransientThermalAnalysis()
 
 # Store all main tree nodes as variables
@@ -306,23 +258,23 @@ ANA_SETTINGS.SolverType = SolverType.Direct
 ANA_SETTINGS.NonLinearFormulation = NonLinearFormulationType.Full
 
 ANA_SETTINGS.NumberOfSteps = 1
-ANA_SETTINGS.SetStepEndTime(1, Quantity('720[s]'))
+ANA_SETTINGS.SetStepEndTime(1, Quantity("720[s]"))
 ANA_SETTINGS.NumberOfSteps = 14
 analysis_step = (
-    (1, Quantity('1e-3[s]')),
-    (2, Quantity('2e-3[s]')),
-    (3, Quantity('20[s]')),
-    (4, Quantity('30[s]')),
-    (5, Quantity('320[s]')),
-    (6, Quantity('330[s]')),
-    (7, Quantity('350[s]')),
-    (8, Quantity('360[s]')),
-    (9, Quantity('380[s]')),
-    (10, Quantity('390[s]')),
-    (11, Quantity('680[s]')),
-    (12, Quantity('690[s]')),
-    (13, Quantity('710[s]')),
-    (14, Quantity('720[s]'))
+    (1, Quantity("1e-3[s]")),
+    (2, Quantity("2e-3[s]")),
+    (3, Quantity("20[s]")),
+    (4, Quantity("30[s]")),
+    (5, Quantity("320[s]")),
+    (6, Quantity("330[s]")),
+    (7, Quantity("350[s]")),
+    (8, Quantity("360[s]")),
+    (9, Quantity("380[s]")),
+    (10, Quantity("390[s]")),
+    (11, Quantity("680[s]")),
+    (12, Quantity("690[s]")),
+    (13, Quantity("710[s]")),
+    (14, Quantity("720[s]")),
 )
 for i, q in analysis_step:
     ANA_SETTINGS.SetStepEndTime(i, q)
@@ -333,47 +285,75 @@ selection = NS_GRP.Children[8]
 External_Convection_Load_1.Location = selection
 
 External_Convection_Load_1.FilmCoefficient.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'), Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_1.FilmCoefficient.Output.DiscreteValues = [
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]'), Quantity('60[W m^-1 m^-1 K^-1]'),
-    Quantity('60[W m^-1 m^-1 K^-1]')
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
+    Quantity("60[W m^-1 m^-1 K^-1]"),
 ]
 
 External_Convection_Load_1.AmbientTemperature.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'), Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_1.AmbientTemperature.Output.DiscreteValues = [
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]'), Quantity('473.15[K]'),
-    Quantity('473.15[K]')
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
+    Quantity("473.15[K]"),
 ]
 
 External_Convection_Load_2 = TRANS_THERM.AddConvection()
@@ -381,47 +361,75 @@ selection = NS_GRP.Children[7]
 External_Convection_Load_2.Location = selection
 
 External_Convection_Load_2.FilmCoefficient.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'), Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_2.FilmCoefficient.Output.DiscreteValues = [
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]'), Quantity('20[W m^-1 m^-1 K^-1]'),
-    Quantity('20[W m^-1 m^-1 K^-1]')
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
+    Quantity("20[W m^-1 m^-1 K^-1]"),
 ]
 
 External_Convection_Load_2.AmbientTemperature.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'),Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_2.AmbientTemperature.Output.DiscreteValues = [
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]'), Quantity('498.15[K]'),
-    Quantity('498.15[K]')
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
+    Quantity("498.15[K]"),
 ]
 
 External_Convection_Load_3 = TRANS_THERM.AddConvection()
@@ -429,69 +437,91 @@ selection = NS_GRP.Children[6]
 External_Convection_Load_3.Location = selection
 
 External_Convection_Load_3.FilmCoefficient.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'), Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_3.FilmCoefficient.Output.DiscreteValues = [
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]'), Quantity('500[W m^-1 m^-1 K^-1]'),
-    Quantity('500[W m^-1 m^-1 K^-1]')
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
+    Quantity("500[W m^-1 m^-1 K^-1]"),
 ]
 
 External_Convection_Load_3.AmbientTemperature.Inputs[0].DiscreteValues = [
-    Quantity('0[s]'), Quantity('1e-3[s]'),
-    Quantity('2e-3[s]'), Quantity('20[s]'),
-    Quantity('30[s]'), Quantity('320[s]'),
-    Quantity('330[s]'), Quantity('350[s]'),
-    Quantity('360[s]'), Quantity('380[s]'),
-    Quantity('390[s]'), Quantity('680[s]'),
-    Quantity('690[s]'), Quantity('710[s]'),
-    Quantity('720[s]')
+    Quantity("0[s]"),
+    Quantity("1e-3[s]"),
+    Quantity("2e-3[s]"),
+    Quantity("20[s]"),
+    Quantity("30[s]"),
+    Quantity("320[s]"),
+    Quantity("330[s]"),
+    Quantity("350[s]"),
+    Quantity("360[s]"),
+    Quantity("380[s]"),
+    Quantity("390[s]"),
+    Quantity("680[s]"),
+    Quantity("690[s]"),
+    Quantity("710[s]"),
+    Quantity("720[s]"),
 ]
 
 External_Convection_Load_3.AmbientTemperature.Output.DiscreteValues = [
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]'), Quantity('373.15[K]'),
-    Quantity('373.15[K]')
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
+    Quantity("373.15[K]"),
 ]
 
 group_list = [External_Convection_Load_1, External_Convection_Load_2, External_Convection_Load_3]
 grouping_folder = Tree.Group(group_list)
 tree_grouping_folder_70 = DataModel.GetObjectsByName("New Folder")
-"""
-)
+
 
 ###############################################################################
 # Use the output from Fluent to import the temperature and HTC data
 # -----------------------------------------------------------------
 #
 # Add imported convection
-result = mechanical.run_python_script(
-    """
 Imported_Load_Group = TRANS_THERM.AddImportedLoadExternalData()
-imported_load_group_61=Imported_Load_Group
+imported_load_group_61 = Imported_Load_Group
 imported_convection_62 = Imported_Load_Group.AddImportedConvection()
-"""
-)
-result = mechanical.run_python_script(
-    """
+
 external_data_files = Ansys.Mechanical.ExternalData.ExternalDataFileCollection()
 external_data_files.SaveFilesWithProject = False
 
@@ -511,9 +541,7 @@ import_settings.SkipRows = 1
 import_settings.SkipFooter = 0
 import_settings.Delimiter = ","
 import_settings.AverageCornerNodesToMidsideNodes = False
-import_settings.UseColumn(
-    0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A"
-)
+import_settings.UseColumn(0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A")
 import_settings.UseColumn(
     1, MechanicalEnums.ExternalData.VariableType.XCoordinate, "m", "X Coordinate@B"
 )
@@ -527,8 +555,10 @@ import_settings.UseColumn(
     4, MechanicalEnums.ExternalData.VariableType.Temperature, "K", "Temperature@E"
 )
 import_settings.UseColumn(
-    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
-    "W m^-2 K^-1", "Heat Transfer Coefficient@F"
+    5,
+    MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
+    "W m^-2 K^-1",
+    "Heat Transfer Coefficient@F",
 )
 
 external_data_file_2 = Ansys.Mechanical.ExternalData.ExternalDataFile()
@@ -547,9 +577,7 @@ import_settings.SkipRows = 1
 import_settings.SkipFooter = 0
 import_settings.Delimiter = ","
 import_settings.AverageCornerNodesToMidsideNodes = False
-import_settings.UseColumn(
-    0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A"
-)
+import_settings.UseColumn(0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A")
 import_settings.UseColumn(
     1, MechanicalEnums.ExternalData.VariableType.XCoordinate, "m", "X Coordinate@B"
 )
@@ -563,8 +591,10 @@ import_settings.UseColumn(
     4, MechanicalEnums.ExternalData.VariableType.Temperature, "K", "Temperature@E"
 )
 import_settings.UseColumn(
-    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
-    "W m^-2 K^-1", "Heat Transfer Coefficient@F"
+    5,
+    MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
+    "W m^-2 K^-1",
+    "Heat Transfer Coefficient@F",
 )
 
 external_data_file_3 = Ansys.Mechanical.ExternalData.ExternalDataFile()
@@ -583,9 +613,7 @@ import_settings.SkipRows = 1
 import_settings.SkipFooter = 0
 import_settings.Delimiter = ","
 import_settings.AverageCornerNodesToMidsideNodes = False
-import_settings.UseColumn(
-    0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A"
-)
+import_settings.UseColumn(0, MechanicalEnums.ExternalData.VariableType.NodeId, "", "Node ID@A")
 import_settings.UseColumn(
     1, MechanicalEnums.ExternalData.VariableType.XCoordinate, "m", "X Coordinate@B"
 )
@@ -599,31 +627,39 @@ import_settings.UseColumn(
     4, MechanicalEnums.ExternalData.VariableType.Temperature, "K", "Temperature@E"
 )
 import_settings.UseColumn(
-    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
-    "W m^-2 K^-1", "Heat Transfer Coefficient@F"
+    5,
+    MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,
+    "W m^-2 K^-1",
+    "Heat Transfer Coefficient@F",
 )
 
 imported_load_group_61.ImportExternalDataFiles(external_data_files)
-"""
-)
 
-result = mechanical.run_python_script(
-    """
+
 table = imported_load_group_61.Children[0].GetTableByName("Film Coefficient")
 numofsteps = 15
 Film_Coeff = [
     "File1:Heat Transfer Coefficient@F",
     "File2:Heat Transfer Coefficient@F",
-    "File3:Heat Transfer Coefficient@F"
+    "File3:Heat Transfer Coefficient@F",
 ]
-Amb_Temp = [
-    "File1:Temperature@E",
-    "File2:Temperature@E",
-    "File3:Temperature@E"
-]
+Amb_Temp = ["File1:Temperature@E", "File2:Temperature@E", "File3:Temperature@E"]
 Ana_time = [
-    "0", "1e-3", "2e-3", "20", "30", "320", "330", "350", "360", "380", "390",
-    "680", "690", "710", "720"
+    "0",
+    "1e-3",
+    "2e-3",
+    "20",
+    "30",
+    "320",
+    "330",
+    "350",
+    "360",
+    "380",
+    "390",
+    "680",
+    "690",
+    "710",
+    "720",
 ]
 
 for i in range(numofsteps - 1):
@@ -638,23 +674,15 @@ selection = NS_GRP.Children[4]
 imported_convection_62.Location = selection
 imported_load_id = imported_convection_62.ObjectId
 imported_load = DataModel.GetObjectById(imported_load_id)
-"""
-)
 
-mechanical.run_python_script(
-    """
 imported_load.ImportLoad()
 
 Tree.Activate([imported_load])
 ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "imported_temperature.png"), image_export_format, settings_720p
+    os.path.join(OUTPUT_DIR, "imported_temperature.png"), image_export_format, settings_720p
 )
-"""
-)
-mechanical.download(
-    files=os.path.join(project_directory, "imported_temperature.png"), target_dir=OUTPUT_DIR
-)
+
 if GRAPHICS_BOOL:
     display_image("imported_temperature.png")
 
@@ -662,8 +690,6 @@ if GRAPHICS_BOOL:
 # Solve and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
 # Insert results objects
 
 Temp = TRANS_THERM_SOLN.AddTemperature()
@@ -681,13 +707,9 @@ ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (
     Ansys.Mechanical.DataModel.MechanicalEnums.Graphics.ExtraModelDisplay.NoWireframe
 )
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "temperature.png"), image_export_format, settings_720p
-)
-"""
+    os.path.join(OUTPUT_DIR, "temperature.png"), image_export_format, settings_720p
 )
 
-# Download the temperature image and display it
-mechanical.download(files=os.path.join(project_directory, "temperature.png"), target_dir=OUTPUT_DIR)
 if GRAPHICS_BOOL:
     display_image("temperature.png")
 
@@ -696,8 +718,6 @@ if GRAPHICS_BOOL:
 # Setup Structural Analysis
 # -------------------------
 #
-mechanical.run_python_script(
-    """
 Model.AddStaticStructuralAnalysis()
 
 # Define analysis settings
@@ -708,27 +728,27 @@ STAT_STRUC_SOLN = STAT_STRUC.Solution
 STAT_STRUC_ANA_SETTING = STAT_STRUC.Children[0]
 
 STAT_STRUC_ANA_SETTING.NumberOfSteps = 1
-STAT_STRUC_ANA_SETTING.SetStepEndTime(1, Quantity('720[s]'))
+STAT_STRUC_ANA_SETTING.SetStepEndTime(1, Quantity("720[s]"))
 STAT_STRUC_ANA_SETTING.NumberOfSteps = 14
 
 analysis_step = (
-    (1, Quantity('1e-3[s]')),
-    (2, Quantity('2e-3[s]')),
-    (3, Quantity('20[s]')),
-    (4, Quantity('30[s]')),
-    (5, Quantity('320[s]')),
-    (6, Quantity('330[s]')),
-    (7, Quantity('350[s]')),
-    (8, Quantity('360[s]')),
-    (9, Quantity('380[s]')),
-    (10, Quantity('390[s]')),
-    (11, Quantity('680[s]')),
-    (12, Quantity('690[s]')),
-    (13, Quantity('710[s]')),
-    (14, Quantity('720[s]'))
+    (1, Quantity("1e-3[s]")),
+    (2, Quantity("2e-3[s]")),
+    (3, Quantity("20[s]")),
+    (4, Quantity("30[s]")),
+    (5, Quantity("320[s]")),
+    (6, Quantity("330[s]")),
+    (7, Quantity("350[s]")),
+    (8, Quantity("360[s]")),
+    (9, Quantity("380[s]")),
+    (10, Quantity("390[s]")),
+    (11, Quantity("680[s]")),
+    (12, Quantity("690[s]")),
+    (13, Quantity("710[s]")),
+    (14, Quantity("720[s]")),
 )
 for i, q in analysis_step:
-    STAT_STRUC_ANA_SETTING.SetStepEndTime(i,q)
+    STAT_STRUC_ANA_SETTING.SetStepEndTime(i, q)
 STAT_STRUC_ANA_SETTING.Activate()
 
 
@@ -740,9 +760,24 @@ imported_load = DataModel.GetObjectsByName("Imported Body Temperature")[0]
 table = imported_load.GetTableByName("Source Time")
 numofsteps = 14
 nCol = 2
-Ana_time = ["1e-3","2e-3","20","30","320","330","350","360","380","390","680","690","710","720"]
+Ana_time = [
+    "1e-3",
+    "2e-3",
+    "20",
+    "30",
+    "320",
+    "330",
+    "350",
+    "360",
+    "380",
+    "390",
+    "680",
+    "690",
+    "710",
+    "720",
+]
 
-for i in range(numofsteps-1):
+for i in range(numofsteps - 1):
     table.Add(None)
 
 for i in range(numofsteps):
@@ -756,15 +791,11 @@ imported_load.ImportLoad()
 Fixed_Support = STAT_STRUC.AddFixedSupport()
 selection = NS_GRP.Children[3]
 Fixed_Support.Location = selection
-"""
-)
 
 ###############################################################################
 # Solve and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
 SOLN = STAT_STRUC.Solution
 
 TOT_DEF1 = SOLN.AddTotalDeformation()
@@ -791,26 +822,17 @@ ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (
     Ansys.Mechanical.DataModel.MechanicalEnums.Graphics.ExtraModelDisplay.NoWireframe
 )
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "deformation.png"), image_export_format, settings_720p
+    os.path.join(OUTPUT_DIR, "deformation.png"), image_export_format, settings_720p
 )
 
 Tree.Activate([EQV_STRS1])
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "stress.png"), image_export_format, settings_720p
+    os.path.join(OUTPUT_DIR, "stress.png"), image_export_format, settings_720p
 )
 
 Tree.Activate([EQV_PLAS_STRN1])
 ExtAPI.Graphics.ExportImage(
-    os.path.join(project_directory, "plastic_strain.png"), image_export_format, settings_720p
-)
-"""
-)
-
-# Download the results images to local directory
-mechanical.download(files=os.path.join(project_directory, "deformation.png"), target_dir=OUTPUT_DIR)
-mechanical.download(files=os.path.join(project_directory, "stress.png"), target_dir=OUTPUT_DIR)
-mechanical.download(
-    files=os.path.join(project_directory, "plastic_strain.png"), target_dir=OUTPUT_DIR
+    os.path.join(OUTPUT_DIR, "plastic_strain.png"), image_export_format, settings_720p
 )
 
 # Deformation

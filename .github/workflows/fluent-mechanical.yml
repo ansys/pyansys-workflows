@@ -132,6 +132,9 @@ jobs:
       fail-fast: false
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
+    container:
+            image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
+            options: --entrypoint /bin/bash
     steps:
 
       - name: Checkout code
@@ -142,14 +145,18 @@ jobs:
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+        run: |
+            apt update
+            apt install --reinstall ca-certificates
+            apt install software-properties-common -y
+            add-apt-repository ppa:deadsnakes/ppa -y
+            apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv make
+            python${{ env.MAIN_PYTHON_VERSION }} -m venv .venv
 
       - name: Install system dependencies
         run: |
-          sudo apt-get update
-          sudo apt-get install -y nodejs npm graphviz xvfb
+          apt-get update
+          apt-get install -y nodejs npm graphviz xvfb
           npm install -g @mermaid-js/mermaid-cli
 
       - name: Install dependencies
@@ -159,22 +166,6 @@ jobs:
           . .venv/bin/activate
           pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download (if needed) launch, and validate Mechanical service
-        env:
-          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
-          MECHANICAL_IMAGE: ${{ env.MECHANICAL_DOCKER_IMAGE }}:${{ matrix.ansys-release }}.0
-        run: |
-          docker pull ${{ env.MECHANICAL_IMAGE }}
-          docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_IMAGE }} > log.txt &
-          grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
-
       - name: Check out the fluent outputs
         uses: actions/download-artifact@v4
         with:
@@ -182,9 +173,15 @@ jobs:
           path: fluent-mechanical/outputs
 
       - name: Run the PyMechanical script
+        env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
           . .venv/bin/activate
-          xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
+          xvfb-run mechanical-env python fluent-mechanical/wf_fm_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -214,12 +211,17 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
           . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
-          xvfb-run make html
+          xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymech-docs-logs${{ matrix.ansys-release }}.txt
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
