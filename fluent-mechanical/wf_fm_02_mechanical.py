@@ -101,7 +101,8 @@ if "DOC_BUILD" in os.environ:
 #
 config = AddinConfiguration("WorkBench")
 config.no_act_addins = True
-mechanical = App(globals=globals(), config=config)
+mechanical = App(config=config)
+mechanical.update_globals(globals())
 print(mechanical)
 
 
