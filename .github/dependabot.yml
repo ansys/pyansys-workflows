@@ -4,9 +4,6 @@ updates:
     directory: "/doc"
     schedule:
       interval: "weekly"
-    labels:
-      - "maintenance"
-      - "dependencies"
     assignees:
       - "pyansys-ci-bot"
     commit-message:
@@ -19,8 +16,6 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    labels:
-      - "maintenance"
     assignees:
       - "pyansys-ci-bot"
     commit-message:
