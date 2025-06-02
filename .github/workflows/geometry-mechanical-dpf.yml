@@ -32,6 +32,8 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: true
+  DOCKER_IMAGE_PRIME_NAME: ghcr.iop/ansys/prime
+  DOCKER_IMAGE_PRIME_TAG: '25.2.0'
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
@@ -90,6 +92,11 @@ jobs:
           # Define the ANSYS_GEOMETRY_RELEASE environment variable to be used in the next stages
           echo "ANSYS_GEOMETRY_RELEASE=$env:ANSYS_GEOMETRY_RELEASE" | Out-File -FilePath $env:GITHUB_ENV -Append
 
+
+      - name: Pull prime service
+        run: |
+          docker pull ${{ env.DOCKER_IMAGE_PRIME_NAME }}:${{ env.DOCKER_IMAGE_PRIME_TAG }}
+    
       - name: Run the PyAnsys Geometry script
         run: |
           .venv/Scripts/activate
