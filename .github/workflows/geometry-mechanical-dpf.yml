@@ -32,7 +32,7 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: true
-  DOCKER_IMAGE_PRIME_NAME: ghcr.iop/ansys/prime
+  DOCKER_IMAGE_PRIME_NAME: ghcr.io/ansys/prime
   DOCKER_IMAGE_PRIME_TAG: '25.2.0'
 
 concurrency:
