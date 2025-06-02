@@ -14,17 +14,17 @@ if "%1" == "" goto help
 if "%1" == "clean" goto clean
 
 REM Check if vtk is installed - if so, uninstall and install vtk-osmesa
-set IS_VTK_INSTALLED=0
-pip show vtk >NUL 2>NUL
-if %ERRORLEVEL% EQU 0 (
-	set IS_VTK_INSTALLED=1
-	echo Uninstalling vtk...
-	pip uninstall -y vtk
-)
-if %IS_VTK_INSTALLED% EQU 1 (
-	echo Installing vtk-osmesa...
-	pip install --extra-index-url https://wheels.vtk.org vtk-osmesa==9.3.0
-)
+REM set IS_VTK_INSTALLED=0
+REM pip show vtk >NUL 2>NUL
+REM if %ERRORLEVEL% EQU 0 (
+REM 	set IS_VTK_INSTALLED=1
+REM 	echo Uninstalling vtk...
+REM 	pip uninstall -y vtk
+REM )
+REM if %IS_VTK_INSTALLED% EQU 1 (
+REM 	echo Installing vtk-osmesa...
+REM 	pip install --extra-index-url https://wheels.vtk.org vtk-osmesa==9.3.0
+REM )
 
 %SPHINXBUILD% >NUL 2>NUL
 if errorlevel 9009 (
