@@ -31,7 +31,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
-  RUN_DOC_BUILD: false
+  RUN_DOC_BUILD: true
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
