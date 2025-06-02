@@ -33,6 +33,10 @@ env:
   ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: false
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   geometry:
     name: Geometry
@@ -40,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [25.1]
     steps:
 
       - name: Checkout code
