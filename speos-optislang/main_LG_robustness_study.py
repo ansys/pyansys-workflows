@@ -36,7 +36,7 @@ from ansys.optislang.core.project_parametric import (
     StochasticParameter,
 )
 import ansys.speos.core as core
-from ansys.speos.core import Project, Body
+from ansys.speos.core import Body, Project
 from ansys.speos.core.simulation import SimulationDirect
 from ansys.speos.core.source import SourceSurface
 from comtypes.client import CreateObject
