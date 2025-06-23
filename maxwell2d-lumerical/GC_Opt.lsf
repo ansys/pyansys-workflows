@@ -1,0 +1,301 @@
+# This script file builds the simulation file for the apodized grating coupler, GC
+# entirely using script commands, with the goal to focus the output laser beam at a specific distance. Objects are added to the simulation file
+# using the specific add commands. Then the script reads the coordinates of the nodal points calculated from Maxwell
+# and sets the 5th solution as the target distance of the foccused beam. An optimization is created based on the define FoM in the analysis group & uses as
+# as optimization parameters, the pitch, the etch depth and the minimum duty cycle of the GC.
+
+clear;
+switchtolayout;
+
+selectall; deleteall; # select and delete all objects to make sure we start with a clean project file
+setprofile = 0; # not add the profile monitor for the first run; 1 to set this monitor 
+um=1e-6;
+
+#################################### add simulation region/mesh/source  ##############################
+addfdtd;
+set("simulation time", 3000e-15); # the unit is second
+set("dimension", "2D");
+set("x",16*um);
+set("y",-0.75*um);
+set("z",0*um);
+set("x span", 48*um);
+set("y span", 3.5*um);
+set("mesh accuracy", 2);
+
+addmode; #addsource
+set("injection axis","x");
+set("x",-3*um);
+set("y",-1*um);
+set("y span",1*um);
+set("z",0);
+set("z span",1.14*um);
+set("wavelength start", 1550e-9);
+set("wavelength stop", 1550e-9);
+
+adddftmonitor; #addmonitor
+set("name","near_field");
+set("monitor type",6);
+set("x",24e-6); set("x span",60e-6);
+set("y",0.7e-6);
+set("z",0e-6); set("z span",15.85e-6);
+
+############################################ Define geometry ##############################################
+# add structures
+
+
+###########     Scripted part of the Structure Group        ###########
+addstructuregroup; # add an apodised grating
+set("name","GC_2D");
+set("x",0); # sets the x position
+
+set("y",-1.1*um);
+
+set("z",0*um);
+adduserprop("index",0,2);
+adduserprop("sidewall_angle",0,90);
+adduserprop("duty cycle",0,0.8);
+adduserprop("n_uniform_gratings",0,1);
+adduserprop("dc_min",0,0.476);
+adduserprop("dc_uniform",0,0.85);
+adduserprop("n_apodized_gratings",0,30);
+adduserprop("target length",0,50);
+adduserprop("h total",2,0.3*um);
+adduserprop("etch depth",2,0.3*um);
+adduserprop("input length",2,10*um);
+adduserprop("output length",2,80*um);
+adduserprop("pitch_uniform",2,0.761*um);
+adduserprop("material",5,"<Object defined dielectric>");
+set('script','
+
+deleteall;
+fill_width_uniform = pitch_uniform*dc_uniform;
+etch_width_uniform = pitch_uniform*(1-dc_uniform);
+
+
+etch_width_apod = linspace(dc_uniform, dc_min, n_apodized_gratings);
+
+n_periods = ceil(%target length%/pitch_uniform);
+fill_width = pitch_uniform*dc_uniform;
+etch_width = pitch_uniform*(1-dc_uniform);
+L = n_periods*pitch_uniform + etch_width;
+sidewall_angle_rad = (90-sidewall_angle)*pi/180;
+
+
+if(%etch depth% > %h total%) { 
+  %etch depth% = %h total%;
+}
+
+# input waveguide
+vtx = [-%input length%,%h total%;0,%h total%;%h total%*tan(sidewall_angle_rad),0;-%input length%-%h total%*tan(sidewall_angle_rad),0];  # microns
+addpoly;
+set("name","input waveguide");
+set("vertices", vtx);
+set("x", 0);
+set("y", 0);
+set("material",material); 
+if(get("material")=="<Object defined dielectric>") 
+{ set("index",index); }
+set("override mesh order from material database", 1);
+set("mesh order", 3);
+
+# lower layer below grating
+if(%etch depth% < %h total%) {
+  addrect;
+  set("name","lower layer");
+  set("x min",-%input length%);
+  set("x max",%output length%);
+  set("y min",0);
+  set("y max",%h total%-%etch depth%);
+  set("material",material); 
+  if(get("material")=="<Object defined dielectric>") 
+   { set("index",index); }
+}
+
+#add grating
+for(i=1:(n_uniform_gratings+n_apodized_gratings)){
+  
+  if (i<=n_uniform_gratings){
+    vtx = [pitch_uniform*(i-1)+etch_width_uniform,%h total%;pitch_uniform*i,%h total%;pitch_uniform*i+%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%;pitch_uniform*(i-1)+etch_width_uniform-%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%];  # microns
+    addpoly;
+    set("name","grating");
+    set("vertices", vtx);
+    set("x", 0);
+    set("y", 0);
+    set("material",material); 
+    if(get("material")=="<Object defined dielectric>") 
+   { set("index",index); }
+  }else{
+    
+    ew = pitch_uniform*(1-etch_width_apod(i-n_uniform_gratings));
+    vtx = [pitch_uniform*(i-1)+ew,%h total%;pitch_uniform*i,%h total%;pitch_uniform*i+%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%;pitch_uniform*(i-1)+ew-%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%];  # microns
+    addpoly;
+    set("name","grating");
+    set("vertices", vtx);
+    set("x", 0);
+    set("y", 0);
+    set("material",material); 
+    if(get("material")=="<Object defined dielectric>") 
+   { set("index",index); }
+  }
+  
+}
+
+selectall;
+
+set("z",0);
+set("z span",1e-6);
+
+');
+
+
+
+
+addrect; # add 
+set("name","cladding");
+set("x",19.5*um); # sets the x position
+set("x span",121*um); # sets the x position
+set("y",-0.3*um);
+set("y span",1.6*um);
+set("z",0*um);
+set("z span",1*um);
+set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
+set("override mesh order from material database", true); 
+set("mesh order", 5); # material name has to be exact
+
+# add structures
+addrect; # add a 
+set("name","BOx");
+set("x",19.5*um); # sets the x position
+set("x span",121*um); # sets the x position
+set("y",-1.55*um);
+set("y span",0.9*um);
+set("z",0*um);
+set("z span",1*um);
+set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
+#set("override mesh order from material database", true); 
+#set("mesh order", 5); # material name has to be exact
+
+# add structures
+addrect; # add a 
+set("name","Substrate");
+set("x",19.5*um); # sets the x position
+set("x span",121*um); # sets the x position
+set("y",-6*um);
+set("y span",8*um);
+set("z",0*um);
+set("z span",1*um);
+set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
+set("override mesh order from material database", true); 
+set("mesh order", 1); # material name has to be exact
+
+## Read Data from ASCII file ##
+cd(filedirectory(currentscriptname));
+M=readdata("legend.txt");
+Mselect=M(5,1)*1e-6;                      
+
+################Analysis Group#######################
+ ## Figure of Merit --- Focus Beam ##
+##############################################
+addanalysisgroup;
+set("name","FoM_beam");
+set("x", 0);
+set("y", 0);
+set("z", 0);
+
+addanalysisresult("FoM");
+addanalysisprop("Mselect",2,M(5,1)*um);
+###########     Scripted part of the Analysis Group        ###########
+
+set('analysis script','
+
+# Define far field position vector
+
+x=linspace(-40-06,-5e-06,800);
+y=linspace(Mselect-5e-06,Mselect+5e-06,800);
+
+# Do far field projection
+E_H_far=farfieldexact2d("nearfield_profile",x,y,{"field":"E and H"});
+E_far = E_H_far.E;
+H_far = E_H_far.H;
+
+
+Ex=E_far(:,:,:,:,1);
+Ey=E_far(:,:,:,:,2);
+Ez=E_far(:,:,:,:,3);
+ 
+Hx=H_far(:,:,:,:,1);
+Hy=H_far(:,:,:,:,2);
+Hz=H_far(:,:,:,:,3);
+
+E2_far=(pinch(abs(Ex)))^2+(pinch(abs(Ey)))^2+(pinch(abs(Ez)))^2;
+H2_far=(pinch(abs(Hx)))^2+(pinch(abs(Hy)))^2+(pinch(abs(Hz)))^2;
+
+#FoM=integrate(E2_far,1:2,x,y);
+
+ind2 = find(y,Mselect);
+A=pinch(E2_far,2,ind2);
+FoM=max(A);
+
+');
+
+adddftmonitor;
+set("name","nearfield_profile");
+set("monitor type",6);  # 2D y-normal
+set("x",26*um);
+set("x span",65*um);
+set("y",0.7*um);
+set("z",0);
+addtogroup("FoM_beam");
+
+########################## Save model ########################
+
+save("Testsim");
+
+########################## add Optimization sweep ########################
+
+addsweep(1);
+setsweep("optimization", "name", "Intensity");
+setsweep("Intensity", "Type", "Maximize");
+setsweep("Intensity", "algorithm", "Particle Swarm");
+setsweep("Intensity", "maximum generations", 5);
+setsweep("Intensity", "generation size", 8);
+setsweep("Intensity", "tolerance", 0);
+
+# define the grating pitch size
+para1 = struct;
+para1.Parameter = "::model::GC_2D::pitch_uniform";
+para1.Type = "Length";
+para1.Min = 0.7e-6;
+para1.Max = 0.9e-6;
+para1.Units = "microns";
+addsweepparameter("Intensity", para1);
+
+# define the grating etch depth
+para2 = struct;
+para2.Parameter = "::model::GC_2D::etch depth";
+para2.Type = "Length";
+para2.Min = 0.1e-6;
+para2.Max = 0.3e-6;
+para2.Units = "microns";
+addsweepparameter("Intensity", para2);
+
+para3 = struct;
+para3.Parameter = "::model::GC_2D::dc_min";
+para3.Type = "Number";
+para3.Min = 0.1;
+para3.Max = 0.6;
+para3.Units = "microns";
+addsweepparameter("Intensity", para3);
+
+# define figure of merit
+result_1 = struct;
+result_1.Name = "new_result";
+result_1.Result = "::model::FoM_beam::FoM";
+result_1.Optimize = true;
+
+# add the figure of merits R & T to the optimization
+addsweepresult("Intensity", result_1);
+save("Testsim");
+## run optimization
+runsweep("Intensity");
+
