@@ -6,6 +6,7 @@
 # 1. Set up the Maxwell 2D Parametric Model
 # 2. Identify the Electric Field Node Point for Each Design Point
 # 3. Export the Node Coordinates for the subsequent Lumerical Step
+#4. Launch the Lumerical Scripts
 #
 # Keywords: **Ion Trap**, **Electrostatic**
 
