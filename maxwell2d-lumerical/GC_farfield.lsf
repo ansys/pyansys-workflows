@@ -19,7 +19,7 @@ H_far = E_H_far.H;
 Ex=E_far(:,:,:,:,1);
 Ey=E_far(:,:,:,:,2);
 Ez=E_far(:,:,:,:,3);
- 
+
 Hx=H_far(:,:,:,:,1);
 Hy=H_far(:,:,:,:,2);
 Hz=H_far(:,:,:,:,3);
@@ -32,7 +32,7 @@ image(x*1e6,y*1e6, E2_far,"x-coordinate (um)","y-coordinate (um)","|E|^2");
 cd(filedirectory(currentscriptname));
 ## Read Data from ASCII file ##
     M=readdata("legend.txt");
-    Mselect=M(5,1)*1e-6;     
+    Mselect=M(5,1)*1e-6;
 
 # farfield along x axis
 E3_z = farfieldexact2d('near_field',x,Mselect);
@@ -45,7 +45,7 @@ ind1 = find(E3_z,max(E3_z));
 xmax = x(ind1);
 indR1 = find(E3_z,E3_z(ind1)/2);
 if ( ind1<indR1  ) {
- indR1 = find(E3_z,E3_z(ind1)/2);   
+ indR1 = find(E3_z,E3_z(ind1)/2);
 }
 indL1 = abs(ind1-(abs(indR1-ind1)));
 FWHM_X=abs(x(indR1)-x(indL1));

@@ -8,7 +8,7 @@ clear;
 switchtolayout;
 
 selectall; deleteall; # select and delete all objects to make sure we start with a clean project file
-setprofile = 0; # not add the profile monitor for the first run; 1 to set this monitor 
+setprofile = 0; # not add the profile monitor for the first run; 1 to set this monitor
 um=1e-6;
 
 #################################### add simulation region/mesh/source  ##############################
@@ -81,7 +81,7 @@ L = n_periods*pitch_uniform + etch_width;
 sidewall_angle_rad = (90-sidewall_angle)*pi/180;
 
 
-if(%etch depth% > %h total%) { 
+if(%etch depth% > %h total%) {
   %etch depth% = %h total%;
 }
 
@@ -92,8 +92,8 @@ set("name","input waveguide");
 set("vertices", vtx);
 set("x", 0);
 set("y", 0);
-set("material",material); 
-if(get("material")=="<Object defined dielectric>") 
+set("material",material);
+if(get("material")=="<Object defined dielectric>")
 { set("index",index); }
 set("override mesh order from material database", 1);
 set("mesh order", 3);
@@ -106,14 +106,14 @@ if(%etch depth% < %h total%) {
   set("x max",%output length%);
   set("y min",0);
   set("y max",%h total%-%etch depth%);
-  set("material",material); 
-  if(get("material")=="<Object defined dielectric>") 
+  set("material",material);
+  if(get("material")=="<Object defined dielectric>")
    { set("index",index); }
 }
 
 #add grating
 for(i=1:(n_uniform_gratings+n_apodized_gratings)){
-  
+
   if (i<=n_uniform_gratings){
     vtx = [pitch_uniform*(i-1)+etch_width_uniform,%h total%;pitch_uniform*i,%h total%;pitch_uniform*i+%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%;pitch_uniform*(i-1)+etch_width_uniform-%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%];  # microns
     addpoly;
@@ -121,11 +121,11 @@ for(i=1:(n_uniform_gratings+n_apodized_gratings)){
     set("vertices", vtx);
     set("x", 0);
     set("y", 0);
-    set("material",material); 
-    if(get("material")=="<Object defined dielectric>") 
+    set("material",material);
+    if(get("material")=="<Object defined dielectric>")
    { set("index",index); }
   }else{
-    
+
     ew = pitch_uniform*(1-etch_width_apod(i-n_uniform_gratings));
     vtx = [pitch_uniform*(i-1)+ew,%h total%;pitch_uniform*i,%h total%;pitch_uniform*i+%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%;pitch_uniform*(i-1)+ew-%etch depth%*tan(sidewall_angle_rad),%h total%-%etch depth%];  # microns
     addpoly;
@@ -133,11 +133,11 @@ for(i=1:(n_uniform_gratings+n_apodized_gratings)){
     set("vertices", vtx);
     set("x", 0);
     set("y", 0);
-    set("material",material); 
-    if(get("material")=="<Object defined dielectric>") 
+    set("material",material);
+    if(get("material")=="<Object defined dielectric>")
    { set("index",index); }
   }
-  
+
 }
 
 selectall;
@@ -150,7 +150,7 @@ set("z span",1e-6);
 
 
 
-addrect; # add 
+addrect; # add
 set("name","cladding");
 set("x",19.5*um); # sets the x position
 set("x span",121*um); # sets the x position
@@ -159,11 +159,11 @@ set("y span",1.6*um);
 set("z",0*um);
 set("z span",1*um);
 set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
-set("override mesh order from material database", true); 
+set("override mesh order from material database", true);
 set("mesh order", 5); # material name has to be exact
 
 # add structures
-addrect; # add a 
+addrect; # add a
 set("name","BOx");
 set("x",19.5*um); # sets the x position
 set("x span",121*um); # sets the x position
@@ -172,11 +172,11 @@ set("y span",0.9*um);
 set("z",0*um);
 set("z span",1*um);
 set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
-#set("override mesh order from material database", true); 
+#set("override mesh order from material database", true);
 #set("mesh order", 5); # material name has to be exact
 
 # add structures
-addrect; # add a 
+addrect; # add a
 set("name","Substrate");
 set("x",19.5*um); # sets the x position
 set("x span",121*um); # sets the x position
@@ -185,13 +185,13 @@ set("y span",8*um);
 set("z",0*um);
 set("z span",1*um);
 set("material", "SiO2 (Glass) - Palik"); # material name has to be exact
-set("override mesh order from material database", true); 
+set("override mesh order from material database", true);
 set("mesh order", 1); # material name has to be exact
 
 ## Read Data from ASCII file ##
 cd(filedirectory(currentscriptname));
 M=readdata("legend.txt");
-Mselect=M(5,1)*1e-6;                      
+Mselect=M(5,1)*1e-6;
 
 ################Analysis Group#######################
  ## Figure of Merit --- Focus Beam ##
@@ -222,7 +222,7 @@ H_far = E_H_far.H;
 Ex=E_far(:,:,:,:,1);
 Ey=E_far(:,:,:,:,2);
 Ez=E_far(:,:,:,:,3);
- 
+
 Hx=H_far(:,:,:,:,1);
 Hy=H_far(:,:,:,:,2);
 Hz=H_far(:,:,:,:,3);
