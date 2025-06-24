@@ -236,7 +236,6 @@ print('Grating period (P), (nm) ',str(Gc2.getv('GC_period')*1000000000))
 print('Grating minimum duty cycle:',str(Gc2.getv('GC_DCmin')))
 
 Grating_Schema = Image.open(my_path+'img_001.jpg')
-Grating_Schema
 
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
