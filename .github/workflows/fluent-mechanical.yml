@@ -42,6 +42,8 @@ jobs:
       fail-fast: false
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
+    env:
+      ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.FLUENT_LICENSE_SERVER )}}
     steps:
 
       - name: Checkout code
