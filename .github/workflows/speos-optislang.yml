@@ -58,6 +58,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Set up environment variables
+        shell: bash
         run: |
           VERSION="${{ matrix.ansys-release }}"
           ANSYS_RELEASE_SHORT="${VERSION%.*}"
@@ -66,6 +67,7 @@ jobs:
           echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
 
       - name: Install dependencies
+        shell: bash
         run: |
           python -m pip install --upgrade pip
           python -m venv .venv
@@ -80,9 +82,10 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download and run Speos service image
+        shell: bash
         run: |
           $env:ANSYS_SPEOS_RELEASE = "${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
-          Write-Host "Download Speos service image: $env:ANSYS_SPEOS_RELEASE"
+          echo "Download Speos service image: $env:ANSYS_SPEOS_RELEASE"
 
           # Pull the image
           docker pull $env:ANSYS_SPEOS_RELEASE
@@ -91,6 +94,7 @@ jobs:
           docker run --detach --name speos-rpc -p 50098:50098 -e SPEOS_LOG_LEVEL=2 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /app/SpeosRPC_Server.x ghcr.io/ansys/speos-rpc:${{ env.ANSYS_RELEASE_NO_DOT }} -m 25000000
 
       - name: Run the workflow script
+        shell: bash
         run: |
           . .venv/bin/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
@@ -103,6 +107,7 @@ jobs:
 
       - name: (DOCS) Check if docs should be built
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        shell: bash
         run: |
           echo "Requested to build docs..."
           if [ "${{ matrix.ansys-release }}" = "$ANSYS_RELEASE_FOR_DOCS" ]; then
@@ -117,6 +122,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_01_geometry.py'
+        shell: bash
         run: |
           . .venv/bin/activate
           cd doc
@@ -134,6 +140,7 @@ jobs:
 
       - name: Stop any remaining containers
         if: always()
+        shell: bash
         run: |
           dockerContainers=$(docker ps -a -q)
           if [ -n "$dockerContainers" ]; then
