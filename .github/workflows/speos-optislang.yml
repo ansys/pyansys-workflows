@@ -34,11 +34,11 @@ jobs:
 
   speos-optislang:
     name: Speos Optislang
-    runs-on: [self-hosted, Windows, pyansys-workflows]
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.2]
+        ansys-release: [25.2.0]
     container:
       image: ${{ format('ghcr.io/ansys/optislang:{0}-jammy', matrix.ansys-release) }}
       credentials:
@@ -60,27 +60,34 @@ jobs:
       - name: Setup headless display
         uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
 
+      - name: Set up environment variables
+        run: |
+          VERSION="${{ matrix.ansys-release }}"
+          ANSYS_RELEASE_SHORT="${VERSION%.*}"
+          echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
+          ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
+          echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           python -m venv .venv
-          .venv/Scripts/activate
-          pip install -r speos-optislang/requirements_${{ matrix.ansys-release }}.txt
+          . .venv/bin/activate
+          pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download and run Speos service container
+      - name: Download and run Speos service image
         run: |
-          $env:ANSYS_RELEASE_NO_DOT = "${{ matrix.ansys-release }}" -replace '\.', ''
-          $env:ANSYS_SPEOS_RELEASE = "${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_NO_DOT }}"
-          Write-Host "Download Speos service container: $env:ANSYS_SPEOS_RELEASE"
+          $env:ANSYS_SPEOS_RELEASE = "${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
+          Write-Host "Download Speos service image: $env:ANSYS_SPEOS_RELEASE"
 
-          # Pull the container image
+          # Pull the image
           docker pull $env:ANSYS_SPEOS_RELEASE
 
           # Run the container
@@ -88,7 +95,7 @@ jobs:
 
       - name: Run the workflow script
         run: |
-          .venv/Scripts/activate
+          . .venv/bin/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
 
       # - name: Store the outputs
@@ -100,21 +107,21 @@ jobs:
       - name: (DOCS) Check if docs should be built
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
-          Write-Host "Requested to build docs..."
-          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
-            Write-Host "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
-          } else {
-            Write-Host "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
-          }
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" = "$ANSYS_RELEASE_FOR_DOCS" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_01_geometry.py'
         run: |
-          .venv/Scripts/activate
+          . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
           ./make.bat html
@@ -131,8 +138,8 @@ jobs:
       - name: Stop any remaining containers
         if: always()
         run: |
-          $dockerContainers = docker ps -a -q
-          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
-          }
+          dockerContainers=$(docker ps -a -q)
+          if [ -n "$dockerContainers" ]; then
+            docker stop $dockerContainers
+            docker rm $dockerContainers
+          fi
