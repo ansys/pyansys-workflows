@@ -138,7 +138,7 @@ def examples_gallery_dirs_and_filename_pattern():
             "../../geometry-mechanical-dpf",
             "../../geometry-mesh",
             "../../geometry-mesh-fluent",
-            "../../speos-optislang"
+            "../../speos-optislang",
         ]
         gallery_dirs = [
             "examples/fluent-mechanical",

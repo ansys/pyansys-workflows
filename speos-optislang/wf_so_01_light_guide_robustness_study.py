@@ -136,6 +136,7 @@ VARIATION_ANALYSIS_BOUNDARIES = {
 # opening results, changing source positions and powers, running Speos simulations,
 # and creating the optiSLang workflow.
 
+
 def clean_all_dbs(speos_client: core.kernel.client.SpeosClient):
     """
     Clean the database info loaded inside a client.
@@ -652,6 +653,7 @@ def get_design_quality_values(osl):
         feasible_designs,
     )
 
+
 ###############################################################################
 # Main script execution
 # ---------------------
@@ -705,9 +707,17 @@ print("Variation Analysis: Done!")
 print(f'{"*" * 25} SUMMARY {"*" * 25}')
 print(f"Probability of failure for RMS contrast: {round(rms_contrast_fail_prob, 1)} %")
 print(f"Probability of failure for Average: {round(average_fail_prob, 1)} %")
-print(f"Probability of failure for fulfillment national rules: {round(national_rules_fail_prob, 1)} %")
-print(f"Probability of failure for fulfillment specification rules: {round(specification_rules_fail_prob, 1)} %\n")
-print(f"{num_feasible_designs} out of {VARIATION_ANALYSIS_BOUNDARIES['maximum_number_simulations']} designs are feasible.")
+print(
+    f"Probability of failure for fulfillment national rules: {round(national_rules_fail_prob, 1)} %"
+)
+print(
+    "Probability of failure for fulfillment specification rules: "
+    f"{round(specification_rules_fail_prob, 1)} %\n"
+)
+print(
+    f"{num_feasible_designs} out of {VARIATION_ANALYSIS_BOUNDARIES['maximum_number_simulations']} "
+    "designs are feasible."
+)
 print("*" * 50)
 
 # Close optiSLang
