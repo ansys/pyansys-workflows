@@ -19,8 +19,22 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_speops-optislang-01-light-guide-robustness-study:
 
-# Install the latest release from PyPi: python -m pip install ansys-optislang-core
+Evaluating robustness of exterior lightguide
+############################################
+
+In this example, we use Speos and optiSLang to analyze the robustness of a prismatic light
+guide and quantify the failure rate due to production tolerances in an automated way.
+We will understand which tolerances lead to regulation fails for the automotive
+Day-Time-Running lights and which tolerances must be improved to increase the optical
+performance. Additionally, we will evaluate the scattering of the homogeneity (RMS-contrast)
+and the lit appearance (average luminance) to see what the worst design looks like due to
+tolerances.
+
+"""  # noqa: D400, D415
+
 import os
 import pathlib
 import time
@@ -42,10 +56,89 @@ from ansys.speos.core.source import SourceSurface
 from comtypes.client import CreateObject
 import numpy as np
 
+###############################################################################
+# Parameters for the script
+# -------------------------
+# The following parameters are used to control the script execution. You can
+# modify these parameters to suit your needs.
+#
+
+MAXIMUM_NUMBER_SIMULATIONS: int = 200
+"""Maximum number of simulations for the robustness analysis."""
+
+PARAMETERS: list[dict] = [
+    {
+        "name": "LED_delta_x",
+        "value": 0.0,
+        "distribution_type": "NORMAL",
+        "distribution_parameters": [0, 0.25],  # mean value, standard deviation
+    },
+    {
+        "name": "LED_delta_y",
+        "value": 0.0,
+        "distribution_type": "NORMAL",
+        "distribution_parameters": [0, 0.25],  # mean value, standard deviation
+    },
+    {
+        "name": "LED_delta_z",
+        "value": 0.0,
+        "distribution_type": "NORMAL",
+        "distribution_parameters": [0, 0.25],  # mean value, standard deviation
+    },
+    {
+        "name": "Flux",
+        "value": 200.0,
+        "distribution_type": "TRUNCATEDNORMAL",
+        "distribution_parameters": [
+            300,
+            45,
+            200,
+            400,
+        ],  # mean value, standard deviation, lower bound, upper bound
+    },
+]
+"""Input parameters and their statistical distributions."""
+
+RESPONSES: list[dict] = [
+    {"name": "RMS_contrast", "value": 1.0},
+    {"name": "Average", "value": 120.0},
+    {"name": "Number_of_rules_limited_passed", "value": 0.0},
+    {"name": "Number_of_rules_failed", "value": 0.0},
+]
+"""Expected responses in the robustness analysis."""
+
+CRITERIA: list[dict] = [
+    {"name": "RMS_contrast", "type": "constraint", "limit": 0.2, "target": "<="},
+    {"name": "Average", "type": "constraint", "limit": 160000, "target": ">="},
+    {
+        "name": "Number_of_rules_limited_passed",
+        "type": "constraint",
+        "limit": 2,
+        "target": "<=",
+    },
+    {"name": "Number_of_rules_failed", "type": "constraint", "limit": 0, "target": "<="},
+]
+"""Evaluation criteria for the robustness analysis."""
+
+VARIATION_ANALYSIS_BOUNDARIES = {
+    "maximum_number_simulations": MAXIMUM_NUMBER_SIMULATIONS,
+    "parameters": PARAMETERS,
+    "responses": RESPONSES,
+    "criteria": CRITERIA,
+}
+"""Variation analysis boundaries for the robustness study."""
+
+###############################################################################
+# Define functions
+# ----------------
+# The following functions are defined to perform various tasks in the
+# robustness analysis workflow, such as cleaning databases, displacing faces and bodies,
+# opening results, changing source positions and powers, running Speos simulations,
+# and creating the optiSLang workflow.
 
 def clean_all_dbs(speos_client: core.kernel.client.SpeosClient):
     """
-    clean the database info loaded inside a client.
+    Clean the database info loaded inside a client.
 
     Parameters
     ----------
@@ -164,7 +257,6 @@ def open_result(file):
                 ]
             ),
         }
-        # os.remove(export_dir)
         return res
     else:
         dpf_instance.ImportTemplate(
@@ -194,7 +286,6 @@ def open_result(file):
             "Number_of_rules_limited_passed": limited_passed_count,
             "Number_of_rules_failed": failed_count,
         }
-        # os.remove(export_dir)
         return res
 
 
@@ -229,7 +320,7 @@ def change_surface_source_position(project, sources, source_position_dict):
 
 def change_source_power(sources, source_power_dict):
     """
-    change the power of surface where surface source is linked.
+    Change the power of surface where surface source is linked.
 
     Parameters
     ----------
@@ -272,7 +363,7 @@ def speos_simulation(hid, speos, parameters):
     project = Project(speos=speos, path=speos_file)
     # project.preview()
 
-    # update of the light source power
+    # Update of the light source power
     sources = project.find(name=".*", name_regex=True, feature_type=SourceSurface)
     new_sources_power = {
         "Surface.1:6015": new_parameter_values.get("Flux"),
@@ -281,7 +372,7 @@ def speos_simulation(hid, speos, parameters):
 
     change_source_power(sources, new_sources_power)
 
-    # update of the source position
+    # Update of the source position
     new_source_displacement = {
         "Surface.1:6015": [
             new_parameter_values.get("LED_delta_x"),
@@ -302,7 +393,7 @@ def speos_simulation(hid, speos, parameters):
     sim.set_stop_condition_rays_number(2000000).commit()
     res = sim.compute_CPU()
 
-    # result extraction
+    # Result extraction
     xmp_files = [item.path for item in res if ".xmp" in item.path]
     response = {}
     result_design = {}
@@ -330,75 +421,6 @@ def speos_simulation(hid, speos, parameters):
         )
     print(result_print)
     return result_design
-
-
-def get_variation_analysis_boundaries():
-    """This function collects the robustness boundaries:
-        - max number of simulations
-        - input parameter
-        - responses
-        - criteria
-
-    Parameters
-    ----------
-
-    Returns
-    -------
-    dict
-        Dictionary with boundaries as json
-    """
-    user_input_json = {
-        "maximum_number_simulations": 200,
-        "parameters": [
-            {
-                "name": "LED_delta_x",
-                "value": 0.0,
-                "distribution_type": "NORMAL",
-                "distribution_parameters": [0, 0.25],  # mean value, standard deviation
-            },
-            {
-                "name": "LED_delta_y",
-                "value": 0.0,
-                "distribution_type": "NORMAL",
-                "distribution_parameters": [0, 0.25],  # mean value, standard deviation
-            },
-            {
-                "name": "LED_delta_z",
-                "value": 0.0,
-                "distribution_type": "NORMAL",
-                "distribution_parameters": [0, 0.25],  # mean value, standard deviation
-            },
-            {
-                "name": "Flux",
-                "value": 200.0,
-                "distribution_type": "TRUNCATEDNORMAL",
-                "distribution_parameters": [
-                    300,
-                    45,
-                    200,
-                    400,
-                ],  # mean value, standard deviation, lower bound, upper bound
-            },
-        ],
-        "responses": [
-            {"name": "RMS_contrast", "value": 1.0},
-            {"name": "Average", "value": 120.0},
-            {"name": "Number_of_rules_limited_passed", "value": 0.0},
-            {"name": "Number_of_rules_failed", "value": 0.0},
-        ],
-        "criteria": [
-            {"name": "RMS_contrast", "type": "constraint", "limit": 0.2, "target": "<="},
-            {"name": "Average", "type": "constraint", "limit": 160000, "target": ">="},
-            {
-                "name": "Number_of_rules_limited_passed",
-                "type": "constraint",
-                "limit": 2,
-                "target": "<=",
-            },
-            {"name": "Number_of_rules_failed", "type": "constraint", "limit": 0, "target": "<="},
-        ],
-    }
-    return user_input_json
 
 
 def get_executable(version):
@@ -630,84 +652,64 @@ def get_design_quality_values(osl):
         feasible_designs,
     )
 
+###############################################################################
+# Main script execution
+# ---------------------
 
-if __name__ == "__main__":
-    # Definition of the variation analysis boundaries
-    user_input = get_variation_analysis_boundaries()
+# optiSLang Project creation and workflow setup
+osl_executable = get_executable(251)
+my_osl = Optislang(
+    executable=osl_executable,
+    ini_timeout=60,
+    # loglevel="DEBUG"
+)
+print(f"Using optiSLang version {my_osl.osl_version_string}")
 
-    # optiSLang Project creation and workflow setup
-    osl_executable = get_executable(251)
-    my_osl = Optislang(
-        executable=osl_executable,
-        ini_timeout=60,
-        # loglevel="DEBUG"
-    )
-    print(f"Using optiSLang version {my_osl.osl_version_string}")
+# Create workflow
+parametric_system, proxy_node = create_workflow(my_osl, VARIATION_ANALYSIS_BOUNDARIES)
 
-    ### Create workflow
-    parametric_system, proxy_node = create_workflow(my_osl, user_input)
+# Create criteria definition
+criteria_definition(parametric_system, VARIATION_ANALYSIS_BOUNDARIES)
 
-    ### create criteria definition
-    criteria_definition(parametric_system, user_input)
+# Save project
+temp_dir = pathlib.Path(os.getenv("TEMP"))
+project_name = "_proxy_solver_workflow.opf"
+# my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project
 
-    ### save project
-    temp_dir = pathlib.Path(os.getenv("TEMP"))
-    project_name = "_proxy_solver_workflow.opf"
-    # my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project
+# optiSLang project execution
+my_osl.application.project.start(wait_for_finished=False)
+print("Variation Analysis: started.")
 
-    # optiSLang project execution
-    my_osl.application.project.start(wait_for_finished=False)
-    print("Variation Analysis: started.")
-    # run Robustness analysis and loop until get_status()
-    # returns "Processing done" for the root system
-    while not my_osl.project.root_system.get_status() == "Processing done":
-        design_list = proxy_node.get_designs()
-        if len(design_list):
-            responses_dict = calculate(design_list)
-            proxy_node.set_designs(responses_dict)
-        time.sleep(1)
-    ### run MOP node
-    my_osl.application.project.start(wait_for_finished=True)
-    print("Variation Analysis: Done!")
+# Run Robustness analysis and loop until get_status()
+# returns "Processing done" for the root system
+while not my_osl.project.root_system.get_status() == "Processing done":
+    design_list = proxy_node.get_designs()
+    if len(design_list):
+        responses_dict = calculate(design_list)
+        proxy_node.set_designs(responses_dict)
+    time.sleep(1)
 
-    # get quality values
-    (
-        rms_contrast_fail_prob,
-        average_fail_prob,
-        specification_rules_fail_prob,
-        national_rules_fail_prob,
-        num_feasible_designs,
-    ) = get_design_quality_values(my_osl)
+# Run MOP node
+my_osl.application.project.start(wait_for_finished=True)
+print("Variation Analysis: Done!")
 
-    print(25 * "*" + " SUMMARY " + 25 * "*")
-    print("Probability of failure for RMS contrast:", round(rms_contrast_fail_prob, 1), " %")
-    print(
-        "Probability of failure for Average:",
-        round(
-            average_fail_prob,
-            1,
-        ),
-        " %",
-    )
-    print(
-        "Probability of failure for fulfillment national rules:",
-        round(national_rules_fail_prob, 1),
-        " %",
-    )
-    print(
-        "Probability of failure for fulfillment specification rules:",
-        round(specification_rules_fail_prob, 1),
-        " %",
-    )
-    print()
-    print(
-        num_feasible_designs,
-        "out of",
-        user_input.get("maximum_number_simulations"),
-        "Designs are feasible.",
-    )
-    print(50 * "*")
+# Get quality values
+(
+    rms_contrast_fail_prob,
+    average_fail_prob,
+    specification_rules_fail_prob,
+    national_rules_fail_prob,
+    num_feasible_designs,
+) = get_design_quality_values(my_osl)
 
-    # close optiSLang
-    my_osl.dispose()
-    print("OSL Project finished.")
+print(f'{"*" * 25} SUMMARY {"*" * 25}')
+print(f"Probability of failure for RMS contrast: {round(rms_contrast_fail_prob, 1)} %")
+print(f"Probability of failure for Average: {round(average_fail_prob, 1)} %")
+print(f"Probability of failure for fulfillment national rules: {round(national_rules_fail_prob, 1)} %")
+print(f"Probability of failure for fulfillment specification rules: {round(specification_rules_fail_prob, 1)} %\n")
+print(f"{num_feasible_designs} out of {VARIATION_ANALYSIS_BOUNDARIES['maximum_number_simulations']} designs are feasible.")
+print("*" * 50)
+
+# Close optiSLang
+my_osl.dispose()
+print("OSL Project finished.")

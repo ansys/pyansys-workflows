@@ -1,0 +1,138 @@
+name: Speos Optislang Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'speos-optislang/**'
+
+env:
+  MAIN_PYTHON_VERSION: '3.12'
+  OPTISLANG_DOCKER_IMAGE: 'ghcr.io/ansys/optislang'
+  SPEOS_DOCKER_IMAGE: 'ghcr.io/ansys/speos-rpc'
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  ANSYS_RELEASE_FOR_DOCS: 25.2
+  RUN_DOC_BUILD: false
+
+jobs:
+
+  speos-optislang:
+    name: Speos Optislang
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [25.2]
+    container:
+      image: ${{ format('ghcr.io/ansys/optislang:{0}-jammy', matrix.ansys-release) }}
+      credentials:
+        username: ansys-bot
+        password: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          sparse-checkout: |
+            speos-optislang
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5.6.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Setup headless display
+        uses: pyvista/setup-headless-display-action@7d84ae825e6d9297a8e99bdbbae20d1b919a0b19 # v4.2
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          .venv/Scripts/activate
+          pip install -r speos-optislang/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and run Speos service container
+        run: |
+          $env:ANSYS_RELEASE_NO_DOT = "${{ matrix.ansys-release }}" -replace '\.', ''
+          $env:ANSYS_SPEOS_RELEASE = "${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_NO_DOT }}"
+          Write-Host "Download Speos service container: $env:ANSYS_SPEOS_RELEASE"
+
+          # Pull the container image
+          docker pull $env:ANSYS_SPEOS_RELEASE
+
+          # Run the container
+          docker run --detach --name speos-rpc -p 50098:50098 -e SPEOS_LOG_LEVEL=2 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /app/SpeosRPC_Server.x ghcr.io/ansys/speos-rpc:${{ env.ANSYS_RELEASE_NO_DOT }} -m 25000000
+
+      - name: Run the workflow script
+        run: |
+          .venv/Scripts/activate
+          python speos-optislang/wf_so_01_light_guide_robustness_study.py
+
+      # - name: Store the outputs
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: ...
+      #     path: ...
+
+      - name: (DOCS) Check if docs should be built
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        run: |
+          Write-Host "Requested to build docs..."
+          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
+            Write-Host "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
+          } else {
+            Write-Host "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
+          }
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_01_geometry.py'
+        run: |
+          .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mesh-docs-stage-geometry
+          path: |
+            doc/_build/
+            doc/source/examples/speos-optislang/
+
+      - name: Stop any remaining containers
+        if: always()
+        run: |
+          $dockerContainers = docker ps -a -q
+          if (-not [string]::IsNullOrEmpty($dockerContainers)) {
+              docker stop $dockerContainers
+              docker rm $dockerContainers
+          }
