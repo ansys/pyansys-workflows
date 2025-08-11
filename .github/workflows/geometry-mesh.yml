@@ -178,7 +178,7 @@ jobs:
         run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:${{ matrix.ansys-release }}
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mesh-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
@@ -208,7 +208,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mesh-docs-stage-geometry
