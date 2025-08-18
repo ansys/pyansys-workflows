@@ -1,0 +1,2 @@
+
+ansys-dpf-core[plotting]==0.12.2
