@@ -24,8 +24,6 @@ on:
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
-  OPTISLANG_DOCKER_IMAGE: 'ghcr.io/ansys/optislang'
-  SPEOS_DOCKER_IMAGE: 'ghcr.io/ansys/speos-rpc'
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
   RUN_DOC_BUILD: false
@@ -34,7 +32,7 @@ jobs:
 
   speos-optislang:
     name: Speos Optislang
-    runs-on: ubuntu-22.04
+    runs-on: [self-hosted, Windows, pyansys-workflows]
     strategy:
       fail-fast: false
       matrix:
@@ -69,37 +67,6 @@ jobs:
           . .venv/bin/activate
           pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
 
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download and run Optislang service image
-        shell: bash
-        run: |
-          echo "OPTISLANG_IMAGE=${{ env.OPTISLANG_DOCKER_IMAGE }}:${{ matrix.ansys-release }}-jammy"
-          echo "Download Optislang service image: ${{ $env:OPTISLANG_IMAGE }}"
-
-          # Pull the image
-          docker pull ${{ $env:OPTISLANG_IMAGE }}
-
-          # Run the container
-          docker run --detach --name optislang-rpc -p 50097:50097 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} ${{ env.OPTISLANG_IMAGE }}
-
-      - name: Download and run Speos service image
-        shell: bash
-        run: |
-          echo "ANSYS_SPEOS_IMAGE=${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
-          echo "Download Speos service image: ${{ $env:ANSYS_SPEOS_IMAGE }}"
-
-          # Pull the image
-          docker pull ${{ $env:ANSYS_SPEOS_IMAGE }}
-
-          # Run the container
-          docker run --detach --name speos-rpc -p 50098:50098 -e SPEOS_LOG_LEVEL=2 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /app/SpeosRPC_Server.x ${{ env.ANSYS_SPEOS_IMAGE }} -m 25000000
-
       - name: Run the workflow script
         shell: bash
         run: |
@@ -128,7 +95,7 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          BUILD_DOCS_SCRIPT: 'geometry-mesh/wf_gm_01_geometry.py'
+          BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
         shell: bash
         run: |
           . .venv/bin/activate
@@ -140,17 +107,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mesh-docs-stage-geometry
+          name: speos-optislang-docs-stage
           path: |
             doc/_build/
             doc/source/examples/speos-optislang/
-
-      - name: Stop any remaining containers
-        if: always()
-        shell: bash
-        run: |
-          dockerContainers=$(docker ps -a -q)
-          if [ -n "$dockerContainers" ]; then
-            docker stop $dockerContainers
-            docker rm $dockerContainers
-          fi
