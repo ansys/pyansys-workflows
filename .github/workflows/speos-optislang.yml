@@ -39,11 +39,6 @@ jobs:
       fail-fast: false
       matrix:
         ansys-release: [25.2.0]
-    container:
-      image: ${{ format('ghcr.io/ansys/optislang:{0}-jammy', matrix.ansys-release) }}
-      credentials:
-        username: ansys-bot
-        password: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Checkout code
         uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
@@ -80,6 +75,18 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and run Optislang service image
+        shell: bash
+        run: |
+          $env:OPTISLANG_RELEASE = "${{ env.OPTISLANG_DOCKER_IMAGE }}:${{ matrix.ansys-release }}-jammy"
+          echo "Download Optislang service image: $env:OPTISLANG_RELEASE"
+
+          # Pull the image
+          docker pull $env:OPTISLANG_RELEASE
+
+          # Run the container
+          docker run --detach --name optislang-rpc -p 50097:50097 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} ghcr.io/ansys/optislang:${{ env.ANSYS_RELEASE_NO_DOT }}
 
       - name: Download and run Speos service image
         shell: bash
