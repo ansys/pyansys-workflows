@@ -659,7 +659,7 @@ def get_design_quality_values(osl):
 # ---------------------
 
 # optiSLang Project creation and workflow setup
-osl_executable = get_executable(251)
+osl_executable = get_executable(252)
 my_osl = Optislang(
     executable=osl_executable,
     ini_timeout=60,
