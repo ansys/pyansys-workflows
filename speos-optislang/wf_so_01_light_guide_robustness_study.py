@@ -567,7 +567,11 @@ def calculate(designs):
         A list of evaluated designs with the corresponding outputs.
     """
     # create speos instance
-    speos = core.Speos(host="localhost", port=50098)
+    from ansys.speos.core import launcher
+
+    speos = launcher.launch_local_speos_rpc_server(version="252")
+
+    # speos = core.Speos(host="localhost", port=50098)
 
     # run speos simulation
     result_design_list = []
