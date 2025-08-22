@@ -23,11 +23,12 @@ on:
       - 'speos-optislang/**'
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
-  RUN_DOC_BUILD: false
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
+  MAIN_PYTHON_VERSION: '3.12'
+  RUN_DOC_BUILD: false
+  SPEOS_DOCKER_IMAGE: 'ghcr.io/ansys/speos-rpc'
 
 jobs:
 
@@ -78,7 +79,7 @@ jobs:
       - name: Download and run Speos service image
         shell: bash
         run: |
-          echo "ANSYS_SPEOS_IMAGE=${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
+          echo "ANSYS_SPEOS_IMAGE=${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}" >> $GITHUB_ENV
           echo "Download Speos service image: ${{ $env:ANSYS_SPEOS_IMAGE }}"
 
           # Pull the image
