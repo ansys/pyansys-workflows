@@ -80,10 +80,10 @@ jobs:
         shell: bash
         run: |
           echo "ANSYS_SPEOS_IMAGE=${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}" >> $GITHUB_ENV
-          echo "Download Speos service image: ${{ $env:ANSYS_SPEOS_IMAGE }}"
+          echo "Download Speos service image: $ANSYS_SPEOS_IMAGE"
 
           # Pull the image
-          docker pull ${{ $env:ANSYS_SPEOS_IMAGE }}
+          docker pull ${{ env:ANSYS_SPEOS_IMAGE }}
 
           # Run the container
           docker run --detach --name speos-rpc -p 50098:50098 -e SPEOS_LOG_LEVEL=2 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /app/SpeosRPC_Server.x ${{ env.ANSYS_SPEOS_IMAGE }} -m 25000000
