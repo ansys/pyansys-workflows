@@ -576,12 +576,19 @@ def calculate(designs):
 
     # run speos simulation
     result_design_list = []
-    for design in designs:
-        hid = design["hid"]
-        parameters = design["parameters"]
 
-        result_design = speos_simulation(hid, speos, parameters)
-        result_design_list.append(result_design)
+    # testing
+    design = designs[0]
+    hid = design["hid"]
+    parameters = design["parameters"]
+    result_design = speos_simulation(hid, speos, parameters)
+    exit()
+    # for design in designs:
+    #     hid = design["hid"]
+    #     parameters = design["parameters"]
+
+    #     result_design = speos_simulation(hid, speos, parameters)
+    #     result_design_list.append(result_design)
 
     # close speos instance
     speos.client.close()
