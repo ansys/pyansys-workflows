@@ -360,8 +360,9 @@ def speos_simulation(hid, speos, parameters):
     new_parameter_values = {p["name"]: p["value"] for p in parameters}
 
     clean_all_dbs(speos.client)
-    speos_file = os.path.join(os.path.abspath(""), "Lightguide.speos", "Lightguide.speos")
-    project = Project(speos=speos, path=speos_file)
+    script_folder = pathlib.Path(__file__).resolve().parent
+    speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos.speos"
+    project = Project(speos=speos, path=str(speos_file))
     # project.preview()
 
     # Update of the light source power
