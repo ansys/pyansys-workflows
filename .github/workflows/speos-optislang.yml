@@ -27,6 +27,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
   RUN_DOC_BUILD: false
+  AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
 
 jobs:
 
