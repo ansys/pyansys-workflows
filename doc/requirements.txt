@@ -16,10 +16,10 @@ jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
 matplotlib==3.10.1
 panel==1.6.1
-plotly==6.2.0
+plotly==6.3.0
 pythreejs==2.4.2
 pillow==11.3.0
 ipyvtklink==0.2.3
-ipykernel==6.29.5
-pyvista[jupyter]==0.45.2
+ipykernel==6.30.1
+pyvista[jupyter]==0.46.2
 trame-vtk!=2.8.16
