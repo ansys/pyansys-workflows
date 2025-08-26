@@ -79,7 +79,8 @@ jobs:
       - name: Download and run Speos service image
         shell: bash
         run: |
-          echo "ANSYS_SPEOS_IMAGE=${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}" >> $GITHUB_ENV
+          export ANSYS_SPEOS_IMAGE="${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
+          echo "ANSYS_SPEOS_IMAGE=$ANSYS_SPEOS_IMAGE" >> $GITHUB_ENV
           echo "Download Speos service image: $ANSYS_SPEOS_IMAGE"
 
           # Pull the image
