@@ -68,7 +68,7 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m venv .venv
-          .venv/Scripts/activate
+          source .venv/bin/activate
           pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
 
       - name: Login to GitHub Container Registry
@@ -107,7 +107,7 @@ jobs:
       - name: Run the workflow script
         shell: bash
         run: |
-          .venv/Scripts/activate
+          source .venv/bin/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
 
       # - name: Store the outputs
