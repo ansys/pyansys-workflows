@@ -36,7 +36,7 @@ jobs:
   speos-optislang:
     name: Speos Optislang
     # runs-on: [self-hosted, Windows, pyansys-workflows]
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     strategy:
       fail-fast: false
       matrix:

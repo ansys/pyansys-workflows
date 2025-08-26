@@ -361,7 +361,7 @@ def speos_simulation(hid, speos, parameters):
 
     clean_all_dbs(speos.client)
     script_folder = pathlib.Path(__file__).resolve().parent
-    speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos.speos"
+    speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos"
     project = Project(speos=speos, path=str(speos_file))
     # project.preview()
 
@@ -568,11 +568,11 @@ def calculate(designs):
         A list of evaluated designs with the corresponding outputs.
     """
     # create speos instance
-    # from ansys.speos.core import launcher
+    from ansys.speos.core import launcher
 
-    # speos = launcher.launch_local_speos_rpc_server(version="252")
+    speos = launcher.launch_local_speos_rpc_server(version="252")
 
-    speos = core.Speos(host="localhost", port=50098)
+    # speos = core.Speos(host="localhost", port=50098)
 
     # run speos simulation
     result_design_list = []
