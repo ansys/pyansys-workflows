@@ -27,6 +27,7 @@ env:
   ANSYS_RELEASE_FOR_DOCS: 25.2
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
+  OPTISLANG_DOCKER_IMAGE: 'ghcr.io/ansys/optislang'
   RUN_DOC_BUILD: false
   SPEOS_DOCKER_IMAGE: 'ghcr.io/ansys/speos-rpc'
 
@@ -34,7 +35,8 @@ jobs:
 
   speos-optislang:
     name: Speos Optislang
-    runs-on: [self-hosted, Windows, pyansys-workflows]
+    # runs-on: [self-hosted, Windows, pyansys-workflows]
+    runs-on: ubuntu-22.04
     strategy:
       fail-fast: false
       matrix:
@@ -68,6 +70,39 @@ jobs:
           python -m venv .venv
           .venv/Scripts/activate
           pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@74a5d142397b4f367a81961eba4e8cd7edddf772 # v3.4.0
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Download and run Speos service image
+        shell: bash
+        run: |
+          export ANSYS_SPEOS_IMAGE="${{ env.SPEOS_DOCKER_IMAGE }}:${{ env.ANSYS_RELEASE_COMPACT }}"
+          echo "ANSYS_SPEOS_IMAGE=$ANSYS_SPEOS_IMAGE" >> $GITHUB_ENV
+          echo "Download Speos service image: $ANSYS_SPEOS_IMAGE"
+
+          # Pull the image
+          docker pull $ANSYS_SPEOS_IMAGE
+
+          # Run the container
+          docker run --detach --name speos-rpc -p 50098:50098 -e SPEOS_LOG_LEVEL=2 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /app/SpeosRPC_Server.x $ANSYS_SPEOS_IMAGE -m 25000000
+
+      - name: Download and run Optislang service image
+        shell: bash
+        run: |
+          export ANSYS_OPTISLANG_IMAGE="${{ env.OPTISLANG_DOCKER_IMAGE }}:${{ matrix.ansys-release }}-jammy"
+          echo "ANSYS_OPTISLANG_IMAGE=$ANSYS_OPTISLANG_IMAGE" >> $GITHUB_ENV
+          echo "Download Optislang service image: $ANSYS_OPTISLANG_IMAGE"
+
+          # Pull the image
+          docker pull $ANSYS_OPTISLANG_IMAGE
+
+          # Run the container
+          docker run --detach --name optislang-rpc -p 50099:50099 -e ANSYSLMD_LICENSE_FILE=${{ env.ANSYSLMD_LICENSE_FILE }} --entrypoint /usr/ansys_inc/v252/optiSLang/optislang $ANSYS_OPTISLANG_IMAGE
 
       - name: Run the workflow script
         shell: bash
@@ -113,3 +148,13 @@ jobs:
           path: |
             doc/_build/
             doc/source/examples/speos-optislang/
+
+      - name: Stop any remaining containers
+        if: always()
+        shell: bash
+        run: |
+          dockerContainers=$(docker ps -a -q)
+          if [ -n "$dockerContainers" ]; then
+            docker stop $dockerContainers
+            docker rm $dockerContainers
+          fi
