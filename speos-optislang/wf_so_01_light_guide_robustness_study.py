@@ -675,7 +675,6 @@ osl_executable = get_executable(252)
 my_osl = Optislang(
     executable=osl_executable,
     ini_timeout=60,
-    port=50099,
     # loglevel="DEBUG"
 )
 print(f"Using optiSLang version {my_osl.osl_version_string}")
