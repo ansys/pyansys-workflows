@@ -21,5 +21,5 @@ pythreejs==2.4.2
 pillow==11.3.0
 ipyvtklink==0.2.3
 ipykernel==6.30.1
-pyvista[jupyter]==0.46.2
+pyvista[jupyter]==0.46.3
 trame-vtk!=2.8.16
