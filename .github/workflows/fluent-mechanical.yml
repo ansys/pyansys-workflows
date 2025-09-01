@@ -45,7 +45,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             fluent-mechanical
@@ -135,7 +135,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             fluent-mechanical
@@ -176,7 +176,7 @@ jobs:
           grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
 
       - name: Check out the fluent outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
           path: fluent-mechanical/outputs
@@ -205,7 +205,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: fluent-mechanical-docs-stage-fluent
