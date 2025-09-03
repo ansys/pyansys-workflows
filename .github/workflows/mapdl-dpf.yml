@@ -55,6 +55,7 @@ jobs:
           sparse-checkout: |
             mapdl-dpf
             doc
+            .ci
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v5
