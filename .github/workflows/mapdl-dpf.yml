@@ -20,35 +20,40 @@ on:
       - main
   pull_request:
     paths:
-      - 'fluent-mechanical/**'
+      - 'mapdl-dpf/**'
 
 env:
   MAIN_PYTHON_VERSION: '3.12'
-  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
-  MECHANICAL_DOCKER_IMAGE: 'ghcr.io/ansys/mechanical'
-  DOCKER_MECH_CONTAINER_NAME: mechanical
-  PYMECHANICAL_PORT: 10000
+  MAPDL_DOCKER_IMAGE: 'ghcr.io/ansys/mapdl'
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
   RUN_DOC_BUILD: false
-  PYMECHANICAL_START_INSTANCE: false
+  DPF_PORT: 21002
+  DPF_START_SERVER: False
+  MAPDL_IMAGE_VERSION_DOCS_BUILD: v24.2-ubuntu
 
 jobs:
-  fluent:
-    name: Fluent
+  mapdl-dpf:
+    name: MAPDL-DPF
     runs-on: public-ubuntu-latest-8-cores
     strategy:
       fail-fast: false
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
+    env:
+      PYMAPDL_PORT: 21000  # default won't work on GitHub runners
+      PYMAPDL_DB_PORT: 21001  # default won't work on GitHub runners
+      PYMAPDL_START_INSTANCE: FALSE
+      ON_DOCUMENTATION: TRUE
+
     steps:
 
       - name: Checkout code
         uses: actions/checkout@v4
         with:
           sparse-checkout: |
-            fluent-mechanical
+            mapdl-dpf
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
@@ -59,7 +64,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
+          pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -68,23 +73,42 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Download Fluent service container
-        run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
-
-      - name: Run the Fluent script
+      - name: "Pull, launch, and validate MAPDL service"
+        id: start_mapdl
         env:
-          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+          MAPDL_VERSION: ${{ env.MAPDL_IMAGE_VERSION_DOCS_BUILD }}
+          DISTRIBUTED_MODE: "dmp"
         run: |
-          python fluent-mechanical/wf_fm_01_fluent.py
+          export INSTANCE_NAME=MAPDL_0
+          .ci/start_mapdl.sh & export DOCKER_PID=$!
+          echo "Launching MAPDL service at PID: $DOCKER_PID"
+          echo "DOCKER_PID=$(echo $DOCKER_PID)" >> $GITHUB_OUTPUT
+      - name: "DPF Server Activation"
+        run: |
+          $(docker pull ghcr.io/ansys/dpf-core:22.2dev && docker run -d --name dpfserver -p ${{ env.DPF_PORT }}:50052 ghcr.io/ansys/dpf-core:22.2dev && echo "DPF Server active on port ${{ env.DPF_PORT }}.") &
 
-      - name: Store the outputs
-        uses: actions/upload-artifact@v4
-        with:
-          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
-          path: |
-            fluent-mechanical/outputs/htc_temp_mapping_LOW_TEMP.csv
-            fluent-mechanical/outputs/htc_temp_mapping_MEDIUM_TEMP.csv
-            fluent-mechanical/outputs/htc_temp_mapping_HIGH_TEMP.csv
+      - name: "Test virtual framebuffer"
+        run: |
+          xvfb-run python .ci/display_test.py
+
+      - name: "Retrieve PyMAPDL version"
+        id: version
+        run: |
+          echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
+          echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
+
+      - name: "Waiting for the services to be up"
+        timeout-minutes: 15
+        run: |
+          .ci/waiting_services.sh
+
+      - name: Run the MAPDL-DPF script
+        env:
+          LIBGL_ALWAYS_SOFTWARE: 1
+          PYANSYS_VISUALIZER_HTML_BACKEND: true
+        run: |
+          python mapdl-dpf/wf_mapdl-dpf.py
 
       - name: Stop all containers (if any)
         run: |
@@ -107,116 +131,8 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
-          FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
-          BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
+          BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
         run: |
-          cd doc
-          pip install -r requirements.txt
-          make html
-
-      - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
-        with:
-          name: fluent-mechanical-docs-stage-fluent
-          path: |
-            doc/_build/
-            doc/source/examples/fluent-mechanical/
-          overwrite: true
-
-  mechanical:
-    name: Mechanical
-    runs-on: [public-ubuntu-latest-8-cores]
-    needs: fluent
-    strategy:
-      fail-fast: false
-      matrix:
-        ansys-release: [24.1, 24.2, 25.1]
-    steps:
-
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            fluent-mechanical
-            doc
-
-      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Install system dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y nodejs npm graphviz xvfb
-          npm install -g @mermaid-js/mermaid-cli
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          python -m venv .venv
-          . .venv/bin/activate
-          pip install -r fluent-mechanical/requirements_${{ matrix.ansys-release }}.txt
-
-      - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Download (if needed) launch, and validate Mechanical service
-        env:
-          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
-          MECHANICAL_IMAGE: ${{ env.MECHANICAL_DOCKER_IMAGE }}:${{ matrix.ansys-release }}.0
-        run: |
-          docker pull ${{ env.MECHANICAL_IMAGE }}
-          docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_IMAGE }} > log.txt &
-          grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
-
-      - name: Check out the fluent outputs
-        uses: actions/download-artifact@v4
-        with:
-          name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
-          path: fluent-mechanical/outputs
-
-      - name: Run the PyMechanical script
-        run: |
-          . .venv/bin/activate
-          xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
-
-      - name: Store the outputs
-        uses: actions/upload-artifact@v4
-        with:
-          name: fluent-mechanical-workflow-mechanical-outputs-${{ matrix.ansys-release }}
-          path: fluent-mechanical/outputs
-
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
-      - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        with:
-          name: fluent-mechanical-docs-stage-fluent
-          path: doc
-
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        env:
-          BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
-        run: |
-          . .venv/bin/activate
           cd doc
           pip install -r requirements.txt
           xvfb-run make html
@@ -225,8 +141,8 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: fluent-mechanical-docs
+          name: mapdl-dpf-docs-stage-mapdl
           path: |
             doc/_build/
-            doc/source/examples/fluent-mechanical/
+            doc/source/examples/mapdl-dpf/
           overwrite: true
