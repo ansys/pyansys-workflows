@@ -33,7 +33,7 @@ jobs:
     secrets: inherit
     with:
       doc-build: false
-  
+
   mapdl-dpf:
     uses: ./.github/workflows/mapdl-dpf.yml
     secrets: inherit
