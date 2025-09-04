@@ -44,7 +44,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             geometry-mechanical-dpf
@@ -151,7 +151,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             geometry-mechanical-dpf
@@ -173,7 +173,7 @@ jobs:
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
@@ -214,7 +214,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mechanical-dpf-docs-stage-geometry

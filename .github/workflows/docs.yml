@@ -39,7 +39,7 @@ jobs:
     needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
@@ -55,25 +55,25 @@ jobs:
           pip install -r doc/requirements.txt
 
       - name: Download artifacts for geometry-mesh
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mesh-docs
           path: doc/
 
       - name: Download artifacts for geometry-mesh-fluent
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mesh-fluent-docs
           path: doc/
 
       - name: Download artifacts for geometry-mechanical-dpf
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mechanical-dpf-docs
           path: doc/
 
       - name: Download artifacts for fluent-mechanical
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: fluent-mechanical-docs
           path: doc/
@@ -94,7 +94,7 @@ jobs:
     needs: compile-docs
     steps:
       - name: "Download the documentation artifact"
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: documentation-html
           path: doc
