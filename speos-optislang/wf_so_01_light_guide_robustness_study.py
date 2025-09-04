@@ -33,7 +33,27 @@ performance. Additionally, we will evaluate the scattering of the homogeneity (R
 and the lit appearance (average luminance) to see what the worst design looks like due to
 tolerances.
 
+Problem Description
+-------------------
+
+The optical simulation project includes a lightguide with an LED. During the vehicle assemble
+step, the relative position of LED can have an impact on the optical performance of the
+lightguide, i.e. RMS-contrast and average luminance.
+
+The workflow includes the following steps:
+- Definition of the variation analysis boundaries
+- optiSLang Project creation and workflow setup
+- optiSLang project execution
+- Connect to PySpeos server
+- PySpeos execution
+- Result evaluation
+
+This workflow will generate output as a robustness summary table is printed out to the console.
+
 """  # noqa: D400, D415
+
+# Perform required imports
+# ------------------------
 
 import os
 import pathlib
@@ -57,11 +77,14 @@ from comtypes.client import CreateObject
 import numpy as np
 
 ###############################################################################
-# Parameters for the script
-# -------------------------
+# Definition of the variation analysis boundaries
+# -----------------------------------------------
 # The following parameters are used to control the script execution. You can
 # modify these parameters to suit your needs.
-#
+# - tolerance parameter and distributions
+# - responses (quality measurements / performance indicator)
+# - constraints (quality limits for each performance indicator)
+# - the number of designs to be calculated for the robustness analysis
 
 MAXIMUM_NUMBER_SIMULATIONS: int = 200
 """Maximum number of simulations for the robustness analysis."""
@@ -137,7 +160,7 @@ VARIATION_ANALYSIS_BOUNDARIES = {
 # and creating the optiSLang workflow.
 
 
-def clean_all_dbs(speos_client: core.kernel.client.SpeosClient):
+def clean_all_dbs(speos_client: core.kernel.client.SpeosClient) -> None:
     """
     Clean the database info loaded inside a client.
 
@@ -147,6 +170,7 @@ def clean_all_dbs(speos_client: core.kernel.client.SpeosClient):
 
     Returns
     -------
+    None
 
     """
     for item in (
@@ -166,68 +190,20 @@ def clean_all_dbs(speos_client: core.kernel.client.SpeosClient):
         item.delete()
 
 
-def displace_face(edit_face, face_name, xyz=[0, 0, 0]):
+def open_result(file) -> dict:
     """
-    Move a face in a translational direction defined by a provided vector xyz.
-
-    Parameters
-    ----------
-    edit_face: ansys.speos.core.face.Face
-    face_name: str
-        geo_path of face
-    xyz: tuple
-        A tuple with 3 elements defining a vector defined by xyz
-
-    Returns
-    -------
-
-    """
-    temp_face_vertices = edit_face._face.vertices
-    temp_face_vertices = np.array(temp_face_vertices).reshape((-1, 3))
-    new_face_vertices = [np.add(item, xyz) for item in temp_face_vertices]
-    new_face_vertices = np.array(new_face_vertices).reshape((1, -1)).tolist()[0]
-
-    edit_face.set_vertices(new_face_vertices)
-    edit_face.commit()
-
-
-def displace_body(project, body_name, xyz=[1, 0, 0]):
-    """
-    Move a body in a translational direction defined by a provided vector xyz.
-
-    Parameters
-    ----------
-    project: script.Project
-    body_name: str
-        geo_path of a body
-    xyz: tuple
-        A tuple with 3 elements defining a vector defined by xyz
-
-    Returns
-    -------
-
-    """
-    print(body_name)
-    edit_body = project.find(name=body_name, name_regex=True, feature_type=Body)[0]
-    faces = edit_body._geom_features
-    for face in faces:
-        face_name = face._name
-        displace_face(face, face_name="/".join([body_name, face_name]), xyz=xyz)
-
-
-def open_result(file):
-    """
-    Open result file and extract results.
+    Open result Speos XMP result file and extract measurement results based
+    on a measurement template file.
 
     Parameters
     ----------
     file: str
-        file directory
+        Speos result xmp file directory
 
     Returns
     -------
     dict
-        a dictionary with results
+        a dictionary with measurement results
 
     """
     dpf_instance = CreateObject("XMPViewer.Application")
@@ -290,7 +266,58 @@ def open_result(file):
         return res
 
 
-def change_surface_source_position(project, sources, source_position_dict):
+def displace_face(edit_face, face_name, xyz=[0, 0, 0]) -> None:
+    """
+    Move a face in a translational direction defined by a provided vector xyz.
+
+    Parameters
+    ----------
+    edit_face: ansys.speos.core.face.Face
+    face_name: str
+        geo_path of face
+    xyz: tuple
+        A tuple with 3 elements defining a vector defined by xyz
+
+    Returns
+    -------
+    None
+
+    """
+    temp_face_vertices = edit_face._face.vertices
+    temp_face_vertices = np.array(temp_face_vertices).reshape((-1, 3))
+    new_face_vertices = [np.add(item, xyz) for item in temp_face_vertices]
+    new_face_vertices = np.array(new_face_vertices).reshape((1, -1)).tolist()[0]
+
+    edit_face.set_vertices(new_face_vertices)
+    edit_face.commit()
+
+
+def displace_body(project, body_name, xyz=[1, 0, 0]) -> None:
+    """
+    Move a body in a translational direction defined by a provided vector xyz.
+
+    Parameters
+    ----------
+    project: script.Project
+    body_name: str
+        geo_path of a body
+    xyz: tuple
+        A tuple with 3 elements defining a vector defined by xyz
+
+    Returns
+    -------
+    None
+
+    """
+    print(body_name)
+    edit_body = project.find(name=body_name, name_regex=True, feature_type=Body)[0]
+    faces = edit_body._geom_features
+    for face in faces:
+        face_name = face._name
+        displace_face(face, face_name="/".join([body_name, face_name]), xyz=xyz)
+
+
+def change_surface_source_position(project, sources, source_position_dict) -> None:
     """
     change the position of surface where surface source is linked.
 
@@ -305,6 +332,7 @@ def change_surface_source_position(project, sources, source_position_dict):
 
     Returns
     -------
+    None
 
     """
     for source in sources:
@@ -319,7 +347,7 @@ def change_surface_source_position(project, sources, source_position_dict):
             )
 
 
-def change_source_power(sources, source_power_dict):
+def change_source_power(sources, source_power_dict) -> None:
     """
     Change the power of surface where surface source is linked.
 
@@ -332,6 +360,7 @@ def change_source_power(sources, source_power_dict):
 
     Returns
     -------
+    None
 
     """
     for source in sources:
@@ -341,7 +370,7 @@ def change_source_power(sources, source_power_dict):
             source.commit()
 
 
-def speos_simulation(hid, speos, parameters):
+def speos_simulation(hid, speos, parameters) -> dict:
     """
     Run speos simulation with given source parameters to be changed.
 
@@ -355,6 +384,9 @@ def speos_simulation(hid, speos, parameters):
 
     Returns
     -------
+    dict
+        a dictionary with index of design id and value as dictionary including
+        simulation results: RMS_contrast, Average luminous, Number_of_rules_failed
 
     """
     new_parameter_values = {p["name"]: p["value"] for p in parameters}
@@ -425,7 +457,36 @@ def speos_simulation(hid, speos, parameters):
     return result_design
 
 
-def get_executable(version):
+def get_design_values(osl) -> list[dict]:
+    """
+
+    Parameters
+    ----------
+    osl: ansys.optislang.core
+        Ansys optiSLang instance
+
+    Returns
+    -------
+    list of dict:
+        A list of dictionaries containing the all design information for each design.
+    """
+    project_tree = osl.osl_server.get_full_project_tree()
+    project_actors = project_tree["projects"][0]["system"]
+    algorithmsystem_uid = project_actors["nodes"][0]["uid"]
+    actor_info = osl.osl_server.get_actor_status_info(
+        algorithmsystem_uid, 0, include_design_values=True
+    )
+
+    return actor_info
+
+
+################################################################################
+# Main script execution
+# ---------------------
+# From the environment variable, find the optiSLang executable for given version
+# and initiate an optiSLang project.
+#
+def get_executable(version) -> pathlib.Path:
     """Returns the optiSLang executable for given version.
 
     Parameters
@@ -446,7 +507,21 @@ def get_executable(version):
     return osl_com
 
 
-def create_workflow(osl, user_input_json):
+osl_executable = get_executable(252)
+my_osl = Optislang(
+    executable=osl_executable,
+    ini_timeout=60,
+    # loglevel="DEBUG"
+)
+print(f"Using optiSLang version {my_osl.osl_version_string}")
+
+
+################################################################################
+# Create optiSLang workflow
+# ---------------------
+# Create robustness workflow and define criteria definition
+#
+def create_workflow(osl, user_input_json) -> Optislang.nodes:
     """
     This function creates the robustness workflow
     with a proxy node and register parameters and responses.
@@ -507,7 +582,7 @@ def create_workflow(osl, user_input_json):
     return robustness_system, proxy_solver_node
 
 
-def criteria_definition(system, load_json):
+def criteria_definition(system, load_json) -> None:
     """
     This functions defines the robustness criteria in optiSLang based on user input
     Parameters
@@ -519,6 +594,7 @@ def criteria_definition(system, load_json):
 
     Returns
     -------
+    None
 
     """
     for crit in load_json.get("criteria"):
@@ -554,9 +630,29 @@ def criteria_definition(system, load_json):
             )
 
 
-def calculate(designs):
+parametric_system, proxy_node = create_workflow(my_osl, VARIATION_ANALYSIS_BOUNDARIES)
+criteria_definition(parametric_system, VARIATION_ANALYSIS_BOUNDARIES)
+
+# Save project
+temp_dir = pathlib.Path(os.getenv("TEMP"))
+project_name = "_proxy_solver_workflow.opf"
+# my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project
+
+# optiSLang project execution
+my_osl.application.project.start(wait_for_finished=False)
+print("Variation Analysis: started.")
+
+################################################################################
+# Execute Robustness analysis
+# ---------------------
+# loop until get_status() and returns "Processing done" for the root system
+#
+
+
+def calculate(designs) -> list:
     """
-    This function evaluated the outputs based on the given designs parameters.
+    This function evaluated the optical simulation outputs based on the given designs parameters.
+
     Parameters
     ----------
     designs: list
@@ -572,8 +668,6 @@ def calculate(designs):
 
     speos = launcher.launch_local_speos_rpc_server(version="252")
 
-    # speos = core.Speos(host="localhost", port=50098)
-
     # run speos simulation
     result_design_list = []
     for design in designs:
@@ -588,29 +682,23 @@ def calculate(designs):
     return result_design_list
 
 
-def get_design_values(osl):
-    """
+while not my_osl.project.root_system.get_status() == "Processing done":
+    design_list = proxy_node.get_designs()
+    if len(design_list):
+        responses_dict = calculate(design_list)
+        proxy_node.set_designs(responses_dict)
+    time.sleep(1)
 
-    Parameters
-    ----------
-    osl: ansys.optislang.core
-        Ansys optiSLang instance
-
-    Returns
-    -------
-    list of dict:
-        A list of dictionaries containing the all design information for each design.
-    """
-    project_tree = osl.osl_server.get_full_project_tree()
-    project_actors = project_tree["projects"][0]["system"]
-    algorithmsystem_uid = project_actors["nodes"][0]["uid"]
-    actor_info = osl.osl_server.get_actor_status_info(
-        algorithmsystem_uid, 0, include_design_values=True
-    )
-
-    return actor_info
+# Run MOP node
+my_osl.application.project.start(wait_for_finished=True)
+print("Variation Analysis: Done!")
 
 
+################################################################################
+# Get quality values
+# ---------------------
+# Get the robustness result and display in the console.
+#
 def get_design_quality_values(osl):
     """
     This function calculates the probability of failure for each response.
@@ -659,48 +747,6 @@ def get_design_quality_values(osl):
     )
 
 
-###############################################################################
-# Main script execution
-# ---------------------
-
-# optiSLang Project creation and workflow setup
-osl_executable = get_executable(252)
-my_osl = Optislang(
-    executable=osl_executable,
-    ini_timeout=60,
-    # loglevel="DEBUG"
-)
-print(f"Using optiSLang version {my_osl.osl_version_string}")
-
-# Create workflow
-parametric_system, proxy_node = create_workflow(my_osl, VARIATION_ANALYSIS_BOUNDARIES)
-
-# Create criteria definition
-criteria_definition(parametric_system, VARIATION_ANALYSIS_BOUNDARIES)
-
-# Save project
-temp_dir = pathlib.Path(os.getenv("TEMP"))
-project_name = "_proxy_solver_workflow.opf"
-# my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project
-
-# optiSLang project execution
-my_osl.application.project.start(wait_for_finished=False)
-print("Variation Analysis: started.")
-
-# Run Robustness analysis and loop until get_status()
-# returns "Processing done" for the root system
-while not my_osl.project.root_system.get_status() == "Processing done":
-    design_list = proxy_node.get_designs()
-    if len(design_list):
-        responses_dict = calculate(design_list)
-        proxy_node.set_designs(responses_dict)
-    time.sleep(1)
-
-# Run MOP node
-my_osl.application.project.start(wait_for_finished=True)
-print("Variation Analysis: Done!")
-
-# Get quality values
 (
     rms_contrast_fail_prob,
     average_fail_prob,
@@ -725,6 +771,9 @@ print(
 )
 print("*" * 50)
 
+################################################################################
 # Close optiSLang
+# ---------------------
+#
 my_osl.dispose()
 print("OSL Project finished.")
