@@ -521,7 +521,7 @@ print(f"Using optiSLang version {my_osl.osl_version_string}")
 # ---------------------
 # Create robustness workflow and define criteria definition
 #
-def create_workflow(osl, user_input_json) -> Optislang.nodes:
+def create_workflow(osl, user_input_json):
     """
     This function creates the robustness workflow
     with a proxy node and register parameters and responses.
