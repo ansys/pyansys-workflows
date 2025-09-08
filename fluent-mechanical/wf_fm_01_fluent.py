@@ -84,7 +84,7 @@ import os
 from pathlib import PurePosixPath
 
 import ansys.fluent.core as pyfluent
-from ansys.fluent.core import FluentMode, Precision, UIMode, examples
+from ansys.fluent.core import examples
 from ansys.fluent.core.solver import using
 from ansys.fluent.visualization import Contour, GraphicsWindow, config
 from ansys.units import VariableCatalog
