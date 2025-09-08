@@ -137,14 +137,10 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         "timeout": 300,
     }
     solver = pyfluent.launch_fluent(
-        precision=Precision.DOUBLE,
+        precision="double",
         processor_count=4,
-        mode=FluentMode.SOLVER,
-        cwd="/mnt/pyfluent",
+        mode="solver",
         container_dict=container_dict,
-        start_container=True,
-        ui_mode=UIMode.NO_GUI_OR_GRAPHICS,
-        cleanup_on_exit=False,
     )
 
     FLUENT_WORKING_DIR = "/mnt/pyfluent"
