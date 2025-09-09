@@ -30,7 +30,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 25.1
+  ANSYS_RELEASE_FOR_DOCS: 25.2
   RUN_DOC_BUILD: false
 
 jobs:
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.2, 25.1, 25.2]
     steps:
 
       - name: Checkout code
@@ -143,7 +143,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.2, 25.1, 25.2]
     container:
         image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
         options: --entrypoint /bin/bash
