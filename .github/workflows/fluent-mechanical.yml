@@ -73,11 +73,16 @@ jobs:
       - name: Download Fluent service container
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
+      - name: Update graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1-mesa-dev libosmesa6-dev xvfb
+
       - name: Run the Fluent script
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
-          python fluent-mechanical/wf_fm_01_fluent.py
+          xvfb-run python fluent-mechanical/wf_fm_01_fluent.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
