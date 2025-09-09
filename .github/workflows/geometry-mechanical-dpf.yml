@@ -133,8 +133,7 @@ jobs:
         run: |
           $dockerContainers = docker ps -a -q
           if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
+              docker rm -f $dockerContainers
           }
 
   mech-dpf:
