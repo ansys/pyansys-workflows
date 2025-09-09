@@ -81,12 +81,18 @@ This workflow will generate the following files as output:
 # examples.
 
 import os
-from pathlib import PurePosixPath
 
 import ansys.fluent.core as pyfluent
 from ansys.fluent.core import examples
+from ansys.fluent.core.solver import using
+from ansys.fluent.visualization import Contour, GraphicsWindow, config
+from ansys.units import VariableCatalog
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
+
+# Set the graphics configuration
+config.interactive = False
+config.view = "isometric"
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -136,9 +142,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         container_dict=container_dict,
     )
 
-    FLUENT_WORKING_DIR = "/mnt/pyfluent"
-
-    import_mesh_file = PurePosixPath(FLUENT_WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
+    import_mesh_file = "exhaust_manifold_conf.msh.h5"
     print(f"\nImport mesh path for container: {import_mesh_file}\n")
 else:
     solver = pyfluent.launch_fluent(
@@ -306,7 +310,6 @@ solver.settings.solution.controls.p_v_controls.flow_courant_number = 50
 solver.settings.solution.initialization.hybrid_initialize()
 solver.settings.solution.run_calculation.iter_count = 200
 
-
 ###############################################################################
 # Run the Solver & Export the Results to CSV
 # ------------------------------------------
@@ -341,15 +344,14 @@ for temp_name, temp_value in temperature_values:
     )
 
     # Export graphics result for the temperature distribution on interface_solid
-    temp_interface_contour = solver.settings.results.graphics.contour.create(
-        f"temp_interface_contour_{temp_name}"
-    )
-    temp_interface_contour(field="temperature", surfaces_list=["interface_solid"])
-    temp_interface_contour.display()
-    solver.settings.results.graphics.views.auto_scale()
-    solver.settings.results.graphics.picture.save_picture(
-        file_name=f"temp_interface_contour_{temp_name}.png"
-    )
+    with using(solver):
+        graphics_window = GraphicsWindow()
+        temperature_contour = Contour(
+            field=VariableCatalog.TEMPERATURE,
+            surfaces=["interface_solid"],
+        )
+        graphics_window.add_graphics(temperature_contour)
+        graphics_window.save_graphics(filename=f"temp_interface_contour_{temp_name}.svg")
 
     solver.settings.file.write_case_data(file_name=f"exhaust_manifold_results_{temp_name}.cas.h5")
 
