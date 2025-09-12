@@ -33,6 +33,8 @@ env:
   DPF_PORT: 21002
   DPF_START_SERVER: False
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v24.2-ubuntu
+  PYMAPDL_PORT: 21000
+  PYMAPDL_DB_PORT: 21001
 
 jobs:
   mapdl-dpf:
@@ -76,11 +78,14 @@ jobs:
       - name: "Pull, launch, and validate MAPDL service"
         id: start_mapdl
         env:
+          DISTRIBUTED_MODE: "dmp"
           LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
           MAPDL_VERSION: ${{ env.MAPDL_IMAGE_VERSION_DOCS_BUILD }}
           MAPDL_PACKAGE: ${{ env.MAPDL_DOCKER_IMAGE }}
           ANSYSLMD_LICENSE_FILE: ${{ env.ANSYSLMD_LICENSE_FILE }}
-          DISTRIBUTED_MODE: "dmp"
+          PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
+          PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
+          DPF_PORT: ${{ env.DPF_PORT }}
         run: |
           export INSTANCE_NAME=MAPDL_0
           .ci/start_mapdl.sh & export DOCKER_PID=$!
@@ -104,6 +109,9 @@ jobs:
 
       - name: "Waiting for the services to be up"
         timeout-minutes: 15
+        env:
+          PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
+          DPF_PORT: ${{ env.DPF_PORT }}
         run: |
           .ci/waiting_services.sh
 

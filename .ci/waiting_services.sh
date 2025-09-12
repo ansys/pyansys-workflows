@@ -1,4 +1,10 @@
 #!/bin/bash
+
+# Required environment variables:
+# -------------------------------
+# - PYMAPDL_PORT: The port for the PyMAPDL service (e.g., 50052).
+# - DPF_PORT: The port for the DPF service (e.g., 50055).
+
 echo "::group:: Docker services" && docker ps && echo "::endgroup::"
 
 echo "Waiting for the MAPDL service to be up..."
