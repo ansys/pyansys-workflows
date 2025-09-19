@@ -136,13 +136,13 @@ jobs:
           echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
           echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
 
-      - name: "Waiting for the services to be up"
-        timeout-minutes: 15
-        env:
-          PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
-          DPF_PORT: ${{ env.DPF_PORT }}
-        run: |
-          .ci/waiting_services.sh
+      # - name: "Waiting for the services to be up"
+      #   timeout-minutes: 15
+      #   env:
+      #     PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
+      #     DPF_PORT: ${{ env.DPF_PORT }}
+      #   run: |
+      #     .ci/waiting_services.sh
 
       - name: Run the MAPDL-DPF script
         shell: bash
