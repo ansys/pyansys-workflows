@@ -69,6 +69,11 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+      - name: Create a virtual environment and activate it
+        run: |
+          python -m venv .venv
+          .venv\Scripts\activate.bat
+
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
