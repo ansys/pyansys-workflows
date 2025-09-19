@@ -120,7 +120,7 @@ jobs:
           echo "Testing virtual framebuffer..."
           # Install xvfb if not available
           which xvfb-run || (apt-get update && apt-get install -y xvfb)
-          
+
           # Test display if the script exists
           if [ -f ".ci/display_test.py" ]; then
             xvfb-run python .ci/display_test.py
