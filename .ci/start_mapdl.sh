@@ -109,16 +109,27 @@ export I_MPI_SHM_LMT=shm
 export VERSION=$VERSION
 export P_SCHEMA=$P_SCHEMA
 
+# Allow MPI to run as root (required for container environments)
+export OMPI_ALLOW_RUN_AS_ROOT=1
+export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
+
 echo "Starting MAPDL directly in container..."
+echo "Environment variables:"
+echo "  ANSYSLMD_LICENSE_FILE: $ANSYSLMD_LICENSE_FILE"
+echo "  ANSYS_LOCK: $ANSYS_LOCK"
+echo "  I_MPI_SHM_LMT: $I_MPI_SHM_LMT"
+echo "  DISTRIBUTED_MODE: $DISTRIBUTED_MODE"
+echo "  OMPI_ALLOW_RUN_AS_ROOT: $OMPI_ALLOW_RUN_AS_ROOT"
+echo "  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: $OMPI_ALLOW_RUN_AS_ROOT_CONFIRM"
 
 # Start MAPDL using the entrypoint logic directly
-echo "Starting MAPDL with: $EXEC_PATH -grpc -p $PYMAPDL_PORT -$DISTRIBUTED_MODE"
+echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE"
 
 # Create the log file
 touch "${INSTANCE_NAME}.log"
 
-# Start MAPDL in background
-nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -distributed > "${INSTANCE_NAME}.log" 2>&1 &
+# Start MAPDL in background - use the variable, not hardcoded
+nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
 echo "MAPDL started with PID: $MAPDL_PID"
