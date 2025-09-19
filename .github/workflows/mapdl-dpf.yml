@@ -72,14 +72,14 @@ jobs:
       - name: Create a virtual environment
         run: |
           python -m venv .venv
-          .venv/bin/activate
+          source .venv/bin/activate
           apt-get update && apt-get -y install gcc mono-mcs g++
 
       - name: Install dependencies
         run: |
-          .venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt
+          source .venv/bin/activate
+          python -m pip install --upgrade pip --root-user-action=ignore
+          pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt --root-user-action=ignore
 
       - name: Login to GitHub Container Registry
         uses: docker/login-action@v3
@@ -100,7 +100,7 @@ jobs:
           PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
           DPF_PORT: ${{ env.DPF_PORT }}
         run: |
-          .venv/bin/activate
+          source .venv/bin/activate
           export INSTANCE_NAME=MAPDL_0
           .ci/start_mapdl.sh & export DOCKER_PID=$!
           echo "Launching MAPDL service at PID: $DOCKER_PID"
@@ -113,12 +113,13 @@ jobs:
 
       - name: "Test virtual framebuffer"
         run: |
-          .venv/bin/activate
+          source .venv/bin/activate
           xvfb-run python .ci/display_test.py
 
       - name: "Retrieve PyMAPDL version"
         id: version
         run: |
+          source .venv/bin/activate
           echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
           echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
 
@@ -135,7 +136,7 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: 1
           PYANSYS_VISUALIZER_HTML_BACKEND: true
         run: |
-          .venv/bin/activate
+          source .venv/bin/activate
           echo "Starting MAPDL-DPF workflow..."
           echo "PYMAPDL_PORT: $PYMAPDL_PORT"
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
@@ -164,8 +165,9 @@ jobs:
         env:
           BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
         run: |
+          source .venv/bin/activate
           cd doc
-          pip install -r requirements.txt
+          pip install -r requirements.txt --root-user-action=ignore
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
