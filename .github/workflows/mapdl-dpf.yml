@@ -72,7 +72,7 @@ jobs:
       - name: Create a virtual environment and activate it
         run: |
           python -m venv .venv
-          .venv\Scripts\activate.bat
+          .venv/bin/activate
 
       - name: Install dependencies
         run: |
