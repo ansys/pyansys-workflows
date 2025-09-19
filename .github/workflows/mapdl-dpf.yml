@@ -69,13 +69,13 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-      - name: Create a virtual environment and activate it
+      - name: Create a virtual environment
         run: |
           python -m venv .venv
-          .venv/bin/activate
 
       - name: Install dependencies
         run: |
+          .venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt
 
@@ -98,6 +98,7 @@ jobs:
           PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
           DPF_PORT: ${{ env.DPF_PORT }}
         run: |
+          .venv/bin/activate
           export INSTANCE_NAME=MAPDL_0
           .ci/start_mapdl.sh & export DOCKER_PID=$!
           echo "Launching MAPDL service at PID: $DOCKER_PID"
@@ -110,6 +111,7 @@ jobs:
 
       - name: "Test virtual framebuffer"
         run: |
+          .venv/bin/activate
           xvfb-run python .ci/display_test.py
 
       - name: "Retrieve PyMAPDL version"
@@ -131,6 +133,7 @@ jobs:
           LIBGL_ALWAYS_SOFTWARE: 1
           PYANSYS_VISUALIZER_HTML_BACKEND: true
         run: |
+          .venv/bin/activate
           echo "Starting MAPDL-DPF workflow..."
           echo "PYMAPDL_PORT: $PYMAPDL_PORT"
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
