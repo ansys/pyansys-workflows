@@ -72,6 +72,8 @@ jobs:
       - name: Create a virtual environment
         run: |
           python -m venv .venv
+          .venv/bin/activate
+          apt-get update && apt-get -y install gcc mono-mcs g++
 
       - name: Install dependencies
         run: |
