@@ -70,14 +70,16 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Create a virtual environment
+        shell: bash
         run: |
           python -m venv .venv
-          source .venv/bin/activate
+          . .venv/bin/activate
           apt-get update && apt-get -y install gcc mono-mcs g++
 
       - name: Install dependencies
+        shell: bash
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           python -m pip install --upgrade pip --root-user-action=ignore
           pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt --root-user-action=ignore
 
@@ -90,6 +92,7 @@ jobs:
 
       - name: "Pull, launch, and validate MAPDL service"
         id: start_mapdl
+        shell: bash
         env:
           DISTRIBUTED_MODE: "dmp"
           LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
@@ -100,7 +103,7 @@ jobs:
           PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
           DPF_PORT: ${{ env.DPF_PORT }}
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           export INSTANCE_NAME=MAPDL_0
           .ci/start_mapdl.sh & export DOCKER_PID=$!
           echo "Launching MAPDL service at PID: $DOCKER_PID"
@@ -112,14 +115,16 @@ jobs:
           $(docker pull $DPF_DOCKER_IMAGE && docker run -d --name dpfserver --env ANSYS_DPF_ACCEPT_LA=Y -p ${{ env.DPF_PORT }}:50052 $DPF_DOCKER_IMAGE && echo "DPF Server active on port ${{ env.DPF_PORT }}.") &
 
       - name: "Test virtual framebuffer"
+        shell: bash
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           xvfb-run python .ci/display_test.py
 
       - name: "Retrieve PyMAPDL version"
         id: version
+        shell: bash
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
           echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
 
@@ -132,11 +137,12 @@ jobs:
           .ci/waiting_services.sh
 
       - name: Run the MAPDL-DPF script
+        shell: bash
         env:
           LIBGL_ALWAYS_SOFTWARE: 1
           PYANSYS_VISUALIZER_HTML_BACKEND: true
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           echo "Starting MAPDL-DPF workflow..."
           echo "PYMAPDL_PORT: $PYMAPDL_PORT"
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
@@ -162,10 +168,11 @@ jobs:
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        shell: bash
         env:
           BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
         run: |
-          source .venv/bin/activate
+          . .venv/bin/activate
           cd doc
           pip install -r requirements.txt --root-user-action=ignore
           xvfb-run make html
