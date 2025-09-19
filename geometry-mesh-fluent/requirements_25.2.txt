@@ -1,0 +1,3 @@
+ansys-geometry-core[all]==0.11.0
+ansys-fluent-core==0.34.1
+ansys-tools-visualization-interface<0.10

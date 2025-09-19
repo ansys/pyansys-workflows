@@ -1,0 +1,4 @@
+ansys-mechanical-core==0.11.30
+ansys-fluent-core==0.34.1
+matplotlib==3.10.1
+ansys-tools-visualization-interface<0.10
