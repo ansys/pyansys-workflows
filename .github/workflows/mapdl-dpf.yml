@@ -39,7 +39,7 @@ env:
 jobs:
   mapdl-dpf:
     name: MAPDL-DPF
-    runs-on: public-ubuntu-latest-8-cores
+    runs-on: ubuntu-22.04
     container:
       image: "ghcr.io/ansys/mapdl:v25.2.4-ubuntu-cicd"
       options: -u=0:0 --oom-kill-disable --memory=6656MB --memory-swap=16896MB --shm-size=1gb --entrypoint /bin/bash
