@@ -86,7 +86,7 @@ import numpy as np
 # - constraints (quality limits for each performance indicator)
 # - the number of designs to be calculated for the robustness analysis
 
-MAXIMUM_NUMBER_SIMULATIONS: int = 200
+MAXIMUM_NUMBER_SIMULATIONS: int = 100
 """Maximum number of simulations for the robustness analysis."""
 
 PARAMETERS: list[dict] = [
@@ -206,62 +206,75 @@ def open_result(file) -> dict:
         a dictionary with measurement results
 
     """
-    dpf_instance = CreateObject("XMPViewer.Application")
-    dpf_instance.OpenFile(file)
-    temp_dir = os.getenv("TEMP")
-    if not os.path.exists(temp_dir):
-        os.mkdir(temp_dir)
-    if "radiance" in file.lower():
-        dpf_instance.ImportTemplate(
-            os.path.join(os.path.abspath(""), "Lightguide.speos", "DRL_Upper-only.VE-measure.xml"),
-            1,
-            1,
-            0,
-        )
-        export_dir = os.path.join(temp_dir, "lg_robustness_result.txt")
-        dpf_instance.MeasuresExportTXT(export_dir)
-        file = open(export_dir)
-        content = file.readlines()
-        RMS_content = content[10]
-        Average_content = content[11]
-        res = {
-            "RMS_contrast": float(
-                RMS_content[RMS_content.find("\tValue=") + 7 : RMS_content.find(r"ValueUnit=")]
-            ),
-            "Average": float(
-                Average_content[
-                    Average_content.find("\tValue=") + 7 : Average_content.find(r"ValueUnit=")
-                ]
-            ),
-        }
-        return res
-    else:
-        dpf_instance.ImportTemplate(
-            os.path.join(os.path.abspath(""), "Lightguide.speos", "ECE_R87_DRL_WithoutLines.xml"),
-            1,
-            1,
-            0,
-        )
-        export_dir = os.path.join(temp_dir, f"lg_robustness_result.txt")
-        dpf_instance.MeasuresExportTXT(export_dir)
-        limited_passed_count = 0
-        failed_count = 0
-        passed_count = 0
-        with open(export_dir) as result_file:
-            for line in result_file:
-                if "RuleStatus" in line:
-                    if "(specification failed)" in line:
-                        limited_passed_count += 1
-                    elif "(passed)" in line:
-                        passed_count += 1
-                    elif "(failed)" in line:
-                        failed_count += 1
-                    else:
-                        print("Rules status is unknown.")
+    if os.name == "nt":  # running on Windows
+        dpf_instance = CreateObject("XMPViewer.Application")
+        dpf_instance.OpenFile(file)
+        temp_dir = os.getenv("TEMP")
+        if not os.path.exists(temp_dir):
+            os.mkdir(temp_dir)
+        if "radiance" in file.lower():
+            dpf_instance.ImportTemplate(
+                os.path.join(
+                    os.path.abspath(""), "Lightguide.speos", "DRL_Upper-only.VE-measure.xml"
+                ),
+                1,
+                1,
+                0,
+            )
+            export_dir = os.path.join(temp_dir, "lg_robustness_result.txt")
+            dpf_instance.MeasuresExportTXT(export_dir)
+            file = open(export_dir)
+            content = file.readlines()
+            RMS_content = content[10]
+            Average_content = content[11]
+            res = {
+                "RMS_contrast": float(
+                    RMS_content[RMS_content.find("\tValue=") + 7 : RMS_content.find(r"ValueUnit=")]
+                ),
+                "Average": float(
+                    Average_content[
+                        Average_content.find("\tValue=") + 7 : Average_content.find(r"ValueUnit=")
+                    ]
+                ),
+            }
+            return res
+        else:
+            dpf_instance.ImportTemplate(
+                os.path.join(
+                    os.path.abspath(""), "Lightguide.speos", "ECE_R87_DRL_WithoutLines.xml"
+                ),
+                1,
+                1,
+                0,
+            )
+            export_dir = os.path.join(temp_dir, f"lg_robustness_result.txt")
+            dpf_instance.MeasuresExportTXT(export_dir)
+            limited_passed_count = 0
+            failed_count = 0
+            passed_count = 0
+            with open(export_dir) as result_file:
+                for line in result_file:
+                    if "RuleStatus" in line:
+                        if "(specification failed)" in line:
+                            limited_passed_count += 1
+                        elif "(passed)" in line:
+                            passed_count += 1
+                        elif "(failed)" in line:
+                            failed_count += 1
+                        else:
+                            print("Rules status is unknown.")
 
+            res = {
+                "Number_of_rules_limited_passed": limited_passed_count,
+                "Number_of_rules_failed": failed_count,
+            }
+            return res
+    else:  # Dummy results when running on VM XMPViewer is not supported
         res = {
-            "Number_of_rules_limited_passed": limited_passed_count,
-            "Number_of_rules_failed": failed_count,
+            "RMS_contrast": 0.15,
+            "Average": 250000.0,
+            "Number_of_rules_limited_passed": 1,
+            "Number_of_rules_failed": 0,
         }
         return res
 
