@@ -1,0 +1,196 @@
+name: MAPDL-DPF Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'mapdl-dpf/**'
+
+env:
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  MAIN_PYTHON_VERSION: "3.11"
+  MAPDL_DOCKER_IMAGE: 'ghcr.io/ansys/mapdl'
+  DPF_DOCKER_IMAGE: ghcr.io/ansys/mapdl:v25.2-rocky-dpf-standalone
+  PYANSYS_WORKFLOWS_CI: true
+  ANSYS_RELEASE_FOR_DOCS: 25.1
+  RUN_DOC_BUILD: false
+  DPF_PORT: 21002
+  DPF_START_SERVER: False
+  MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
+  PYMAPDL_PORT: 21000
+  PYMAPDL_DB_PORT: 21001
+
+jobs:
+  mapdl-dpf:
+    name: MAPDL-DPF
+    runs-on: ubuntu-22.04
+    container:
+      image: "ghcr.io/ansys/mapdl:v25.2.4-ubuntu-cicd"
+      options: -u=0:0 --oom-kill-disable --memory=6656MB --memory-swap=16896MB --shm-size=1gb --entrypoint /bin/bash
+      credentials:
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [24.1, 24.2, 25.1]
+    env:
+      PYMAPDL_START_INSTANCE: FALSE
+      ON_DOCUMENTATION: TRUE
+
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: |
+            mapdl-dpf
+            doc
+            .ci
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Create a virtual environment
+        shell: bash
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          apt-get update && apt-get -y install gcc mono-mcs g++
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          python -m pip install --upgrade pip --root-user-action=ignore
+          pip install -r mapdl-dpf/requirements_${{ matrix.ansys-release }}.txt --root-user-action=ignore
+
+      - name: "Start MAPDL service directly (inside container)"
+        id: start_mapdl
+        shell: bash
+        env:
+          DISTRIBUTED_MODE: "dmp"
+          LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
+          MAPDL_VERSION: ${{ env.MAPDL_IMAGE_VERSION_DOCS_BUILD }}
+          MAPDL_PACKAGE: ${{ env.MAPDL_DOCKER_IMAGE }}
+          ANSYSLMD_LICENSE_FILE: ${{ env.ANSYSLMD_LICENSE_FILE }}
+          PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
+          PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
+          DPF_PORT: ${{ env.DPF_PORT }}
+        run: |
+          . .venv/bin/activate
+          export INSTANCE_NAME=MAPDL_0
+          .ci/start_mapdl.sh & export DOCKER_PID=$!
+          echo "Launching MAPDL service at PID: $DOCKER_PID"
+          echo "DOCKER_PID=$(echo $DOCKER_PID)" >> $GITHUB_OUTPUT
+
+      - name: "DPF server setup"
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          echo "DPF service will be available through MAPDL container"
+          echo "DPF_PORT: $DPF_PORT"
+          # DPF is already available in the MAPDL container
+          # The Python script will connect to it as needed
+          export ANSYS_DPF_ACCEPT_LA=Y
+          echo "ANSYS_DPF_ACCEPT_LA set to Y"
+
+      - name: "Test virtual framebuffer"
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          echo "Testing virtual framebuffer..."
+          # Install xvfb if not available
+          which xvfb-run || (apt-get update && apt-get install -y xvfb)
+
+          # Test display if the script exists
+          if [ -f ".ci/display_test.py" ]; then
+            xvfb-run python .ci/display_test.py
+          else
+            echo "Display test script not found, skipping..."
+          fi
+
+      - name: "Retrieve PyMAPDL version"
+        id: version
+        shell: bash
+        run: |
+          . .venv/bin/activate
+          echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
+          echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
+
+      # - name: "Waiting for the services to be up"
+      #   timeout-minutes: 15
+      #   env:
+      #     PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
+      #     DPF_PORT: ${{ env.DPF_PORT }}
+      #   run: |
+      #     .ci/waiting_services.sh
+
+      - name: Run the MAPDL-DPF script
+        shell: bash
+        env:
+          LIBGL_ALWAYS_SOFTWARE: 1
+          PYANSYS_VISUALIZER_HTML_BACKEND: true
+        run: |
+          . .venv/bin/activate
+          echo "Starting MAPDL-DPF workflow..."
+          echo "PYMAPDL_PORT: $PYMAPDL_PORT"
+          echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
+          python mapdl-dpf/wf_mapdl-dpf.py
+
+      - name: Stop all containers (if any)
+        run: |
+          if [ -n "$(docker ps -a -q)" ]; then
+              docker rm -f $(docker ps -a -q)
+          fi
+
+      - name: (DOCS) Check if docs should be built
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        run: |
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        shell: bash
+        env:
+          BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
+        run: |
+          . .venv/bin/activate
+          cd doc
+          pip install -r requirements.txt --root-user-action=ignore
+          xvfb-run make html
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: mapdl-dpf-docs-stage-mapdl
+          path: |
+            doc/_build/
+            doc/source/examples/mapdl-dpf/
+          overwrite: true
