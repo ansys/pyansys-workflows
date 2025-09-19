@@ -1,9 +1,9 @@
 #!/bin/bash
-# This script is used to start a MAPDL instance in a Docker container.
+# This script is modified to start MAPDL directly inside a container (no Docker-in-Docker)
 #
 # Usage:
 # ------
-# This script is intended to be run in a CI/CD environment where the necessary environment variables are set.
+# This script is intended to be run in a CI/CD environment where we're already inside a MAPDL container.
 #
 # Required environment variables:
 # -------------------------------
@@ -12,45 +12,32 @@
 # - DPF_PORT: The port for the DPF service (e.g., 50055).
 # - INSTANCE_NAME: The name of the MAPDL instance (e.g., "MAPDL_0").
 # - LICENSE_SERVER: The address of the license server (e.g., "123.123.123.123").
-# - MAPDL_PACKAGE: The Docker image package name (e.g., ansys/mapdl).
 # - MAPDL_VERSION: The version of the MAPDL image to use (e.g., "v25.2-ubuntu-cicd").
 # - PYMAPDL_DB_PORT: The port for the PyMAPDL database service (e.g., 50056).
 # - PYMAPDL_PORT: The port for the PyMAPDL service (e.g., 50052).
 #
-# Example:
-# --------
-#
-#   export DISTRIBUTED_MODE="smp"
-#   export DPF_PORT=50055
-#   export INSTANCE_NAME=MAPDL_0
-#   export LICENSE_SERVER="123.123.123.123"
-#   export MAPDL_PACKAGE=ghcr.io/ansys/mapdl
-#   export MAPDL_VERSION=v25.2-ubuntu-cicd
-#   export PYMAPDL_DB_PORT=50056
-#   export PYMAPDL_PORT=50052
-#   ./start_mapdl.sh
-#
 
-export MAJOR MINOR MAPDL_IMAGE VERSION
+export MAJOR MINOR VERSION
 
 echo "MAPDL Instance name: $INSTANCE_NAME"
 echo "MAPDL_VERSION: $MAPDL_VERSION"
+echo "Running inside container - no Docker pull needed"
 
-MAPDL_IMAGE="$MAPDL_PACKAGE:$MAPDL_VERSION"
-echo "MAPDL_IMAGE:   $MAPDL_IMAGE"
-docker pull "$MAPDL_IMAGE"
-
+# Extract version from MAPDL_VERSION
 MAJOR=$(echo "$MAPDL_VERSION" | head -c 3 | tail -c 2)
 MINOR=$(echo "$MAPDL_VERSION" | head -c 5 | tail -c 1)
 
 VERSION="$MAJOR$MINOR"
 echo "MAPDL VERSION: $VERSION"
 
+# Configure licensing
+export ANSYSLMD_LICENSE_FILE="1055@$LICENSE_SERVER"
 
+# Determine executable path based on image type
 if [[ $MAPDL_VERSION == *"latest-ubuntu"* ]]; then
     echo "It is latest-ubuntu. Using 'ansys' script to launch"
     EXEC_PATH=ansys
-    # P_SCHEMA=/ansys_inc/ansys/ac4/schema
+    P_SCHEMA=/ansys_inc/ansys/ac4/schema
 
 elif [[ $MAPDL_VERSION == *"ubuntu"* ]] ; then
     echo "It is an ubuntu based image"
@@ -63,68 +50,101 @@ else
     P_SCHEMA=/ansys_inc/ansys/ac4/schema
 fi;
 
+# Handle CICD version specifics
 if [[ $MAPDL_VERSION == *"cicd"* ]] ; then
-    echo "It is a CICD version, binding DPF port too"
+    echo "It is a CICD version"
     if [ "$RUN_DPF_SERVER" == "true" ]; then
-        echo "RUN_DPF_SERVER is set to true, starting DPF server"
-        export DPF_ON="-e ANSYS_DPF_ACCEPT_LA=Y"
+        echo "RUN_DPF_SERVER is set to true, DPF will be available"
+        export ANSYS_DPF_ACCEPT_LA=Y
     fi
 
-    export DPF_PORT_INTERNAL=50055
-    export DPF_PORT_ARG="-p ${DPF_PORT}:${DPF_PORT_INTERNAL}"
-    export DB_INT_PORT=50056
+    echo "DPF_PORT: $DPF_PORT"
+    echo "PYMAPDL_DB_PORT: $PYMAPDL_DB_PORT"
 
-    echo "DPF_PORT_ARG: $DPF_PORT_ARG"
-    echo "DB_INT_PORT: $DB_INT_PORT"
-
-    echo "Overriding DISTRIBUTED_MODE to 'dmp' for CICD version"
-    export DISTRIBUTED_MODE="dmp"
+    echo "Setting DISTRIBUTED_MODE to $DISTRIBUTED_MODE for CICD version"
 else
-    export DPF_PORT_ARG=""
-    export DB_INT_PORT=50055
-    export DPF_ON=""
+    export PYMAPDL_DB_PORT=DPF_PORT
 fi;
 
 echo "EXEC_PATH: $EXEC_PATH"
 echo "P_SCHEMA: $P_SCHEMA"
 
-# Building docker command
-CMD=$(cat <<-_EOT_
-run \
-  --entrypoint /bin/bash \
-  --name ${INSTANCE_NAME} \
-  --restart always \
-  --health-interval=0.5s \
-  --health-retries=4 \
-  --health-timeout=0.5s \
-  --health-start-period=10s \
-  -e ANSYSLMD_LICENSE_FILE=${ANSYSLMD_LICENSE_FILE} \
-  -e ANSYS_LOCK="OFF" \
-  ${DPF_ON} \
-  -p ${PYMAPDL_PORT}:50052 \
-  -p ${PYMAPDL_DB_PORT}:${DB_INT_PORT} \
-  ${DPF_PORT_ARG} \
-  -e VERSION=${VERSION} \
-  -e DPF_PORT_INTERNAL=${DPF_PORT_INTERNAL} \
-  -e EXEC_PATH=${EXEC_PATH} \
-  -e DISTRIBUTED_MODE=${DISTRIBUTED_MODE} \
-  --shm-size=2gb \
-  -e I_MPI_SHM_LMT=shm \
-  -e P_SCHEMA=${P_SCHEMA} \
-  -w /jobs \
-  -u=0:0 \
-  --memory=6656MB \
-  --memory-swap=16896MB \
-  --mount type=bind,src=${PWD}/.ci/entrypoint.sh,dst=/entrypoint.sh \
-  ${MAPDL_IMAGE} /entrypoint.sh
-_EOT_
-)
+# Verify executable exists
+if [ ! -f "$EXEC_PATH" ] && [ "$EXEC_PATH" != "ansys" ]; then
+    echo "Executable not found at $EXEC_PATH, searching for alternatives..."
 
-echo "Running docker command: "
-echo "docker ${CMD}"
-# shellcheck disable=SC2086
-docker $CMD > "${INSTANCE_NAME}.log" &
-grep -q 'Server listening on' <(timeout 60 tail -f "${INSTANCE_NAME}.log")
+    # Try alternative paths
+    ALTERNATIVE_PATHS=(
+        "/ansys_inc/v$VERSION/ansys/bin/ansys$VERSION"
+        "/ansys_inc/ansys/bin/mapdl"
+        "/ansys_inc/ansys/bin/ansys$VERSION"
+        "/opt/ansys_inc/v$VERSION/ansys/bin/mapdl"
+    )
+
+    for alt_path in "${ALTERNATIVE_PATHS[@]}"; do
+        if [ -f "$alt_path" ]; then
+            EXEC_PATH="$alt_path"
+            echo "Found alternative executable: $EXEC_PATH"
+            break
+        fi
+    done
+
+    # If still not found, try which command
+    if [ ! -f "$EXEC_PATH" ]; then
+        if command -v "ansys$VERSION" >/dev/null 2>&1; then
+            EXEC_PATH="ansys$VERSION"
+            echo "Using system command: $EXEC_PATH"
+        else
+            echo "ERROR: Could not find MAPDL executable"
+            echo "Searched paths:"
+            printf '%s\n' "${ALTERNATIVE_PATHS[@]}"
+            exit 1
+        fi
+    fi
+fi
+
+# Set environment variables for MAPDL
+export ANSYS_LOCK="OFF"
+export I_MPI_SHM_LMT=shm
+export VERSION=$VERSION
+export P_SCHEMA=$P_SCHEMA
+
+echo "Starting MAPDL directly in container..."
+
+# Start MAPDL using the entrypoint logic directly
+echo "Starting MAPDL with: $EXEC_PATH -grpc -p $PYMAPDL_PORT -$DISTRIBUTED_MODE"
+
+# Create the log file
+touch "${INSTANCE_NAME}.log"
+
+# Start MAPDL in background
+nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -distributed > "${INSTANCE_NAME}.log" 2>&1 &
+MAPDL_PID=$!
+
+echo "MAPDL started with PID: $MAPDL_PID"
+
+# Wait for MAPDL to be ready (similar to original script)
+echo "Waiting for MAPDL to start..."
+timeout 60 bash -c "
+    while ! grep -q 'Server listening on' '${INSTANCE_NAME}.log' 2>/dev/null; do
+        if ! kill -0 $MAPDL_PID 2>/dev/null; then
+            echo 'ERROR: MAPDL process died'
+            exit 1
+        fi
+        sleep 1
+    done
+"
+
+if [ $? -eq 0 ]; then
+    echo "MAPDL is ready!"
+else
+    echo "ERROR: MAPDL failed to start or timed out"
+    echo "Content of ${INSTANCE_NAME}.log:"
+    cat "${INSTANCE_NAME}.log"
+    exit 1
+fi
 
 echo "Content of ${INSTANCE_NAME}.log:"
 cat "${INSTANCE_NAME}.log"
+
+echo "MAPDL_PID=$MAPDL_PID"
