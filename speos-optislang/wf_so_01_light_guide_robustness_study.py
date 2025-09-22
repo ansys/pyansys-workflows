@@ -206,7 +206,7 @@ def open_result(file) -> dict:
         a dictionary with measurement results
 
     """
-    if os.name == "nt":  # running on Windows
+    if os.getenv("CI") != "true":  # Use XMPViewer only outside CI environment
         dpf_instance = CreateObject("XMPViewer.Application")
         dpf_instance.OpenFile(file)
         temp_dir = os.getenv("TEMP")
@@ -269,7 +269,7 @@ def open_result(file) -> dict:
                 "Number_of_rules_failed": failed_count,
             }
             return res
-    else:  # Dummy results when running on VM XMPViewer is not supported
+    else:  # Provide dummy results for CI environment
         res = {
             "RMS_contrast": 0.15,
             "Average": 250000.0,
@@ -279,15 +279,13 @@ def open_result(file) -> dict:
         return res
 
 
-def displace_face(edit_face, face_name, xyz=[0, 0, 0]) -> None:
+def displace_face(edit_face, xyz=[0, 0, 0]) -> None:
     """
     Move a face in a translational direction defined by a provided vector xyz.
 
     Parameters
     ----------
     edit_face: ansys.speos.core.face.Face
-    face_name: str
-        geo_path of face
     xyz: tuple
         A tuple with 3 elements defining a vector defined by xyz
 
@@ -326,8 +324,7 @@ def displace_body(project, body_name, xyz=[1, 0, 0]) -> None:
     edit_body = project.find(name=body_name, name_regex=True, feature_type=Body)[0]
     faces = edit_body._geom_features
     for face in faces:
-        face_name = face._name
-        displace_face(face, face_name="/".join([body_name, face_name]), xyz=xyz)
+        displace_face(face, xyz=xyz)
 
 
 def change_surface_source_position(project, sources, source_position_dict) -> None:
