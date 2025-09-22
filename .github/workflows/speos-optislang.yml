@@ -23,6 +23,7 @@ on:
       - 'speos-optislang/**'
 
 env:
+  ON_CI: true
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
