@@ -86,7 +86,7 @@ import numpy as np
 # - constraints (quality limits for each performance indicator)
 # - the number of designs to be calculated for the robustness analysis
 
-MAXIMUM_NUMBER_SIMULATIONS: int = int(os.getenv("ON_CI", 100))
+MAXIMUM_NUMBER_SIMULATIONS: int = 100 if (os.environ.get("ON_CI", "false").lower() != "true") else 5
 """Maximum number of simulations for the robustness analysis."""
 
 PARAMETERS: list[dict] = [
