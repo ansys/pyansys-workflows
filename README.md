@@ -39,7 +39,9 @@ for every part of the simulation process. The available workflows are:
   The involved Ansys products are:
     - For fluids analysis: Ansys Fluent
     - For thermal analysis: Ansys Mechanical
-- [Speos and optiSLang robustness analysis](https://github.com/ansys/pyansys-workflows/tree/main/speos-optislang): this workflow performs a robustness study to evaluate how variations in LED source power and position influence lightguide performance using PySpeos and PyOptiSLang. The analysis quantifies performance through key metrics such as RMS contrast, average luminance, and the number of failed regulations.
+- [Speos and optiSLang robustness analysis](https://github.com/ansys/pyansys-workflows/tree/main/speos-optislang): this workflow performs a robustness
+   study to evaluate how variations in LED source power and position influence lightguide performance using PySpeos and PyOptiSLang. The analysis quantifies performance
+   through key metrics such as RMS contrast, average luminance, and the number of failed regulations.
   The involved Ansys products are:
     - For optical analysis: Ansys Speos
     - For robustness analysis: Ansys optiSLang
