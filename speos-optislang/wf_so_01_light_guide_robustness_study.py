@@ -33,7 +33,7 @@ performance. Additionally, we will evaluate the scattering of the homogeneity (R
 and the lit appearance (average luminance) to see what the worst design looks like due to
 tolerances.
 
-Problem Description
+Problem description
 -------------------
 
 The optical simulation project includes a lightguide with an LED. During the vehicle assemble
