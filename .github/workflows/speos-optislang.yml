@@ -23,11 +23,11 @@ on:
       - 'speos-optislang/**'
 
 env:
-  ON_CI: true
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
+  ON_CI: true
   RUN_DOC_BUILD: false
 
 jobs:
@@ -74,12 +74,6 @@ jobs:
         run: |
           source .venv/Scripts/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
-
-      # - name: Store the outputs
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: ...
-      #     path: ...
 
       - name: (DOCS) Check if docs should be built
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
