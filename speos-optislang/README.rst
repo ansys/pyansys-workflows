@@ -1,5 +1,5 @@
 Speos, optiSLang workflow
-=====================================
+=========================
 
 Below is an example workflow that demonstrates how to perform an optical lightguide robustness
 study, set up the robustness workflow, and run an optical simulation using PyAnsys. The lightguide
