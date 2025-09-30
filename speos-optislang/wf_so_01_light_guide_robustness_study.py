@@ -56,7 +56,7 @@ This workflow will generate output as a robustness summary table is printed out 
 # ------------------------
 
 import os
-import pathlib
+from pathlib import Path
 import time
 
 from ansys.optislang.core import Optislang
@@ -75,6 +75,13 @@ from ansys.speos.core.simulation import SimulationDirect
 from ansys.speos.core.source import SourceSurface
 from comtypes.client import CreateObject
 import numpy as np
+
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "wf_so_01_light_guide_robustness_study.py")
+# sphinx_gallery_end_ignore
 
 ###############################################################################
 # Definition of the variation analysis boundaries
@@ -402,7 +409,7 @@ def speos_simulation(hid, speos, parameters) -> dict:
     new_parameter_values = {p["name"]: p["value"] for p in parameters}
 
     clean_all_dbs(speos.client)
-    script_folder = pathlib.Path(__file__).resolve().parent
+    script_folder = Path(__file__).resolve().parent
     speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos"
     project = Project(speos=speos, path=str(speos_file))
     # project.preview()
@@ -496,7 +503,7 @@ def get_design_values(osl) -> list[dict]:
 # From the environment variable, find the optiSLang executable for given version
 # and initiate an optiSLang project.
 #
-def get_executable(version) -> pathlib.Path:
+def get_executable(version) -> Path:
     """Returns the optiSLang executable for given version.
 
     Parameters
@@ -506,12 +513,12 @@ def get_executable(version) -> pathlib.Path:
 
     Returns
     -------
-    pathlib.Path
+    Path
         Executable path.
     """
     if os.getenv(f"AWP_ROOT{version}"):
         awp_root = os.getenv(f"AWP_ROOT{version}")
-        osl_com = pathlib.Path(awp_root) / "optiSLang" / "optislang.com"
+        osl_com = Path(awp_root) / "optiSLang" / "optislang.com"
     else:
         raise Exception(f"optiSLang installation not found. Please install optiSLang v{version}.")
     return osl_com
@@ -644,7 +651,7 @@ parametric_system, proxy_node = create_workflow(my_osl, VARIATION_ANALYSIS_BOUND
 criteria_definition(parametric_system, VARIATION_ANALYSIS_BOUNDARIES)
 
 # Save project
-temp_dir = pathlib.Path(os.getenv("TEMP"))
+temp_dir = Path(os.getenv("TEMP"))
 project_name = "_proxy_solver_workflow.opf"
 # my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project
 
