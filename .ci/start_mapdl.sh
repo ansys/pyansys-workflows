@@ -115,7 +115,6 @@ export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
 echo "Starting MAPDL directly in container..."
 echo "Environment variables:"
-echo "  ANSYSLMD_LICENSE_FILE: $ANSYSLMD_LICENSE_FILE"
 echo "  ANSYS_LOCK: $ANSYS_LOCK"
 echo "  I_MPI_SHM_LMT: $I_MPI_SHM_LMT"
 echo "  DISTRIBUTED_MODE: $DISTRIBUTED_MODE"
