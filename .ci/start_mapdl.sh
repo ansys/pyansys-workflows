@@ -124,9 +124,6 @@ echo "  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: $OMPI_ALLOW_RUN_AS_ROOT_CONFIRM"
 # Start MAPDL using the entrypoint logic directly
 echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE"
 
-# Checking PYMAPDL is free
-netstat -tulpn | grep :$PYMAPDL_PORT || echo "Port $PYMAPDL_PORT is free"
-
 # Create the log file
 touch "${INSTANCE_NAME}.log"
 
@@ -138,13 +135,20 @@ MAPDL_PID=$!
 echo "Waiting for MAPDL to initialize..."
 sleep 10
 
-# Check if process is still running
-if ! kill -0 $MAPDL_PID 2>/dev/null; then
-    echo "ERROR: MAPDL process died during startup!"
-    echo "Log content:"
-    cat "${INSTANCE_NAME}.log" || echo "No log content"
-    exit 1
-fi
+# Debug: Check immediately and periodically
+for i in {1..10}; do
+    echo "Check $i: Waiting 1 second..."
+    sleep 1
+    
+    if ! kill -0 $MAPDL_PID 2>/dev/null; then
+        echo "ERROR: MAPDL process died after $i seconds!"
+        echo "Log content:"
+        cat "${INSTANCE_NAME}.log" || echo "No log content"
+        exit 1
+    fi
+    
+    echo "MAPDL process still alive after $i seconds"
+done
 
 echo "MAPDL process is running (PID: $MAPDL_PID)"
 echo "MAPDL_PID=$MAPDL_PID"
