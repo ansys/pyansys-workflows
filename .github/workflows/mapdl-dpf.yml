@@ -98,9 +98,9 @@ jobs:
         run: |
           . .venv/bin/activate
           export INSTANCE_NAME=MAPDL_0
-          .ci/start_mapdl.sh & export DOCKER_PID=$!
-          echo "Launching MAPDL service at PID: $DOCKER_PID"
-          echo "DOCKER_PID=$(echo $DOCKER_PID)" >> $GITHUB_OUTPUT
+          .ci/start_mapdl.sh & export MAPDL_PID=$!
+          echo "Launching MAPDL service at PID: $MAPDL_PID"
+          echo "MAPDL_PID=$(echo $MAPDL_PID)" >> $GITHUB_OUTPUT
 
       - name: "DPF server setup"
         shell: bash
