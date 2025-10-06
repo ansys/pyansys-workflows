@@ -133,7 +133,6 @@ MAPDL_PID=$!
 
 # Give MAPDL time to initialize
 echo "Waiting for MAPDL to initialize..."
-sleep 10
 
 # Debug: Check immediately and periodically
 for i in {1..10}; do
