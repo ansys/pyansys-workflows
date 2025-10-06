@@ -49,7 +49,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [25.2]
     env:
       PYMAPDL_START_INSTANCE: FALSE
       ON_DOCUMENTATION: TRUE
