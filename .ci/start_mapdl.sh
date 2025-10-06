@@ -134,18 +134,17 @@ touch "${INSTANCE_NAME}.log"
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
-# Wait for MAPDL to be ready
-echo "Waiting for the MAPDL port to be open..." 
-while ! netstat -tulpn | grep -q ":$PYMAPDL_PORT.*LISTEN"; do
-    # Check if process is still running
-    if ! kill -0 $MAPDL_PID 2>/dev/null; then
-        echo "ERROR: MAPDL process died!"
-        echo "Log content:"
-        cat "${INSTANCE_NAME}.log" || echo "No log content"
-        exit 1
-    fi
-    sleep 0.1
-done
-echo "MAPDL service is up!"
+# Give MAPDL time to initialize
+echo "Waiting for MAPDL to initialize..."
+sleep 10
 
+# Check if process is still running
+if ! kill -0 $MAPDL_PID 2>/dev/null; then
+    echo "ERROR: MAPDL process died during startup!"
+    echo "Log content:"
+    cat "${INSTANCE_NAME}.log" || echo "No log content"
+    exit 1
+fi
+
+echo "MAPDL process is running (PID: $MAPDL_PID)"
 echo "MAPDL_PID=$MAPDL_PID"
