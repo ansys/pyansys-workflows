@@ -50,6 +50,9 @@ else
     P_SCHEMA=/ansys_inc/ansys/ac4/schema
 fi;
 
+echo "EXEC_PATH: $EXEC_PATH"
+echo "P_SCHEMA: $P_SCHEMA"
+
 # Handle CICD version specifics
 if [[ $MAPDL_VERSION == *"cicd"* ]] ; then
     echo "It is a CICD version"
@@ -124,10 +127,13 @@ echo "  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: $OMPI_ALLOW_RUN_AS_ROOT_CONFIRM"
 # Start MAPDL using the entrypoint logic directly
 echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE"
 
+# Checking PYMAPDL is free
+netstat -tulpn | grep :$PYMAPDL_PORT || echo "Port $PYMAPDL_PORT is free"
+
 # Create the log file
 touch "${INSTANCE_NAME}.log"
 
-# Start MAPDL in background - use the variable, not hardcoded
+# Start MAPDL in background
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
