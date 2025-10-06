@@ -136,28 +136,11 @@ MAPDL_PID=$!
 
 echo "MAPDL started with PID: $MAPDL_PID"
 
-# Wait for MAPDL to be ready (similar to original script)
+# Wait for MAPDL to be ready
 echo "Waiting for MAPDL to start..."
-timeout 60 bash -c "
-    while ! grep -q 'Server listening on' '${INSTANCE_NAME}.log' 2>/dev/null; do
-        if ! kill -0 $MAPDL_PID 2>/dev/null; then
-            echo 'ERROR: MAPDL process died'
-            exit 1
-        fi
-        sleep 1
-    done
-"
-
-if [ $? -eq 0 ]; then
+if grep -q 'Server listening on' <(timeout 60 tail -f "${INSTANCE_NAME}.log"); then
     echo "MAPDL is ready!"
 else
     echo "ERROR: MAPDL failed to start or timed out"
-    echo "Content of ${INSTANCE_NAME}.log:"
-    cat "${INSTANCE_NAME}.log"
     exit 1
 fi
-
-echo "Content of ${INSTANCE_NAME}.log:"
-cat "${INSTANCE_NAME}.log"
-
-echo "MAPDL_PID=$MAPDL_PID"
