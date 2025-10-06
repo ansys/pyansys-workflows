@@ -134,13 +134,15 @@ touch "${INSTANCE_NAME}.log"
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
-echo "MAPDL started with PID: $MAPDL_PID"
-
-# Wait for MAPDL to be ready
-echo "Waiting for MAPDL to start..."
-if grep -q 'Server listening on' <(timeout 60 tail -f "${INSTANCE_NAME}.log"); then
-    echo "MAPDL is ready!"
-else
-    echo "ERROR: MAPDL failed to start or timed out"
-    exit 1
-fi
+echo "Waiting for the MAPDL port to be open..." 
+while ! nc -z localhost "$PYMAPDL_PORT"; do
+    # Check if process is still running
+    if ! kill -0 $MAPDL_PID 2>/dev/null; then
+        echo "ERROR: MAPDL process died!"
+        echo "Log content:"
+        cat "${INSTANCE_NAME}.log" || echo "No log content"
+        exit 1
+    fi
+    sleep 0.1
+done
+echo "MAPDL service is up!"
