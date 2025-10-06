@@ -136,18 +136,24 @@ echo "Waiting for MAPDL to initialize..."
 
 # Debug: Check immediately and periodically
 for i in {1..10}; do
-    echo "Check $i: Waiting 1 second..."
-    sleep 1
+    echo "Check $i: Testing process status..."
     
+    # Check process first
     if ! kill -0 $MAPDL_PID 2>/dev/null; then
-        echo "ERROR: MAPDL process died after $i seconds!"
-        echo "Log content:"
+        echo "ERROR: MAPDL process died after $i checks!"
+        echo "--- LOG CONTENT ---"
         cat "${INSTANCE_NAME}.log" || echo "No log content"
+        echo "--- END LOG ---"
+        echo "Process list:"
+        ps aux | grep mapdl || echo "No MAPDL processes found"
         exit 1
     fi
     
     echo "MAPDL process still alive after $i seconds"
+    echo "About to sleep for 1 second..."
+    sleep 1
+    echo "Sleep completed for check $i"
 done
 
-echo "MAPDL process is running (PID: $MAPDL_PID)"
+echo "All checks passed - MAPDL process is running (PID: $MAPDL_PID)"
 echo "MAPDL_PID=$MAPDL_PID"
