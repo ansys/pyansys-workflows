@@ -134,6 +134,13 @@ touch "${INSTANCE_NAME}.log"
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
+# Install netcat if not available
+echo "Checking for netcat..."
+if ! command -v nc >/dev/null 2>&1; then
+    echo "Installing netcat..."
+    apt-get update -qq && apt-get install -y netcat-openbsd
+fi
+
 echo "Waiting for the MAPDL port to be open..." 
 while ! nc -z localhost "$PYMAPDL_PORT"; do
     # Check if process is still running
