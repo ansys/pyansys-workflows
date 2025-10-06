@@ -30,9 +30,6 @@ MINOR=$(echo "$MAPDL_VERSION" | head -c 5 | tail -c 1)
 VERSION="$MAJOR$MINOR"
 echo "MAPDL VERSION: $VERSION"
 
-# Configure licensing
-export ANSYSLMD_LICENSE_FILE="1055@$LICENSE_SERVER"
-
 # Determine executable path based on image type
 if [[ $MAPDL_VERSION == *"latest-ubuntu"* ]]; then
     echo "It is latest-ubuntu. Using 'ansys' script to launch"
@@ -134,7 +131,7 @@ netstat -tulpn | grep :$PYMAPDL_PORT || echo "Port $PYMAPDL_PORT is free"
 touch "${INSTANCE_NAME}.log"
 
 # Start MAPDL in background
-nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE > "${INSTANCE_NAME}.log" 2>&1 &
+nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 > "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
 echo "MAPDL started with PID: $MAPDL_PID"
