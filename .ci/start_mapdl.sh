@@ -128,7 +128,7 @@ echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MO
 touch "${INSTANCE_NAME}.log"
 
 # Start MAPDL in background
-nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 > "${INSTANCE_NAME}.log" 2>&1 &
+nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2
 MAPDL_PID=$!
 
 # Give MAPDL time to initialize
@@ -141,18 +141,12 @@ for i in {1..10}; do
     # Check process first
     if ! kill -0 $MAPDL_PID 2>/dev/null; then
         echo "ERROR: MAPDL process died after $i checks!"
-        echo "--- LOG CONTENT ---"
-        cat "${INSTANCE_NAME}.log" || echo "No log content"
-        echo "--- END LOG ---"
         echo "Process list:"
         ps aux | grep mapdl || echo "No MAPDL processes found"
         exit 1
     fi
     
-    echo "MAPDL process still alive after $i seconds"
-    echo "About to sleep for 1 second..."
-    sleep 1
-    echo "Sleep completed for check $i"
+    echo "MAPDL process still alive after $i."
 done
 
 echo "All checks passed - MAPDL process is running (PID: $MAPDL_PID)"
