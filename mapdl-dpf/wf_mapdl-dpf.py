@@ -108,7 +108,9 @@ mapdl.exit()
 # cwd = Path.cwd()  # Get current working directory
 
 # # download example data
-# local_cdb = download_example_data(filename="local.cdb", directory="pyansys-workflow/pymapdl-pydpf")
+# local_cdb = download_example_data(
+#     filename="local.cdb", directory="pyansys-workflow/pymapdl-pydpf"
+# )
 # global_cdb = download_example_data(
 #     filename="global.cdb", directory="pyansys-workflow/pymapdl-pydpf"
 # )
@@ -203,8 +205,8 @@ mapdl.exit()
 # # Set up DPF operators
 # # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 # # We define two dpf operators: the first reads the displacement results from the global model,
-# # and the second interpolates those displacements onto the boundary coordinates of the local model.
-# # The ``DataSources`` class to link results with the DPF operator inputs.
+# # and the second interpolates those displacements onto the boundary coordinates of the local
+# # model. The ``DataSources`` class to link results with the DPF operator inputs.
 
 
 # def define_dpf_operators(nCores):

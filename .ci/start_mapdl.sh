@@ -137,7 +137,7 @@ echo "Waiting for MAPDL to initialize..."
 # Debug: Check immediately and periodically
 for i in {1..10}; do
     echo "Check $i: Testing process status..."
-    
+
     # Check process first
     if ! kill -0 $MAPDL_PID 2>/dev/null; then
         echo "ERROR: MAPDL process died after $i checks!"
@@ -145,7 +145,7 @@ for i in {1..10}; do
         ps aux | grep mapdl || echo "No MAPDL processes found"
         exit 1
     fi
-    
+
     echo "MAPDL process still alive after $i."
 done
 
