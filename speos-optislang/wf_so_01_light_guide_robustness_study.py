@@ -327,7 +327,6 @@ def displace_body(project, body_name, xyz=[1, 0, 0]) -> None:
     None
 
     """
-    print(body_name)
     edit_body = project.find(name=body_name, name_regex=True, feature_type=Body)[0]
     faces = edit_body._geom_features
     for face in faces:
@@ -412,7 +411,8 @@ def speos_simulation(hid, speos, parameters) -> dict:
     script_folder = Path(__file__).resolve().parent
     speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos"
     project = Project(speos=speos, path=str(speos_file))
-    # project.preview()
+    if hid == "0.1":
+        project.preview()
 
     # Update of the light source power
     sources = project.find(name=".*", name_regex=True, feature_type=SourceSurface)
