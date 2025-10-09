@@ -33,8 +33,10 @@ env:
   DPF_PORT: 21002
   DPF_START_SERVER: False
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
-  PYMAPDL_PORT: 21000
-  PYMAPDL_DB_PORT: 21001
+  PYMAPDL_PORT_0: 21000
+  PYMAPDL_DB_PORT_0: 21001
+  PYMAPDL_PORT_1: 21002
+  PYMAPDL_DB_PORT_1: 21003
 
 jobs:
   mapdl-dpf:
@@ -92,15 +94,25 @@ jobs:
           MAPDL_VERSION: ${{ env.MAPDL_IMAGE_VERSION_DOCS_BUILD }}
           MAPDL_PACKAGE: ${{ env.MAPDL_DOCKER_IMAGE }}
           ANSYSLMD_LICENSE_FILE: ${{ env.ANSYSLMD_LICENSE_FILE }}
-          PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
-          PYMAPDL_DB_PORT: ${{ env.PYMAPDL_DB_PORT }}
           DPF_PORT: ${{ env.DPF_PORT }}
         run: |
           . .venv/bin/activate
+
+          echo "Launching first MAPDL instance..."
           export INSTANCE_NAME=MAPDL_0
+          export PYMAPDL_PORT=$PYMAPDL_PORT_0
+          export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_0
           .ci/start_mapdl.sh & export MAPDL_PID=$!
           echo "Launching MAPDL service at PID: $MAPDL_PID"
           echo "MAPDL_PID=$(echo $MAPDL_PID)" >> $GITHUB_OUTPUT
+
+          echo "Launching second MAPDL instance..."
+          export INSTANCE_NAME=MAPDL_1
+          export PYMAPDL_PORT=$PYMAPDL_PORT_1
+          export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_1
+          .ci/start_mapdl.sh & export MAPDL_PID_1=$!
+          echo "Launching second MAPDL service at PID: $MAPDL_PID_1"
+          echo "MAPDL_PID_1=$(echo $MAPDL_PID_1)" >> $GITHUB_OUTPUT
 
       - name: "DPF server setup"
         shell: bash
