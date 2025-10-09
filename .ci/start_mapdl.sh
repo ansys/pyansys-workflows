@@ -128,7 +128,7 @@ echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MO
 touch "${INSTANCE_NAME}.log"
 
 # Start MAPDL in background
-nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2
+nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 >> "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
 
 # Give MAPDL time to initialize

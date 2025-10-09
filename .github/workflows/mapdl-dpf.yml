@@ -28,7 +28,7 @@ env:
   MAPDL_DOCKER_IMAGE: 'ghcr.io/ansys/mapdl'
   DPF_DOCKER_IMAGE: ghcr.io/ansys/mapdl:v25.2-rocky-dpf-standalone
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 25.1
+  ANSYS_RELEASE_FOR_DOCS: 25.2
   RUN_DOC_BUILD: false
   DPF_PORT: 21002
   DPF_START_SERVER: False
@@ -194,3 +194,10 @@ jobs:
             doc/_build/
             doc/source/examples/mapdl-dpf/
           overwrite: true
+
+      - name: print MAPDL log
+        if: failure()
+        shell: bash
+        run: |
+          echo "Printing MAPDL log for debugging..."
+          cat MAPDL_0.log
