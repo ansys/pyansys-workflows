@@ -66,17 +66,17 @@ from ansys.mapdl.core import MapdlPool
 from ansys.mapdl.core.examples.downloads import download_example_data
 import numpy as np
 
-###############################################################################
-# Create directories to save the results
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ###############################################################################
+# # Create directories to save the results
+# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-folders = ["./Output/Common", "./Output/Global", "./Output/Local"]
-for fdr in folders:
-    try:
-        shutil.rmtree(fdr, ignore_errors=True)
-        os.makedirs(fdr)
-    except:
-        pass
+# folders = ["./Output/Common", "./Output/Global", "./Output/Local"]
+# for fdr in folders:
+#     try:
+#         shutil.rmtree(fdr, ignore_errors=True)
+#         os.makedirs(fdr)
+#     except:
+#         pass
 
 ###############################################################################
 # Create Mapdl pool
@@ -85,9 +85,19 @@ for fdr in folders:
 # the global simulation and the other to the local simulation
 
 nCores = 2  # Number of cores to use
-pool = MapdlPool(2, nproc=nCores)
 
-pool.exit()
+port_0 = os.environ.get("PYMAPDL_PORT_0", 50055)
+port_1 = os.environ.get("PYMAPDL_PORT_1", 50057)
+
+mapdl_pool = MapdlPool(
+   2,
+   license_server_check=False,
+   start_instance=False,
+   port=[port_0, port_1],
+   wait=True,
+)
+
+mapdl_pool.exit()
 
 # ###############################################################################
 # # Set up Global and Local FE models

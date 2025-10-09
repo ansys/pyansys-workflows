@@ -163,8 +163,7 @@ jobs:
           PYANSYS_VISUALIZER_HTML_BACKEND: true
         run: |
           . .venv/bin/activate
-          echo "Starting MAPDL-DPF workflow..."
-          echo "PYMAPDL_PORT: $PYMAPDL_PORT"
+          echo "Building MAPDL-DPF workflow..."
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
           python mapdl-dpf/wf_mapdl-dpf.py
 
