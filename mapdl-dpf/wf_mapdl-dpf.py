@@ -56,44 +56,38 @@ Modeling notes:
    which is then solved completing that timestep.
 """
 
-from ansys.mapdl.core import launch_mapdl
+import os
+from pathlib import Path
+import shutil
+import time as tt
 
-mapdl = launch_mapdl()
+from ansys.dpf import core as dpf
+from ansys.mapdl.core import MapdlPool
+from ansys.mapdl.core.examples.downloads import download_example_data
+import numpy as np
 
-print(mapdl)
+###############################################################################
+# Create directories to save the results
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-mapdl.exit()
+folders = ["./Output/Common", "./Output/Global", "./Output/Local"]
+for fdr in folders:
+    try:
+        shutil.rmtree(fdr, ignore_errors=True)
+        os.makedirs(fdr)
+    except:
+        pass
 
-# import os
-# from pathlib import Path
-# import shutil
-# import time as tt
+###############################################################################
+# Create Mapdl pool
+# ~~~~~~~~~~~~~~~~~
+# We use the ``MapdlPool`` class to create two separate instances — one dedicated to
+# the global simulation and the other to the local simulation
 
-# from ansys.dpf import core as dpf
-# from ansys.mapdl.core import MapdlPool
-# from ansys.mapdl.core.examples.downloads import download_example_data
-# import numpy as np
+nCores = 2  # Number of cores to use
+pool = MapdlPool(2, nproc=nCores)
 
-# ###############################################################################
-# # Create directories to save the results
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-# folders = ["./Output/Common", "./Output/Global", "./Output/Local"]
-# for fdr in folders:
-#     try:
-#         shutil.rmtree(fdr, ignore_errors=True)
-#         os.makedirs(fdr)
-#     except:
-#         pass
-
-# ###############################################################################
-# # Create Mapdl pool
-# # ~~~~~~~~~~~~~~~~~
-# # We use the ``MapdlPool`` class to create two separate instances — one dedicated to
-# # the global simulation and the other to the local simulation
-
-# nCores = 2  # Number of cores to use
-# pool = MapdlPool(2, nproc=nCores)
+pool.exit()
 
 # ###############################################################################
 # # Set up Global and Local FE models
