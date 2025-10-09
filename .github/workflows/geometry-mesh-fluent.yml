@@ -44,14 +44,14 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -133,8 +133,7 @@ jobs:
         run: |
           $dockerContainers = docker ps -a -q
           if (-not [string]::IsNullOrEmpty($dockerContainers)) {
-              docker stop $dockerContainers
-              docker rm $dockerContainers
+              docker rm -f $dockerContainers
           }
 
   fluent-mesh:
@@ -145,17 +144,19 @@ jobs:
       fail-fast: false
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
+    env:
+      ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.FLUENT_LICENSE_SERVER )}}
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -175,7 +176,7 @@ jobs:
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -213,7 +214,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mesh-fluent-docs-stage-geometry
@@ -248,17 +249,19 @@ jobs:
       fail-fast: false
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
+    env:
+      ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.FLUENT_LICENSE_SERVER )}}
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -278,7 +281,7 @@ jobs:
         run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
 
       - name: Check out the meshing outputs
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -318,7 +321,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         with:
           name: geometry-mesh-fluent-docs-stage-mesh
