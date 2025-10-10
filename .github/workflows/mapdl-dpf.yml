@@ -32,6 +32,7 @@ env:
   RUN_DOC_BUILD: false
   DPF_PORT: 21004
   DPF_START_SERVER: False
+  ANSYS_DPF_ACCEPT_LA: Y
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
   PYMAPDL_PORT_0: 21000
   PYMAPDL_DB_PORT_0: 21001
@@ -96,6 +97,7 @@ jobs:
           MAPDL_PACKAGE: ${{ env.MAPDL_DOCKER_IMAGE }}
           ANSYSLMD_LICENSE_FILE: ${{ env.ANSYSLMD_LICENSE_FILE }}
           DPF_PORT: ${{ env.DPF_PORT }}
+          ANSYS_DPF_ACCEPT_LA: ${{ env.ANSYS_DPF_ACCEPT_LA }}
         run: |
           . .venv/bin/activate
 
@@ -122,9 +124,6 @@ jobs:
           echo "DPF service will be available through MAPDL container"
           echo "DPF_PORT: $DPF_PORT"
           # DPF is already available in the MAPDL container
-          # The Python script will connect to it as needed
-          export ANSYS_DPF_ACCEPT_LA=Y
-          echo "ANSYS_DPF_ACCEPT_LA set to Y"
 
       - name: "Test virtual framebuffer"
         shell: bash
@@ -148,14 +147,6 @@ jobs:
           . .venv/bin/activate
           echo "PYMAPDL_VERSION=$(python -c 'from ansys.mapdl.core import __version__; print(__version__)')" >> $GITHUB_OUTPUT
           echo "PyMAPDL version is: $(python -c "from ansys.mapdl.core import __version__; print(__version__)")"
-
-      # - name: "Waiting for the services to be up"
-      #   timeout-minutes: 15
-      #   env:
-      #     PYMAPDL_PORT: ${{ env.PYMAPDL_PORT }}
-      #     DPF_PORT: ${{ env.DPF_PORT }}
-      #   run: |
-      #     .ci/waiting_services.sh
 
       - name: Run the MAPDL-DPF script
         shell: bash
