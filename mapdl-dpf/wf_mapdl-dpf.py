@@ -66,6 +66,9 @@ from ansys.dpf import core as dpf
 from ansys.mapdl.core import MapdlPool
 from ansys.mapdl.core.examples.downloads import download_example_data
 import numpy as np
+import pyvista as pv
+
+pv.OFF_SCREEN = True
 
 ###############################################################################
 # Create directories to save the results
