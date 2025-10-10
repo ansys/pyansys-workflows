@@ -25,7 +25,7 @@
 .. _global-local_1:
 
 Consecutive submodeling with MAPDL pool
-----------------------------
+---------------------------------------
 Problem description:
  - In this example we demonstrate how to use MAPDL pool to
    perform a consecutive submodeling simulation.
