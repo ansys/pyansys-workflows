@@ -162,11 +162,10 @@ jobs:
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
           xvfb-run python mapdl-dpf/wf_mapdl-dpf.py
 
-      - name: Stop all containers (if any)
+      - name: "Install make"
+        shell: bash
         run: |
-          if [ -n "$(docker ps -a -q)" ]; then
-              docker rm -f $(docker ps -a -q)
-          fi
+          apt-get update -qq && apt-get install -y make
 
       - name: (DOCS) Check if docs should be built
         if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
