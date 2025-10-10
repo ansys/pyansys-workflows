@@ -107,13 +107,18 @@ else:
 # file before working with it.
 # Then you can create the :class:`DPF Model <ansys.dpf.core.model.Model>`.
 
-dpf.core.make_tmp_dir_server(dpf.SERVER)
+server_is_local = "DPF_PORT" not in os.environ
 
-if dpf.SERVER.local_server:
-    model = dpf.Model(examples.download_all_kinds_of_complexity_modal())
+if server_is_local:
+    # Local server
+    dpf_server = dpf.server.start_local_server()
+
 else:
-    server_file_path = dpf.upload_file_in_tmp_folder(examples.download_all_kinds_of_complexity_modal())
-    model = dpf.Model(server_file_path)
+    # Remote server
+    dpf_server = dpf.server.connect_to_server(port=int(os.environ["DPF_PORT"]))
+
+# Building the model
+model = dpf.Model(examples.download_all_kinds_of_complexity_modal(), dpf_server)
 
 print(model)
 
