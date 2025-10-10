@@ -85,16 +85,12 @@ import numpy as np
 # the global simulation and the other to the local simulation
 
 nCores = 2  # Number of cores to use
-
-port_0 = os.environ.get("PYMAPDL_PORT_0", 50055)
-port_1 = os.environ.get("PYMAPDL_PORT_1", 50057)
+port_0 = int(os.getenv("PYMAPDL_PORT_0", 21000))
+port_1 = int(os.getenv("PYMAPDL_PORT_1", 21001))
 
 mapdl_pool = MapdlPool(
-   2,
-   license_server_check=False,
-   start_instance=False,
    port=[port_0, port_1],
-   wait=True,
+   start_instance=False,
 )
 
 mapdl_pool.exit()
