@@ -6,14 +6,7 @@ SPHINXOPTS    = -j auto
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
-
-# Check if vtk is installed - if so, uninstall and install vtk-osmesa
-IS_VTK_INSTALLED := $(pip show vtk)
-ifneq ($(IS_VTK_INSTALLED),)
-	@echo "VTK is installed. Uninstalling vtk and installing vtk-osmesa"
-	@pip uninstall -y vtk
-	@pip install --index-url https://wheels.vtk.org vtk-osmesa==9.3.0
-endif
+PYVISTA_OFF_SCREEN = true
 
 # Put it first so that "make" without argument is like "make help".
 help:
