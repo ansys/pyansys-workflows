@@ -411,8 +411,8 @@ def speos_simulation(hid, speos, parameters) -> dict:
     script_folder = Path(__file__).resolve().parent
     speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos"
     project = Project(speos=speos, path=str(speos_file))
-    if hid == "0.1":
-        project.preview()
+    # if hid == "0.1":
+    #     project.preview()
 
     # Update of the light source power
     sources = project.find(name=".*", name_regex=True, feature_type=SourceSurface)
