@@ -158,6 +158,13 @@ VARIATION_ANALYSIS_BOUNDARIES = {
 }
 """Variation analysis boundaries for the robustness study."""
 
+GRAPHICS_BOOL = False  # Set to True to display the graphics
+
+# sphinx_gallery_start_ignore
+if "DOC_BUILD" in os.environ:
+    GRAPHICS_BOOL = True
+# sphinx_gallery_end_ignore
+
 ###############################################################################
 # Define functions
 # ----------------
@@ -411,8 +418,9 @@ def speos_simulation(hid, speos, parameters) -> dict:
     script_folder = Path(__file__).resolve().parent
     speos_file = script_folder / "Lightguide.speos" / "Lightguide.speos"
     project = Project(speos=speos, path=str(speos_file))
-    # if hid == "0.1":
-    #     project.preview()
+    if hid == "0.1":
+        if GRAPHICS_BOOL:
+            project.preview()
 
     # Update of the light source power
     sources = project.find(name=".*", name_regex=True, feature_type=SourceSurface)
