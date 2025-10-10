@@ -65,8 +65,6 @@ import time as tt
 from ansys.dpf import core as dpf
 from ansys.mapdl.core import MapdlPool
 from ansys.mapdl.core.examples.downloads import download_example_data
-from ansys.dpf.core import examples
-
 import numpy as np
 
 ###############################################################################
@@ -195,7 +193,7 @@ def Get_boundary(mapdl):
 
     mapdl.nsel("NONE")
     boundary_coordinates = dpf.fields_factory.create_3d_vector_field(
-        num_entities=len(node_id_subset), location="Nodal", server=
+        num_entities=len(node_id_subset), location="Nodal"
     )  # Define DPF field for DPF interpolator input
 
     nsel = ""
