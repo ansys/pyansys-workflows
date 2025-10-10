@@ -30,7 +30,6 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.2
   RUN_DOC_BUILD: false
-  DPF_PORT: 21004
   DPF_START_SERVER: False
   ANSYS_DPF_ACCEPT_LA: Y
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
@@ -38,6 +37,8 @@ env:
   PYMAPDL_DB_PORT_0: 21001
   PYMAPDL_PORT_1: 21002
   PYMAPDL_DB_PORT_1: 21003
+  DPF_PORT_0: 21004
+  DPF_PORT_1: 21005
 
 jobs:
   mapdl-dpf:
@@ -96,7 +97,6 @@ jobs:
           MAPDL_VERSION: ${{ env.MAPDL_IMAGE_VERSION_DOCS_BUILD }}
           MAPDL_PACKAGE: ${{ env.MAPDL_DOCKER_IMAGE }}
           ANSYSLMD_LICENSE_FILE: ${{ env.ANSYSLMD_LICENSE_FILE }}
-          DPF_PORT: ${{ env.DPF_PORT }}
           ANSYS_DPF_ACCEPT_LA: ${{ env.ANSYS_DPF_ACCEPT_LA }}
         run: |
           . .venv/bin/activate
@@ -105,6 +105,7 @@ jobs:
           export INSTANCE_NAME=MAPDL_0
           export PYMAPDL_PORT=$PYMAPDL_PORT_0
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_0
+          export DPF_PORT=$DPF_PORT_0
           .ci/start_mapdl.sh & export MAPDL_PID=$!
           echo "Launching MAPDL service at PID: $MAPDL_PID"
           echo "MAPDL_PID=$(echo $MAPDL_PID)" >> $GITHUB_OUTPUT
@@ -113,6 +114,7 @@ jobs:
           export INSTANCE_NAME=MAPDL_1
           export PYMAPDL_PORT=$PYMAPDL_PORT_1
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_1
+          export DPF_PORT=$DPF_PORT_1
           .ci/start_mapdl.sh & export MAPDL_PID_1=$!
           echo "Launching second MAPDL service at PID: $MAPDL_PID_1"
           echo "MAPDL_PID_1=$(echo $MAPDL_PID_1)" >> $GITHUB_OUTPUT
