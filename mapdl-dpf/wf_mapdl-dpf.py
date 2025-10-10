@@ -65,6 +65,8 @@ import time as tt
 from ansys.dpf import core as dpf
 from ansys.mapdl.core import MapdlPool
 from ansys.mapdl.core.examples.downloads import download_example_data
+from ansys.dpf.core import examples
+
 import numpy as np
 
 ###############################################################################
@@ -88,6 +90,7 @@ for fdr in folders:
 port_0 = int(os.getenv("PYMAPDL_PORT_0", 21000))
 port_1 = int(os.getenv("PYMAPDL_PORT_1", 21001))
 is_cicd = os.getenv("ON_CICD", False)
+nCores = 2
 
 print(is_cicd, port_0, port_1)
 
@@ -99,12 +102,28 @@ if is_cicd:
 else:
     mapdl_pool = MapdlPool(2)
 
+###############################################################################
+# If you are working with a remote server, you might need to upload the ``RST``
+# file before working with it.
+# Then you can create the :class:`DPF Model <ansys.dpf.core.model.Model>`.
 
-from ansys.dpf import core as dpf
-from ansys.dpf.core import examples
+dpf.core.make_tmp_dir_server(dpf.SERVER)
 
-model = dpf.Model(examples.download_all_kinds_of_complexity_modal())
+if dpf.SERVER.local_server:
+    model = dpf.Model(examples.download_all_kinds_of_complexity_modal())
+else:
+    server_file_path = dpf.upload_file_in_tmp_folder(examples.download_all_kinds_of_complexity_modal())
+    model = dpf.Model(server_file_path)
+
 print(model)
+
+###############################################################################
+
+# from ansys.dpf import core as dpf
+# from ansys.dpf.core import examples
+
+# model = dpf.Model(examples.download_all_kinds_of_complexity_modal())
+# print(model)
 
 mapdl_pool.exit()
 
