@@ -84,14 +84,19 @@ import numpy as np
 # We use the ``MapdlPool`` class to create two separate instances — one dedicated to
 # the global simulation and the other to the local simulation
 
-nCores = 2  # Number of cores to use
 port_0 = int(os.getenv("PYMAPDL_PORT_0", 21000))
 port_1 = int(os.getenv("PYMAPDL_PORT_1", 21001))
+is_cicd = os.getenv("ON_CICD", False)
 
-mapdl_pool = MapdlPool(
-   port=[port_0, port_1],
-   start_instance=False,
-)
+print(is_cicd, port_0, port_1)
+
+if is_cicd:
+   mapdl_pool = MapdlPool(
+      port=[port_0, port_1],
+   )
+
+else:
+   mapdl_pool = MapdlPool(2)
 
 mapdl_pool.exit()
 

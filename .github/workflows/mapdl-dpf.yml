@@ -55,6 +55,7 @@ jobs:
     env:
       PYMAPDL_START_INSTANCE: FALSE
       ON_DOCUMENTATION: TRUE
+      ON_CICD: TRUE
 
     steps:
 
