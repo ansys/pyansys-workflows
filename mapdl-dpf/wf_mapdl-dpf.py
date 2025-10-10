@@ -1,5 +1,6 @@
 # Copyright (C) 2024 - 2025 ANSYS, Inc. and/or its affiliates.
 # SPDX-License-Identifier: MIT
+#
 
 
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -91,12 +92,12 @@ is_cicd = os.getenv("ON_CICD", False)
 print(is_cicd, port_0, port_1)
 
 if is_cicd:
-   mapdl_pool = MapdlPool(
-      port=[port_0, port_1],
-   )
+    mapdl_pool = MapdlPool(
+        port=[port_0, port_1],
+    )
 
 else:
-   mapdl_pool = MapdlPool(2)
+    mapdl_pool = MapdlPool(2)
 
 ###############################################################################
 # Set up Global and Local FE models
@@ -111,9 +112,7 @@ else:
 cwd = Path.cwd()  # Get current working directory
 
 # download example data
-local_cdb = download_example_data(
-    filename="local.cdb", directory="pyansys-workflow/pymapdl-pydpf"
-)
+local_cdb = download_example_data(filename="local.cdb", directory="pyansys-workflow/pymapdl-pydpf")
 global_cdb = download_example_data(
     filename="global.cdb", directory="pyansys-workflow/pymapdl-pydpf"
 )
