@@ -159,7 +159,7 @@ jobs:
           . .venv/bin/activate
           echo "Building MAPDL-DPF workflow..."
           echo "PYMAPDL_START_INSTANCE: $PYMAPDL_START_INSTANCE"
-          python mapdl-dpf/wf_mapdl-dpf.py
+          xvfb-run python mapdl-dpf/wf_mapdl-dpf.py
 
       - name: Stop all containers (if any)
         run: |
