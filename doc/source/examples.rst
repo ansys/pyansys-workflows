@@ -11,6 +11,7 @@ Workflow examples
    examples/geometry-mechanical-dpf/index
    examples/geometry-mesh/index
    examples/geometry-mesh-fluent/index
+   examples/speos-optislang/index
 
 .. include:: examples/fluent-mechanical/index.rst
     :start-line: 1
@@ -25,5 +26,9 @@ Workflow examples
     :end-before: .. toctree
 
 .. include:: examples/geometry-mesh-fluent/index.rst
+    :start-line: 1
+    :end-before: .. toctree
+
+.. include:: examples/speos-optislang/index.rst
     :start-line: 1
     :end-before: .. toctree
