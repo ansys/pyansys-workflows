@@ -1,6 +1,5 @@
 name: >
-  Set up Python
-
+  Set up Python on Mechanical containers
 description: |
   Sets up Python on the Mechanical containers.
 
@@ -9,8 +8,7 @@ inputs:
   # Required inputs
   cache-version:
     description: >
-      The cache key to use for caching the Python directories.
-      This should be changed when the container image changes.
+      The cache key to use for caching the Python directories. This should be changed when the container image changes.
     required: true
     type: string
 
@@ -30,8 +28,7 @@ inputs:
 
   enable-optimizations:
     description: >
-      Whether to enable optimizations when building Python from source.
-      Defaults to true.
+      Whether to enable optimizations when building Python from source. Defaults to true.
     required: false
     type: boolean
     default: true
@@ -43,23 +40,23 @@ runs:
     - name: Get most recent Python version
       shell: bash
       run: |
-          declare -A python_versions=(["3.10"]="3.10.18" ["3.11"]="3.11.13" ["3.12"]="3.12.11" ["3.13"]="3.13.7")
+        declare -A python_versions=(["3.10"]="3.10.18" ["3.11"]="3.11.13" ["3.12"]="3.12.11" ["3.13"]="3.13.7")
 
-          # Get the Python version inputs
-          python_version_input="${{ inputs.python-version }}"
-          python_version_patch_input="${{ inputs.python-version-patch }}"
+        # Get the Python version inputs
+        python_version_input="${{ inputs.python-version }}"
+        python_version_patch_input="${{ inputs.python-version-patch }}"
 
-          if [ -n "$python_version_patch_input" ]; then
-            echo "PYTHON_VERSION_PATCH=$python_version_patch_input" >> "$GITHUB_ENV"
+        if [ -n "$python_version_patch_input" ]; then
+          echo "PYTHON_VERSION_PATCH=$python_version_patch_input" >> "$GITHUB_ENV"
+        else
+          if [[ -v python_versions["$python_version_input"] ]]; then
+            echo "PYTHON_VERSION_PATCH=${python_versions[$python_version_input]}" >> "$GITHUB_ENV"
           else
-            if [[ -v python_versions["$python_version_input"] ]]; then
-              echo "PYTHON_VERSION_PATCH=${python_versions[$python_version_input]}" >> "$GITHUB_ENV"
-            else
-              echo "Key '$python_version_input' does not exist in the hashmap."
-              echo "The available Python versions are: ${!python_versions[@]}"
-              exit 1
-            fi
+            echo "Key '$python_version_input' does not exist in the hashmap."
+            echo "The available Python versions are: ${!python_versions[@]}"
+            exit 1
           fi
+        fi
 
     - name: "Cache Python directories"
       id: cache-python

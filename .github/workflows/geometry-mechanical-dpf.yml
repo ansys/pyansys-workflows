@@ -145,8 +145,8 @@ jobs:
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
     container:
-        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
-        options: --entrypoint /bin/bash
+      image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
+      options: --entrypoint /bin/bash
     steps:
 
       - name: Checkout code
@@ -230,7 +230,6 @@ jobs:
           pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
-
 
       - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}

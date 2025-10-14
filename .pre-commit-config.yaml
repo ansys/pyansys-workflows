@@ -1,47 +1,47 @@
 exclude: "tests/integration/files"
 repos:
 
-- repo: https://github.com/google/yamlfmt
-  rev: v0.17.2
-  hooks:
-    - id: yamlfmt
-      args:
-        - "-formatter"
-        - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+  - repo: https://github.com/google/yamlfmt
+    rev: v0.17.2
+    hooks:
+      - id: yamlfmt
+        args:
+          - "-formatter"
+          - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
 
-- repo: https://github.com/psf/black
-  rev: 25.9.0
-  hooks:
-  - id: black
+  - repo: https://github.com/psf/black
+    rev: 25.9.0
+    hooks:
+      - id: black
 
-- repo: https://github.com/pycqa/isort
-  rev: 7.0.0
-  hooks:
-  - id: isort
+  - repo: https://github.com/pycqa/isort
+    rev: 7.0.0
+    hooks:
+      - id: isort
 
-- repo: https://github.com/PyCQA/flake8
-  rev: 7.3.0
-  hooks:
-  - id: flake8
+  - repo: https://github.com/PyCQA/flake8
+    rev: 7.3.0
+    hooks:
+      - id: flake8
 
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v6.0.0
-  hooks:
-  - id: check-merge-conflict
-  - id: debug-statements
-  - id: check-yaml
-  - id: trailing-whitespace
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-merge-conflict
+      - id: debug-statements
+      - id: check-yaml
+      - id: trailing-whitespace
 
-- repo: https://github.com/ansys/pre-commit-hooks
-  rev: v0.5.2
-  hooks:
-    - id: add-license-headers
-      files: '/.*\.(py)'
-      args:
-      - --start_year=2024
+  - repo: https://github.com/ansys/pre-commit-hooks
+    rev: v0.5.2
+    hooks:
+      - id: add-license-headers
+        files: '/.*\.(py)'
+        args:
+          - --start_year=2024
 
-# this validates our github workflow files
-- repo: https://github.com/python-jsonschema/check-jsonschema
-  rev: 0.34.1
-  hooks:
-    - id: check-github-workflows
+  # this validates our github workflow files
+  - repo: https://github.com/python-jsonschema/check-jsonschema
+    rev: 0.34.1
+    hooks:
+      - id: check-github-workflows
