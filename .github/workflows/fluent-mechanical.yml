@@ -69,7 +69,7 @@ jobs:
           registry: ghcr.io
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-      
+
       - name: Full Fluent image (name+tag)
         run: |
           if [[ "${{ matrix.ansys-release }}" == "24.1" || "${{ matrix.ansys-release }}" == "24.2" ]]; then
