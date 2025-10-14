@@ -363,5 +363,3 @@ for temp_name, temp_value in temperature_values:
 # Close the Fluent solver.
 #
 solver.exit()
-
-# HACK: Faking trigger for CI/CD pipeline

@@ -246,6 +246,8 @@ def solve_airfoil_flow(
 
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
+        "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
+        "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split(),
         "host_mount_path": DATA_DIR,
         "timeout": 300,
     }
@@ -257,7 +259,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         SIM_TEMPERATURE,
         SIM_AOA,
         SIM_PRESSURE,
-        "/mnt/pyfluent",
+        "/home/container/workdir",
         container_dict=container_dict,
     )
 else:
