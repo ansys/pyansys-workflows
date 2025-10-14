@@ -156,18 +156,15 @@ jobs:
             geometry-mechanical-dpf
             doc
 
-      - name: Set up Python
-        run: |
-            apt update
-            apt install --reinstall ca-certificates
-            apt install software-properties-common -y
-            add-apt-repository ppa:deadsnakes/ppa -y
-            apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv make
-            python${{ env.MAIN_PYTHON_VERSION }} -m venv .venv
+      - name: "Set up Python and activate virtual environment"
+        uses: ./.github/workflows/setup-python-mechanical/
+        with:
+          cache-version: ${{ matrix.ansys-release }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
@@ -184,13 +181,13 @@ jobs:
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Run the PyDPF script
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
@@ -228,7 +225,7 @@ jobs:
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\geometry-mechanical-dpf\\images\\|./images/|g' {} +
           pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
@@ -240,7 +237,7 @@ jobs:
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat dpf-docs-logs${{ matrix.ansys-release }}.txt

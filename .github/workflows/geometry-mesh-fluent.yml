@@ -25,7 +25,7 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.12'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
-  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
+  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/fluent'
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
