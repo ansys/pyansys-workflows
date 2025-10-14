@@ -132,6 +132,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     print("Configuring Fluent for CI", flush=True)
     container_dict = {
         "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
+        "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split(),
         "mount_source": WORKING_DIR,
         "timeout": 300,
     }
