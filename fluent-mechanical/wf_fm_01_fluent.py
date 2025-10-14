@@ -85,8 +85,6 @@ from pathlib import PurePosixPath
 
 import ansys.fluent.core as pyfluent
 from ansys.fluent.core import examples
-from matplotlib import image as mpimg
-from matplotlib import pyplot as plt
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -109,6 +107,13 @@ if "DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 
+if GRAPHICS_BOOL:
+    from ansys.fluent.visualization import Contour, GraphicsWindow, config
+    from ansys.units import VariableCatalog
+
+    # Set the graphics configuration
+    config.interactive = False
+    config.view = "isometric"
 
 import_mesh_file = examples.download_file(
     file_name="exhaust_manifold_conf.msh.h5",
@@ -126,6 +131,7 @@ print(import_mesh_file, flush=True)
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     print("Configuring Fluent for CI", flush=True)
     container_dict = {
+        "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
         "mount_source": WORKING_DIR,
         "timeout": 300,
     }
@@ -136,7 +142,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         container_dict=container_dict,
     )
 
-    FLUENT_WORKING_DIR = "/mnt/pyfluent"
+    FLUENT_WORKING_DIR = "/home/container/workdir"
 
     import_mesh_file = PurePosixPath(FLUENT_WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
     print(f"\nImport mesh path for container: {import_mesh_file}\n", flush=True)
@@ -149,16 +155,6 @@ else:
     )
 print(solver.get_fluent_version(), flush=True)
 print(f"Working directory: {WORKING_DIR}", flush=True)
-
-
-def display_image(work_dir, image_name):
-    plt.figure(figsize=(16, 9))
-    plt.imshow(mpimg.imread(os.path.join(work_dir, image_name)))
-    plt.xticks([])
-    plt.yticks([])
-    plt.axis("off")
-    plt.show()
-
 
 ###############################################################################
 # Read the mesh file
@@ -341,22 +337,24 @@ for temp_name, temp_value in temperature_values:
     )
 
     # Export graphics result for the temperature distribution on interface_solid
-    temp_interface_contour = solver.settings.results.graphics.contour.create(
-        f"temp_interface_contour_{temp_name}"
-    )
-    temp_interface_contour(field="temperature", surfaces_list=["interface_solid"])
-    temp_interface_contour.display()
-    solver.settings.results.graphics.views.auto_scale()
-    solver.settings.results.graphics.picture.save_picture(
-        file_name=f"temp_interface_contour_{temp_name}.png"
-    )
+    if GRAPHICS_BOOL:
+        print(f"Generating graphics for temperature contour at {temp_name}", flush=True)
+        graphics_window = GraphicsWindow()
+        temperature_contour = Contour(
+            solver=solver,
+            field=VariableCatalog.TEMPERATURE,
+            surfaces=["interface_solid"],
+        )
+        graphics_window.add_graphics(temperature_contour)
+        if "DOC_BUILD" in os.environ:
+            graphics_window.show()
+        else:
+            graphics_window.save_graphics(
+                filename=f"{WORKING_DIR}/temp_interface_contour_{temp_name}.svg"
+            )
+        graphics_window.close()
 
     solver.settings.file.write_case_data(file_name=f"exhaust_manifold_results_{temp_name}.cas.h5")
-
-# Display the results
-if GRAPHICS_BOOL:
-    for temp_name, temp_value in temperature_values:
-        display_image(WORKING_DIR, f"temp_interface_contour_{temp_name}.png")
 
 ###############################################################################
 # Exit the Solver

@@ -87,11 +87,16 @@ jobs:
           echo "Pulling Fluent image: ${{ env.FLUENT_DOCKER_IMAGE }}"
           docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
+      - name: Update graphics dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libegl1-mesa-dev libosmesa6-dev xvfb
+
       - name: Run the Fluent script
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
         run: |
-          python fluent-mechanical/wf_fm_01_fluent.py
+          xvfb-run python fluent-mechanical/wf_fm_01_fluent.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -128,7 +133,7 @@ jobs:
         run: |
           cd doc
           pip install -r requirements.txt
-          make html
+          xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
