@@ -115,7 +115,7 @@ import_mesh_file = examples.download_file(
     directory="pyansys-workflow/exhaust-manifold/pyfluent",
     save_path=WORKING_DIR,
 )
-print(import_mesh_file)
+print(import_mesh_file, flush=True)
 
 ###############################################################################
 # Launch Fluent
@@ -124,7 +124,7 @@ print(import_mesh_file)
 # four processors and print Fluent version.
 #
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
-    print("Configuring Fluent for CI")
+    print("Configuring Fluent for CI", flush=True)
     container_dict = {
         "mount_source": WORKING_DIR,
         "timeout": 300,
@@ -139,7 +139,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     FLUENT_WORKING_DIR = "/mnt/pyfluent"
 
     import_mesh_file = PurePosixPath(FLUENT_WORKING_DIR) / "exhaust_manifold_conf.msh.h5"
-    print(f"\nImport mesh path for container: {import_mesh_file}\n")
+    print(f"\nImport mesh path for container: {import_mesh_file}\n", flush=True)
 else:
     solver = pyfluent.launch_fluent(
         precision="double",
@@ -147,8 +147,8 @@ else:
         mode="solver",
         cwd=WORKING_DIR,
     )
-print(solver.get_fluent_version())
-print(f"Working directory: {WORKING_DIR}")
+print(solver.get_fluent_version(), flush=True)
+print(f"Working directory: {WORKING_DIR}", flush=True)
 
 
 def display_image(work_dir, image_name):
