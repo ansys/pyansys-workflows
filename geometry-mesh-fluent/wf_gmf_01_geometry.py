@@ -356,5 +356,3 @@ print(f"Design saved to {file}")
 
 # Close the server session.
 modeler.close()
-
-# HACK: Faking trigger for CI/CD pipeline
