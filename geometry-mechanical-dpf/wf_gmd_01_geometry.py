@@ -214,3 +214,5 @@ design.download(file_location=download_file, format=DesignFileFormat.PMDB)
 
 # Close the server session.
 modeler.close()
+
+# HACK: Faking trigger for CI/CD pipeline

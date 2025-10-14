@@ -364,3 +364,5 @@ if GRAPHICS_BOOL:
 # Close the Fluent solver.
 #
 solver.exit()
+
+# HACK: Faking trigger for CI/CD pipeline
