@@ -1,6 +1,14 @@
 exclude: "tests/integration/files"
 repos:
 
+- repo: https://github.com/google/yamlfmt
+  rev: v0.17.2
+  hooks:
+    - id: yamlfmt
+      args:
+        - "-formatter"
+        - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+
 - repo: https://github.com/psf/black
   rev: 24.10.0
   hooks:
