@@ -98,9 +98,9 @@ runs:
         cd Python-$version/
 
         if [ "${{ inputs.enable-optimizations }}" = true ]; then
-          optimization_flag="--enable-optimizations"
+          optimizations_flag="--enable-optimizations"
         else
-          optimization_flag=""
+          optimizations_flag=""
         fi
         ./configure $optimizations_flag
 
@@ -116,8 +116,8 @@ runs:
         # Get the location of the installed Python version
         python_location=$(which python${{ inputs.python-version }})
 
-        # Link python to the installed version
-        ln -s $python_location /usr/bin/python
+        # Link Python to the installed version
+        ln -s "$python_location" /usr/bin/python
 
         # Install sqlite3 and libsqlite3-dev
         apt-get update
