@@ -108,7 +108,8 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: speos-optislang-docs-stage
+          name: speos-optislang-docs
           path: |
             doc/_build/
             doc/source/examples/speos-optislang/
+          overwrite: true

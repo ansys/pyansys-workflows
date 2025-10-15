@@ -9,9 +9,9 @@ updates:
     commit-message:
       prefix: "build"
     groups:
-       docs-deps:
-          patterns:
-            - "*"
+      docs-deps:
+        patterns:
+          - "*"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -21,6 +21,6 @@ updates:
     commit-message:
       prefix: "ci"
     groups:
-       actions:
-          patterns:
-            - "*"
+      actions:
+        patterns:
+          - "*"
