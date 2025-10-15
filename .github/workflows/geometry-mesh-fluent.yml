@@ -31,7 +31,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 25.1
+  ANSYS_RELEASE_FOR_DOCS: 24.1
   RUN_DOC_BUILD: false
 
 jobs:
@@ -144,7 +144,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -191,7 +191,7 @@ jobs:
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v5
         with:
-          name: geometry-mesh-fluent-workflow-geometry-outputs-24.1
+          name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
       - name: Run the Fluent meshing script
@@ -261,7 +261,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
