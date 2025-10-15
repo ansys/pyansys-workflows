@@ -41,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -144,7 +144,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -261,7 +261,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
