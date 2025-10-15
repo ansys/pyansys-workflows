@@ -110,6 +110,7 @@ def generate_mesh(
             ui_mode="no_gui_or_graphics",
             cwd=data_dir,
             cleanup_on_exit=False,
+            start_timeout=300,
         )
     else:
         meshing = pyfluent.launch_fluent(
@@ -197,8 +198,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
         "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
         "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split().append("-meshing"),
-        "host_mount_path": DATA_DIR,
-        "timeout": 300,
+        "mount_source": DATA_DIR,
     }
     # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
     generate_mesh(NACA_AIRFOIL, "/home/container/workdir", container_dict=container_dict)

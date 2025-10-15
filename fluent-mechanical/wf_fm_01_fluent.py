@@ -134,13 +134,13 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
         "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split(),
         "mount_source": WORKING_DIR,
-        "timeout": 300,
     }
     solver = pyfluent.launch_fluent(
         precision="double",
         processor_count=4,
         mode="solver",
         container_dict=container_dict,
+        start_timeout=300,
     )
 
     FLUENT_WORKING_DIR = "/home/container/workdir"
