@@ -196,7 +196,7 @@ def generate_mesh(
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
         "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
-        "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split(),
+        "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split().append("-meshing"),
         "host_mount_path": DATA_DIR,
         "timeout": 300,
     }
