@@ -288,8 +288,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Full Fluent image (name+tag)
+        run: |
+          if [[ "${{ matrix.ansys-release }}" == "24.1" || "${{ matrix.ansys-release }}" == "24.2" ]]; then
+            IMAGE_TAG=v24.2.5
+          elif [[ "${{ matrix.ansys-release }}" == "25.1" ]]; then
+            IMAGE_TAG=v25.1.4
+          else
+            echo "Unsupported release: ${{ matrix.ansys-release }}"
+            exit 1
+          fi
+          echo "FLUENT_DOCKER_IMAGE=${{ env.FLUENT_DOCKER_IMAGE }}:${IMAGE_TAG}" >> $GITHUB_ENV
+
       - name: Download Fluent service container
-        run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
+        run: |
+          echo "Pulling Fluent image: ${{ env.FLUENT_DOCKER_IMAGE }}"
+          docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the meshing outputs
         uses: actions/download-artifact@v5
