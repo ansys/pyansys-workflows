@@ -101,6 +101,7 @@ jobs:
 
       - name: (DOCS) Adapt the documentation paths
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        shell: bash
         run: |
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\speos-optislang\\images\\|./images/|g' {} +
 
