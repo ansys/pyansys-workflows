@@ -6,7 +6,6 @@ SPHINXOPTS    = -j auto
 SPHINXBUILD   = sphinx-build
 SOURCEDIR     = source
 BUILDDIR      = _build
-PYVISTA_OFF_SCREEN = true
 
 # Put it first so that "make" without argument is like "make help".
 help:
