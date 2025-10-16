@@ -44,14 +44,14 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.0
         with:
           sparse-checkout: |
             geometry-mechanical-dpf
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6
+        uses: actions/setup-python@v6.0.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -145,29 +145,27 @@ jobs:
       matrix:
         ansys-release: [24.1, 24.2, 25.1]
     container:
-        image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
-        options: --entrypoint /bin/bash
+      image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
+      options: --entrypoint /bin/bash
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5
+        uses: actions/checkout@v5.0.0
         with:
           sparse-checkout: |
+            .github/workflows/setup-python-mechanical
             geometry-mechanical-dpf
             doc
 
-      - name: Set up Python
-        run: |
-            apt update
-            apt install --reinstall ca-certificates
-            apt install software-properties-common -y
-            add-apt-repository ppa:deadsnakes/ppa -y
-            apt install -y python${{ env.MAIN_PYTHON_VERSION }} python${{ env.MAIN_PYTHON_VERSION }}-venv make
-            python${{ env.MAIN_PYTHON_VERSION }} -m venv .venv
+      - name: "Set up Python and activate virtual environment"
+        uses: ./.github/workflows/setup-python-mechanical/
+        with:
+          cache-version: ${{ matrix.ansys-release }}
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: Install dependencies
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           python -m pip install --upgrade pip
           pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
@@ -184,13 +182,13 @@ jobs:
           ANSYS_WORKBENCH_LOGGING: 0
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Run the PyDPF script
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
@@ -228,19 +226,18 @@ jobs:
           ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_02_mechanical.py'
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\geometry-mechanical-dpf\\images\\|./images/|g' {} +
           pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
-
 
       - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
-          . .venv/bin/activate
+          . /.venv/bin/activate
           pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat dpf-docs-logs${{ matrix.ansys-release }}.txt

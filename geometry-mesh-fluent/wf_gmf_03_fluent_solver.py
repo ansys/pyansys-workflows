@@ -136,6 +136,7 @@ def solve_airfoil_flow(
             ui_mode="no_gui_or_graphics",
             cwd=data_dir,
             cleanup_on_exit=False,
+            start_timeout=300,
         )
     else:
         solver = pyfluent.launch_fluent(
@@ -246,8 +247,9 @@ def solve_airfoil_flow(
 
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     container_dict = {
-        "host_mount_path": DATA_DIR,
-        "timeout": 300,
+        "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
+        "command": os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split(),
+        "mount_source": DATA_DIR,
     }
     # https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html
     # Solve the flow around the airfoil
@@ -257,7 +259,7 @@ if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
         SIM_TEMPERATURE,
         SIM_AOA,
         SIM_PRESSURE,
-        "/mnt/pyfluent",
+        "/home/container/workdir",
         container_dict=container_dict,
     )
 else:

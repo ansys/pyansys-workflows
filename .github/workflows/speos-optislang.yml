@@ -1,0 +1,116 @@
+name: Speos Optislang Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'speos-optislang/**'
+
+env:
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  ANSYS_RELEASE_FOR_DOCS: 25.2.0
+  AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
+  MAIN_PYTHON_VERSION: '3.12'
+  ON_CI: true
+  RUN_DOC_BUILD: false
+
+jobs:
+
+  speos-optislang:
+    name: Speos Optislang
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: [25.2.0]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
+        with:
+          sparse-checkout: |
+            speos-optislang
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@2e3e4b15a884dc73a63f962bff250a855150a234 # v5.6.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Set up environment variables
+        shell: bash
+        run: |
+          VERSION="${{ matrix.ansys-release }}"
+          ANSYS_RELEASE_SHORT="${VERSION%.*}"
+          echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
+          ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
+          echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/Scripts/activate
+          pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
+
+      - name: Run the workflow script
+        shell: bash
+        run: |
+          source .venv/Scripts/activate
+          python speos-optislang/wf_so_01_light_guide_robustness_study.py
+
+      - name: (DOCS) Check if docs should be built
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        shell: bash
+        run: |
+          echo "Requested to build docs..."
+          if [ "${{ matrix.ansys-release }}" = "$ANSYS_RELEASE_FOR_DOCS" ]; then
+            echo "Building docs"
+            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
+          else
+            echo "Not building docs - since not primary release"
+            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
+          fi
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        env:
+          BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
+        shell: bash
+        run: |
+          .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Adapt the documentation paths
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        shell: bash
+        run: |
+          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\speos-optislang\\images\\|./images/|g' {} +
+
+      - name: (DOCS) Upload docs artifacts
+        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: speos-optislang-docs
+          path: |
+            doc/_build/
+            doc/source/examples/speos-optislang/
+          overwrite: true
