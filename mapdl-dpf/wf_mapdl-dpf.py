@@ -28,7 +28,7 @@ Consecutive submodeling with MAPDL pool
 ---------------------------------------
 Problem description:
  - In this example we demonstrate how to use MAPDL pool to
-   perform a consecutive submodeling simulation.
+   perform a consecutive submodeling simulation with MAPDL and DPF.
 
 Analysis type:
  - Static Analysis
@@ -71,7 +71,7 @@ import numpy as np
 # Create directories to save the results
 # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-folders = ["./Output/Common", "./Output/Global", "./Output/Local"]
+folders = ["./outputs/mapdl-dpf/global", "./outputs/mapdl-dpf/local"]
 for fdr in folders:
     try:
         shutil.rmtree(fdr, ignore_errors=True)
@@ -136,11 +136,11 @@ global_cdb = download_example_data(
 
 mapdl_global = mapdl_pool[0]  # Global model
 mapdl_global.cdread("db", global_cdb)  # Load global model
-mapdl_global.cwd(cwd / Path("Output/Global"))  # Set directory of the global model
+mapdl_global.cwd(cwd / Path("outputs/mapdl-dpf/global"))  # Set directory of the global model
 
 mapdl_local = mapdl_pool[1]  # Local model
 mapdl_local.cdread("db", local_cdb)  # Load local model
-mapdl_local.cwd(cwd / Path("Output/Local"))  # Set directory of the local model
+mapdl_local.cwd(cwd / Path("outputs/mapdl-dpf/local"))  # Set directory of the local model
 
 
 def define_BCs(mapdl):
@@ -233,7 +233,7 @@ def define_dpf_operators(nCores):
     dataSources = dpf.DataSources()
     for i in range(nCores):
         dataSources.set_domain_result_file_path(
-            path=Path(f"./Output/Global/file{i}.rst"), key="rst", domain_id=i
+            path=Path(f"./outputs/mapdl-dpf/global/file{i}.rst"), key="rst", domain_id=i
         )
 
     global_model = dpf.Model(dataSources)
