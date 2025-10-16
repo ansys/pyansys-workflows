@@ -37,36 +37,48 @@
 # Perform required imports.
 
 import os
-import sys
+from pathlib import Path
 import tempfile
 import time
 
-sys.path.append("C:\\Program Files\\Lumerical\\v251\\api\\python\\")
-sys.path.append(os.path.dirname(__file__))  # Current directory
-my_path = r"D:/2025/17_IonTrap/PyAnsys_GC_test/"  # Directory where Lumerical Scripts are stored
-my_node_filename = "NodePositionTable.tab"
-my_node_filename_lum = "legend.txt"
+# from PIL import Image
+from ansys.aedt.core import Maxwell2d
+from ansys.api.lumerical.lumapi import FDTD
 
-from PIL import Image
-import ansys.aedt.core
-import lumapi
+# sphinx_gallery_start_ignore
+# Check if the __file__ variable is defined. If not, set it.
+# This is a workaround to run the script in Sphinx-Gallery.
+if "__file__" not in locals():
+    __file__ = Path(os.getcwd(), "wf_so_01_light_guide_robustness_study.py")
+# sphinx_gallery_end_ignore
+
+# sys.path.append("C:\\Program Files\\Lumerical\\v251\\api\\python\\")
+# sys.path.append(os.path.dirname(__file__))  # Current directory
+# my_path = r"D:/2025/17_IonTrap/PyAnsys_GC_test/"  # Directory where Lumerical Scripts are stored
+# my_node_filename = "NodePositionTable.tab"
+# my_node_filename_lum = "legend.txt"
+
 
 # Define constants.
 
-AEDT_VERSION = "2025.1"
+AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.1")  # Set your AEDT version here
 NUM_CORES = 4
 NG_MODE = False  # Open AEDT UI when it is launched.
+NODE_FILENAME = "NodePositionTable.tab"
+LEGEND_FILENAME = "legend.txt"
+PARENT_DIR_PATH = Path(__file__).parent.absolute()
 
 # ## Create temporary directory
 #
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
+lumerical_script_folder = temp_folder / "lumerical_scripts"
 
 # ## Launch AEDT and application
 #
 
 project_name = os.path.join(temp_folder.name, "IonTrapMaxwell.aedt")
-m2d = ansys.aedt.core.Maxwell2d(
+m2d = Maxwell2d(
     project=project_name,
     design="01_IonTrap_3binary2D",
     solution_type="Electrostatic",
@@ -135,7 +147,7 @@ ins = m2d.modeler.create_rectangle(
     material="vacuum",
 )
 
-# Create dummy objects for mesh, center_line for Post Processing and Region
+# Create dummy objects for mesh and center_line for Post Processing and Region
 
 dummy = m2d.modeler.create_rectangle(
     origin=["0", "metal_thickness/2", "0"],
@@ -159,7 +171,8 @@ m2d.assign_voltage(assignment=dc.id, amplitude=0, name="V_dc")
 m2d.assign_voltage(assignment=rf.id, amplitude=1, name="V_rf")
 
 # Define Mesh Settings
-# for good quality results, please uncomment the following  mesh operations lines
+# For good quality results, please uncomment the following  mesh operations lines
+#
 # m2d.mesh.assign_length_mesh(
 #     assignment=center_line.id,
 #     maximum_length=1e-7,
@@ -211,7 +224,7 @@ m2d.analyze_setup(name=setup_name, use_auto_settings=False, cores=NUM_CORES)
 
 #  Create parametric sweep
 
-# keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
+# Keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
 
 div_sweep_start = 1.4
 div_sweep_stop = 2
@@ -224,14 +237,10 @@ sweep = m2d.parametrics.add(
     name="w_dc_sweep",
 )
 add_points = [1, 1.3]
-[
+for p in add_points:
     sweep.add_variation(sweep_variable="div", start_point=p, variation_type="SingleValue")
-    for p in add_points
-]
 sweep["SaveFields"] = True
 sweep.analyze(cores=NUM_CORES)
-
-#
 
 # ## Postprocess
 #
@@ -253,7 +262,8 @@ my_plots[1].add_cartesian_y_marker("0")
 my_plots[1].add_trace_characteristics(
     "XAtYVal", arguments=["0"], solution_range=["Full", "20", "280"]
 )
-my_plots[1].export_table_to_file(my_plots[1].plot_name, my_path + "//" + my_node_filename, "Legend")
+file_path = lumerical_script_folder / NODE_FILENAME
+my_plots[1].export_table_to_file(my_plots[1].plot_name, str(file_path), "Legend")
 
 # ## Release AEDT
 
@@ -261,44 +271,49 @@ m2d.save_project()
 m2d.release_desktop()
 
 # ## Edit the outputted file to be read in by Lumerical
+
 new_line = []
-with open(my_path + my_node_filename, "r", encoding="utf-8") as f:
+with open(lumerical_script_folder / NODE_FILENAME, "r", encoding="utf-8") as f:
     lines = f.readlines()
 new_line.append(lines[0])
 for line in lines[1:]:
     new_line.append(line.split("\t")[0])
     new_line.append("\n" + line.split("\t")[1].lstrip())
-with open(my_path + my_node_filename_lum, "w", encoding="utf-8") as f:
+with open(lumerical_script_folder + LEGEND_FILENAME, "w", encoding="utf-8") as f:
     for line in new_line:
         f.write(line)
 
 # ## Start the Lumerical Process
 
-GC0 = lumapi.FDTD(my_path + "GC_Opt.lsf")  # run the first script: Build geometry & Run optimization
-Gc1 = lumapi.FDTD(my_path + "Readata.lsf")
+gc_0 = FDTD(
+    str(PARENT_DIR_PATH / "GC_Opt.lsf")
+)  # Run the first script: Build geometry & Run optimization
+gc_1 = FDTD(str(PARENT_DIR_PATH / "Readata.lsf"))
 print(
     "Optimize for the Nodal point located",
-    str(Gc1.getv("T5")),
+    str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
-Gc2 = lumapi.FDTD(my_path + "Testsim_Intensity_best_solution")  # Run the optimized design
-Gc2.save(my_path + "GC_farfields_calc")
-Gc2.run()
-Gc2.feval(my_path + "GC_farfield.lsf")  # run the second script for calculating plots
-print("Target focal distance of output laser beam, (um) :", str(Gc2.getv("Mselect") * 1000000))
+gc_2 = FDTD(
+    str(lumerical_script_folder / "Testsim_Intensity_best_solution")
+)  # Run the optimized design
+gc_2.save(str(lumerical_script_folder / "GC_farfields_calc"))
+gc_2.run()
+gc_2.feval(str(PARENT_DIR_PATH / "GC_farfield.lsf"))  # Run the second script for calculating plots
+print("Target focal distance of output laser beam, (um) :", str(gc_2.getv("Mselect") * 1000000))
 print(
-    "Actual focal distance for the optimised geometry, (um)  :", str(Gc2.getv("Mactual") * 1000000)
+    "Actual focal distance for the optimised geometry, (um)  :", str(gc_2.getv("Mactual") * 1000000)
 )
-print("Relative error:", str(Gc2.getv("RelVal") * 100), "(%)")
-print("FWHM of vertical direction at focus, (um) ", str(Gc2.getv("FWHM_X") * 1000000))
-print("FWHM of horizontal direction at focus, (um) ", str(Gc2.getv("FWHM_Y") * 1000000))
-print("Substrate material :", str(Gc2.getv("Material")))
+print("Relative error:", str(gc_2.getv("RelVal") * 100), "(%)")
+print("FWHM of vertical direction at focus, (um) ", str(gc_2.getv("FWHM_X") * 1000000))
+print("FWHM of horizontal direction at focus, (um) ", str(gc_2.getv("FWHM_Y") * 1000000))
+print("Substrate material :", str(gc_2.getv("Material")))
 
-print("Waveguide etch depth, (nm) ", str(Gc2.getv("GC_etch") * 1000000000))
-print("Grating period (P), (nm) ", str(Gc2.getv("GC_period") * 1000000000))
-print("Grating minimum duty cycle:", str(Gc2.getv("GC_DCmin")))
+print("Waveguide etch depth, (nm) ", str(gc_2.getv("GC_etch") * 1000000000))
+print("Grating period (P), (nm) ", str(gc_2.getv("GC_period") * 1000000000))
+print("Grating minimum duty cycle:", str(gc_2.getv("GC_DCmin")))
 
-Grating_Schema = Image.open(my_path + "img_001.jpg")
+# Grating_Schema = Image.open(my_path + "img_001.jpg")
 
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
