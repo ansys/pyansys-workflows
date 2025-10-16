@@ -64,11 +64,6 @@ jobs:
 
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          sparse-checkout: |
-            mapdl-dpf
-            doc
-            .ci
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
         uses: actions/setup-python@v5
@@ -107,7 +102,7 @@ jobs:
           export PYMAPDL_PORT=$PYMAPDL_PORT_0
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_0
           export DPF_PORT=$DPF_PORT_0
-          .ci/start_mapdl.sh & export MAPDL_PID=$!
+          mapdl-dpf/.ci/start_mapdl.sh & export MAPDL_PID=$!
           echo "Launching MAPDL service at PID: $MAPDL_PID"
           echo "MAPDL_PID=$(echo $MAPDL_PID)" >> $GITHUB_OUTPUT
 
@@ -116,7 +111,7 @@ jobs:
           export PYMAPDL_PORT=$PYMAPDL_PORT_1
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_1
           export DPF_PORT=$DPF_PORT_1
-          .ci/start_mapdl.sh & export MAPDL_PID_1=$!
+          mapdl-dpf/.ci/start_mapdl.sh & export MAPDL_PID_1=$!
           echo "Launching second MAPDL service at PID: $MAPDL_PID_1"
           echo "MAPDL_PID_1=$(echo $MAPDL_PID_1)" >> $GITHUB_OUTPUT
 
@@ -137,8 +132,8 @@ jobs:
           which xvfb-run || (apt-get update && apt-get install -y xvfb)
 
           # Test display if the script exists
-          if [ -f ".ci/display_test.py" ]; then
-            xvfb-run python .ci/display_test.py
+          if [ -f "mapdl-dpf/.ci/display_test.py" ]; then
+            xvfb-run python mapdl-dpf/.ci/display_test.py
           else
             echo "Display test script not found, skipping..."
           fi
