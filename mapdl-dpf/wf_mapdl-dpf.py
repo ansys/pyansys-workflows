@@ -90,7 +90,6 @@ port_1 = int(os.getenv("PYMAPDL_PORT_1", 21001))
 is_cicd = os.getenv("ON_CICD", False)
 nCores = 2
 
-print(is_cicd, port_0, port_1)
 
 if is_cicd:
     mapdl_pool = MapdlPool(
