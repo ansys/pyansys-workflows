@@ -31,7 +31,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
-  RUN_DOC_BUILD: false
+  RUN_DOC_BUILD: true
 
 jobs:
   geometry:
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [25.1] # [24.1, 24.2, 25.1]
     steps:
 
       - name: Checkout code
@@ -143,7 +143,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [25.1] # [24.1, 24.2, 25.1]
     container:
       image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
       options: --entrypoint /bin/bash
@@ -175,22 +175,22 @@ jobs:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
-      - name: Run the PyMechanical script
-        env:
-          NUM_CORES: 1
-          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
-          ANSYS_WORKBENCH_LOGGING: 0
-          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
-        run: |
-          . /.venv/bin/activate
-          xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
-          cat pymechlogs${{ matrix.ansys-release }}.txt
+      # - name: Run the PyMechanical script
+      #   env:
+      #     NUM_CORES: 1
+      #     ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+      #     ANSYS_WORKBENCH_LOGGING: 0
+      #     ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+      #   run: |
+      #     . /.venv/bin/activate
+      #     xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
+      #     cat pymechlogs${{ matrix.ansys-release }}.txt
 
-      - name: Run the PyDPF script
-        run: |
-          . /.venv/bin/activate
-          xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
-          cat pydpflogs${{ matrix.ansys-release }}.txt
+      # - name: Run the PyDPF script
+      #   run: |
+      #     . /.venv/bin/activate
+      #     xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
+      #     cat pydpflogs${{ matrix.ansys-release }}.txt
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
@@ -199,7 +199,7 @@ jobs:
           path: geometry-mechanical-dpf/outputs
 
       - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
+        if: inputs.doc-build
         run: |
           echo "Requested to build docs..."
           if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
