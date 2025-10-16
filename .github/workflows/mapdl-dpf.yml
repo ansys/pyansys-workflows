@@ -29,7 +29,7 @@ env:
   DPF_DOCKER_IMAGE: ghcr.io/ansys/mapdl:v25.2-rocky-dpf-standalone
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.2
-  RUN_DOC_BUILD: true
+  RUN_DOC_BUILD: false
   DPF_START_SERVER: false
   ANSYS_DPF_ACCEPT_LA: Y
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
