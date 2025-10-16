@@ -9,7 +9,6 @@ if "%SPHINXBUILD%" == "" (
 )
 set SOURCEDIR=source
 set BUILDDIR=_build
-set PYVISTA_OFF_SCREEN=true
 
 if "%1" == "" goto help
 if "%1" == "clean" goto clean
