@@ -24,7 +24,7 @@ on:
 
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
-  ANSYS_RELEASE_FOR_DOCS: 25.2
+  ANSYS_RELEASE_FOR_DOCS: 25.2.0
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
   ON_CI: true
@@ -101,6 +101,7 @@ jobs:
 
       - name: (DOCS) Adapt the documentation paths
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        shell: bash
         run: |
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\speos-optislang\\images\\|./images/|g' {} +
 
@@ -108,7 +109,8 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         uses: actions/upload-artifact@v4
         with:
-          name: speos-optislang-docs-stage
+          name: speos-optislang-docs
           path: |
             doc/_build/
             doc/source/examples/speos-optislang/
+          overwrite: true

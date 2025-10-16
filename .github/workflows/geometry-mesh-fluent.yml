@@ -25,12 +25,13 @@ on:
 env:
   MAIN_PYTHON_VERSION: '3.12'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
-  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/pyfluent'
+  FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/fluent'
+  FLUENT_DOCKER_EXEC_COMMAND: ${{ secrets.FLUENT_DOCKER_EXEC_COMMAND }}
   ANSRV_GEO_PORT: 700
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 25.1
+  ANSYS_RELEASE_FOR_DOCS: 24.1
   RUN_DOC_BUILD: false
 
 jobs:
@@ -40,7 +41,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -143,9 +144,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
-    env:
-      ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.FLUENT_LICENSE_SERVER )}}
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -172,8 +171,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Full Fluent image (name+tag)
+        run: |
+          if [[ "${{ matrix.ansys-release }}" == "24.1" || "${{ matrix.ansys-release }}" == "24.2" ]]; then
+            IMAGE_TAG=v24.2.5
+          elif [[ "${{ matrix.ansys-release }}" == "25.1" ]]; then
+            IMAGE_TAG=v25.1.4
+          else
+            echo "Unsupported release: ${{ matrix.ansys-release }}"
+            exit 1
+          fi
+          echo "FLUENT_DOCKER_IMAGE=${{ env.FLUENT_DOCKER_IMAGE }}:${IMAGE_TAG}" >> $GITHUB_ENV
+
       - name: Download Fluent service container
-        run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
+        run: |
+          echo "Pulling Fluent image: ${{ env.FLUENT_DOCKER_IMAGE }}"
+          docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v5
@@ -248,9 +261,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
-    env:
-      ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.FLUENT_LICENSE_SERVER )}}
+        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
     steps:
 
       - name: Checkout code
@@ -277,8 +288,22 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Full Fluent image (name+tag)
+        run: |
+          if [[ "${{ matrix.ansys-release }}" == "24.1" || "${{ matrix.ansys-release }}" == "24.2" ]]; then
+            IMAGE_TAG=v24.2.5
+          elif [[ "${{ matrix.ansys-release }}" == "25.1" ]]; then
+            IMAGE_TAG=v25.1.4
+          else
+            echo "Unsupported release: ${{ matrix.ansys-release }}"
+            exit 1
+          fi
+          echo "FLUENT_DOCKER_IMAGE=${{ env.FLUENT_DOCKER_IMAGE }}:${IMAGE_TAG}" >> $GITHUB_ENV
+
       - name: Download Fluent service container
-        run: docker pull ${{ env.FLUENT_DOCKER_IMAGE }}:v${{ matrix.ansys-release }}.0
+        run: |
+          echo "Pulling Fluent image: ${{ env.FLUENT_DOCKER_IMAGE }}"
+          docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the meshing outputs
         uses: actions/download-artifact@v5

@@ -162,5 +162,5 @@ cython_debug/
 # VSCode
 .vscode
 
-# Examples
-Output/*
+# Output folders
+outputs/
