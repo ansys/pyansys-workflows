@@ -1,4 +1,4 @@
-TBD
-===
+MAPDL and DPF workflow
+======================
 
-TBD
+This workflow showcase an example using MAPDL and DPF.
