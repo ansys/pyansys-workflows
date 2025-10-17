@@ -12,7 +12,7 @@ repos:
       - id: yamlfmt
         args:
           - "-formatter"
-          - "max_line_length=120,retain_line_breaks=true,retain_line_breaks_single=true"
+          - "max_line_length=180,retain_line_breaks=true,retain_line_breaks_single=true"
 
   - repo: https://github.com/psf/black
     rev: 25.9.0

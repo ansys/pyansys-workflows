@@ -28,17 +28,22 @@ env:
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
   ON_CI: true
-  RUN_DOC_BUILD: false
 
 jobs:
+
+  is-only-docs-required:
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build }}
 
   speos-optislang:
     name: Speos Optislang
     runs-on: [self-hosted, Windows, pyansys-workflows]
+    needs: is-only-docs-required
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.2.0]
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2.0]') || fromJSON('[25.2.0]') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
@@ -75,21 +80,8 @@ jobs:
           source .venv/Scripts/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        shell: bash
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" = "$ANSYS_RELEASE_FOR_DOCS" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
         shell: bash
@@ -100,13 +92,13 @@ jobs:
           ./make.bat html
 
       - name: (DOCS) Adapt the documentation paths
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         shell: bash
         run: |
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\speos-optislang\\images\\|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: speos-optislang-docs
