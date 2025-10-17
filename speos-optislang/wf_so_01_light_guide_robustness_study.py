@@ -543,7 +543,7 @@ print(f"Using optiSLang version {my_osl.osl_version_string}")
 
 ################################################################################
 # Create optiSLang workflow
-# ---------------------
+# -------------------------
 # Create robustness workflow and define criteria definition
 #
 def create_workflow(osl, user_input_json):
@@ -669,7 +669,7 @@ print("Variation Analysis: started.")
 
 ################################################################################
 # Execute Robustness analysis
-# ---------------------
+# ---------------------------
 # loop until get_status() and returns "Processing done" for the root system
 #
 
@@ -721,7 +721,7 @@ print("Variation Analysis: Done!")
 
 ################################################################################
 # Get quality values
-# ---------------------
+# ------------------
 # Get the robustness result and display in the console.
 #
 def get_design_quality_values(osl):
@@ -798,7 +798,7 @@ print("*" * 50)
 
 ################################################################################
 # Close optiSLang
-# ---------------------
+# ---------------
 #
 my_osl.dispose()
 print("OSL Project finished.")

@@ -223,7 +223,7 @@ materials = ExtAPI.DataModel.Project.Model.Materials
 materials.Import(material_path)
 materials.RefreshMaterials()
 
-PRT1 = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == r"Geom-2\Geom-1\solid"][0]
+PRT1 = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "Geom-2\\Geom-1\\solid"][0]
 
 # Assign it to the bodies
 

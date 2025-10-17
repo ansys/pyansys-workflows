@@ -8,18 +8,20 @@ Workflow examples
    :maxdepth: 3
 
    examples/fluent-mechanical/index
-   examples/geometry-mechanical-dpf/index
    examples/geometry-mesh/index
    examples/geometry-mesh-fluent/index
    examples/speos-optislang/index
+   .. TODO: enable when issues in PyMechanical are resolved
+      examples/geometry-mechanical-dpf/index
 
 .. include:: examples/fluent-mechanical/index.rst
     :start-line: 1
     :end-before: .. toctree
 
-.. include:: examples/geometry-mechanical-dpf/index.rst
-    :start-line: 1
-    :end-before: .. toctree
+.. TODO: enable when issues in PyMechanical are resolved
+.. .. include:: examples/geometry-mechanical-dpf/index.rst
+..     :start-line: 1
+..     :end-before: .. toctree
 
 .. include:: examples/geometry-mesh/index.rst
     :start-line: 1
