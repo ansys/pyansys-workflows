@@ -34,8 +34,8 @@ Analysis type:
  - Static Analysis
 
 Material properties:
- - Youngs modulus, :math:`E = 200 \, GPa`
- - Poissons ratio, :math:`\mu = 0.3`
+ - Young's modulus, :math:`E = 200 \, GPa`
+ - Poisson's ratio, :math:`\mu = 0.3`
 
 Boundary conditions (global model):
  - Fixed support applied at the bottom side
@@ -51,10 +51,10 @@ Loading:
 
 Modeling notes:
  - At each timestep, the global model is solved with the specified boundary
-   conditions;the resulting nodal displacements are interpolated to the
+   conditions; the resulting nodal displacements are interpolated to the
    boundary nodes of the local model, using the DPF interpolation operator.
    Those displacements are enforced as constraints to the local model,
-   which is then solved completing that timestep.
+   which is then solved, completing that timestep.
 """
 
 import os
