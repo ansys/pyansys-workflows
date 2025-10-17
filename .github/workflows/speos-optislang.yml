@@ -34,7 +34,7 @@ jobs:
   is-only-docs-required:
     uses: ./.github/workflows/check-docs-required.yml
     with:
-      doc-build: ${{ inputs.doc-build }}
+      doc-build: ${{ inputs.doc-build || false }}
 
   speos-optislang:
     name: Speos Optislang
