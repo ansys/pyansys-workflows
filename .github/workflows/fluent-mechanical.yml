@@ -32,17 +32,22 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
-  RUN_DOC_BUILD: false
   PYMECHANICAL_START_INSTANCE: false
 
 jobs:
+  is-only-docs-required:
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build || false }}
+
   fluent:
     name: Fluent
     runs-on: public-ubuntu-latest-8-cores
+    needs: is-only-docs-required
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
 
       - name: Checkout code
@@ -112,20 +117,8 @@ jobs:
               docker rm -f $(docker ps -a -q)
           fi
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
@@ -135,7 +128,7 @@ jobs:
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: fluent-mechanical-docs-stage-fluent
@@ -147,11 +140,11 @@ jobs:
   mechanical:
     name: Mechanical
     runs-on: [public-ubuntu-latest-8-cores]
-    needs: fluent
+    needs: [fluent, is-only-docs-required]
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1, 24.2, 25.1]
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
 
       - name: Checkout code
@@ -193,7 +186,30 @@ jobs:
         run: |
           docker pull ${{ env.MECHANICAL_IMAGE }}
           docker run --restart always --name ${{ env.DOCKER_MECH_CONTAINER_NAME }} -e ANSYSLMD_LICENSE_FILE=1055@${{ env.LICENSE_SERVER }} -p ${{ env.PYMECHANICAL_PORT }}:10000 ${{ env.MECHANICAL_IMAGE }} > log.txt &
-          grep -q 'WB Initialize Done' <(timeout 60 tail -f log.txt)
+
+          # Wait for Mechanical to initialize with intelligent polling
+          max_wait=300  # Maximum wait time in seconds
+          check_interval=10  # Check every 10 seconds
+          elapsed=0
+
+          echo "Waiting for Mechanical to initialize..."
+          while [ $elapsed -lt $max_wait ]; do
+            if grep -q 'WB Initialize Done' log.txt 2>/dev/null; then
+              echo "Mechanical initialized successfully after ${elapsed} seconds"
+              break
+            fi
+            echo "Waiting for initialization... (${elapsed}/${max_wait}s)"
+            sleep $check_interval
+            elapsed=$((elapsed + check_interval))
+          done
+
+          # Final check
+          if ! grep -q 'WB Initialize Done' log.txt 2>/dev/null; then
+            echo "ERROR: Mechanical failed to initialize within ${max_wait} seconds"
+            echo "=== Last 50 lines of log.txt ==="
+            tail -n 50 log.txt || echo "No log file found"
+            exit 1
+          fi
 
       - name: Check out the fluent outputs
         uses: actions/download-artifact@v5
@@ -212,27 +228,15 @@ jobs:
           name: fluent-mechanical-workflow-mechanical-outputs-${{ matrix.ansys-release }}
           path: fluent-mechanical/outputs
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v5
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: fluent-mechanical-docs-stage-fluent
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
@@ -242,7 +246,7 @@ jobs:
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: fluent-mechanical-docs

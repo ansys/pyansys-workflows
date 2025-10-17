@@ -26,9 +26,7 @@ from datetime import datetime
 import os
 import re
 
-from ansys_sphinx_theme import ansys_favicon
-from ansys_sphinx_theme import pyansys_logo_black as logo
-from ansys_sphinx_theme import pyansys_logo_white
+from ansys_sphinx_theme import ansys_favicon, pyansys_logo_white
 import pyvista as pv
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
 
@@ -54,7 +52,6 @@ release = version = "0.1.0"
 cname = os.getenv("DOCUMENTATION_CNAME", "no.cname")
 
 # Select desired logo, theme, favicon, and declare the html title
-html_logo = logo
 html_theme = "ansys_sphinx_theme"
 html_favicon = ansys_favicon
 html_short_title = html_title = "PyAnsys Workflows"
@@ -62,10 +59,18 @@ html_short_title = html_title = "PyAnsys Workflows"
 # specify the location of your github repo
 html_theme_options = {
     "github_url": "https://github.com/ansys/pyansys-workflows",
+    "logo": "pyansys",
     "show_prev_next": False,
     "show_breadcrumbs": True,
     "additional_breadcrumbs": [
         ("PyAnsys", "https://docs.pyansys.com/"),
+    ],
+    "icon_links": [
+        {
+            "name": "Support",
+            "url": "https://github.com/ansys/pyansys-workflows/discussions",
+            "icon": "fa fa-comment fa-fw",
+        },
     ],
 }
 
