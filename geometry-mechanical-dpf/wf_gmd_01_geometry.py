@@ -214,5 +214,3 @@ design.download(file_location=download_file, format=DesignFileFormat.PMDB)
 
 # Close the server session.
 modeler.close()
-
-# TODO: hack triggering docs

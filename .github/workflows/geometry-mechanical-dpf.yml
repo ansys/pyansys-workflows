@@ -31,7 +31,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
-  RUN_DOC_BUILD: true
+  RUN_DOC_BUILD: false
 
 jobs:
   geometry:
@@ -40,7 +40,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.1] # [24.1, 24.2, 25.1]
+        ansys-release: [24.1, 24.2, 25.1]
     steps:
 
       - name: Checkout code
@@ -143,7 +143,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.1] # [24.1, 24.2, 25.1]
+        ansys-release: [24.1, 24.2, 25.1]
     container:
       image: 'ghcr.io/ansys/mechanical:${{ matrix.ansys-release }}.0'
       options: --entrypoint /bin/bash
@@ -207,7 +207,7 @@ jobs:
           path: geometry-mechanical-dpf/outputs
 
       - name: (DOCS) Check if docs should be built
-        if: inputs.doc-build
+        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
         run: |
           echo "Requested to build docs..."
           if [ "${{ matrix.ansys-release }}" = "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
