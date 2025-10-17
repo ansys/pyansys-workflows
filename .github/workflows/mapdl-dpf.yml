@@ -29,7 +29,6 @@ env:
   DPF_DOCKER_IMAGE: ghcr.io/ansys/mapdl:v25.2-rocky-dpf-standalone
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.2
-  RUN_DOC_BUILD: false
   DPF_START_SERVER: false
   ANSYS_DPF_ACCEPT_LA: Y
   MAPDL_IMAGE_VERSION_DOCS_BUILD: v25.2.4-ubuntu-cicd
@@ -42,9 +41,16 @@ env:
   PYVISTA_OFF_SCREEN: true
 
 jobs:
+
+  is-only-docs-required:
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build || false }}
+
   mapdl-dpf:
     name: MAPDL-DPF
     runs-on: ubuntu-22.04
+    needs: is-only-docs-required
     container:
       image: "ghcr.io/ansys/mapdl:v25.2.4-ubuntu-cicd"
       options: -u=0:0 --oom-kill-disable --memory=6656MB --memory-swap=16896MB --shm-size=1gb --entrypoint /bin/bash
@@ -54,7 +60,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.2]
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2]') || fromJSON('[25.2]') }}
     env:
       PYMAPDL_START_INSTANCE: FALSE
       ON_DOCUMENTATION: TRUE
@@ -162,20 +168,8 @@ jobs:
         run: |
           apt-get update -qq && apt-get install -y make
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         shell: bash
         env:
           BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
@@ -186,7 +180,7 @@ jobs:
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: mapdl-dpf-docs-stage-mapdl
