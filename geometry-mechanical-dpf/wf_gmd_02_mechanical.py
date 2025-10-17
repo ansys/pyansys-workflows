@@ -34,7 +34,7 @@ the heat developed in chips.
 import os
 from pathlib import Path
 
-import ansys.mechanical.core as mech
+from ansys.mechanical.core import App
 from matplotlib import image as mpimg
 from matplotlib import pyplot as plt
 
@@ -63,8 +63,7 @@ if "DOC_BUILD" in os.environ:
 # Start a PyMechanical app
 # ------------------------
 #
-app = mech.App()
-app.update_globals(globals())
+app = App(globals=globals())
 print(app)
 
 
@@ -215,6 +214,5 @@ transient_solution.Solve(True)
 # -------------------------------
 # Mechanical file (mechdb) contains results for each analysis
 #
-app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
-project_directory = ExtAPI.DataModel.Project.ProjectDirectory
-app.exit()
+app.save_as(os.path.join(OUTPUT_DIR, "pcb.mechdb"), overwrite=True)
+app.close()
