@@ -156,6 +156,11 @@ jobs:
             .github/workflows/setup-python-mechanical
             geometry-mechanical-dpf
             doc
+    
+      - name: "Install system dependencies"
+        run: |
+          apt update
+          apt install lsb-release xvfb git curl make -y
 
       - name: "Set up Python and activate virtual environment"
         uses: ./.github/workflows/setup-python-mechanical/
