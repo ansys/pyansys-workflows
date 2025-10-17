@@ -163,3 +163,5 @@ design.download(file_location=download_file, format=DesignFileFormat.FMD)
 
 # Close the server session.
 modeler.close()
+
+# HACK: trigger workflow
