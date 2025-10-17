@@ -24,7 +24,7 @@ on:
 
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
-  ANSYS_RELEASE_FOR_DOCS: 25.2.0
+  ANSYS_RELEASE_FOR_DOCS: 25.2
   AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
   ON_CI: true
@@ -43,7 +43,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2.0]') || fromJSON('[25.2.0]') }}
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2]') || fromJSON('[25.2]') }}
     steps:
       - name: Checkout code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
@@ -60,8 +60,7 @@ jobs:
       - name: Set up environment variables
         shell: bash
         run: |
-          VERSION="${{ matrix.ansys-release }}"
-          ANSYS_RELEASE_SHORT="${VERSION%.*}"
+          ANSYS_RELEASE_SHORT="${{ matrix.ansys-release }}"
           echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
           ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
           echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
@@ -72,7 +71,7 @@ jobs:
           python -m pip install --upgrade pip
           python -m venv .venv
           source .venv/Scripts/activate
-          pip install -r speos-optislang/requirements_${{ env.ANSYS_RELEASE_SHORT }}.txt
+          pip install -r speos-optislang/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Run the workflow script
         shell: bash
@@ -80,7 +79,7 @@ jobs:
           source .venv/Scripts/activate
           python speos-optislang/wf_so_01_light_guide_robustness_study.py
 
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
