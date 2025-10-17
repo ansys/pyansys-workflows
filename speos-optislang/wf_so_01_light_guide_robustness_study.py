@@ -165,6 +165,9 @@ if "DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 
+ANSYS_RELEASE = os.getenv("ANSYS_RELEASE_COMPACT", "252")
+"""ANSYS release version."""
+
 ###############################################################################
 # Define functions
 # ----------------
@@ -532,7 +535,7 @@ def get_executable(version) -> Path:
     return osl_com
 
 
-osl_executable = get_executable(252)
+osl_executable = get_executable(ANSYS_RELEASE)
 my_osl = Optislang(
     executable=osl_executable,
     ini_timeout=60,
@@ -691,7 +694,7 @@ def calculate(designs) -> list:
     # create speos instance
     from ansys.speos.core import launcher
 
-    speos = launcher.launch_local_speos_rpc_server(version="252")
+    speos = launcher.launch_local_speos_rpc_server(version=ANSYS_RELEASE)
 
     # run speos simulation
     result_design_list = []
