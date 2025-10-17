@@ -27,7 +27,7 @@
 Consecutive submodeling with MAPDL pool
 ---------------------------------------
 Problem description:
- - In this example we demonstrate how to use MAPDL pool to
+ - In this example, we demonstrate how to use MAPDL pool to
    perform a consecutive submodeling simulation with MAPDL and DPF.
 
 Analysis type:
