@@ -178,22 +178,22 @@ jobs:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
-      # - name: Run the PyMechanical script
-      #   env:
-      #     NUM_CORES: 1
-      #     ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
-      #     ANSYS_WORKBENCH_LOGGING: 0
-      #     ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
-      #   run: |
-      #     . /.venv/bin/activate
-      #     xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
-      #     cat pymechlogs${{ matrix.ansys-release }}.txt
+      - name: Run the PyMechanical script
+        env:
+          NUM_CORES: 1
+          ANSYS_WORKBENCH_LOGGING_CONSOLE: 0
+          ANSYS_WORKBENCH_LOGGING: 0
+          ANSYS_WORKBENCH_LOGGING_FILTER_LEVEL: 2
+        run: |
+          . /.venv/bin/activate
+          xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pymechlogs${{ matrix.ansys-release }}.txt
 
-      # - name: Run the PyDPF script
-      #   run: |
-      #     . /.venv/bin/activate
-      #     xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
-      #     cat pydpflogs${{ matrix.ansys-release }}.txt
+      - name: Run the PyDPF script
+        run: |
+          . /.venv/bin/activate
+          xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          cat pydpflogs${{ matrix.ansys-release }}.txt
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
