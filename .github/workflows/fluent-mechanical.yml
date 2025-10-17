@@ -118,7 +118,7 @@ jobs:
           fi
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_01_fluent.py'
@@ -128,7 +128,7 @@ jobs:
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: fluent-mechanical-docs-stage-fluent
@@ -230,13 +230,13 @@ jobs:
 
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v5
-        if: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: fluent-mechanical-docs-stage-fluent
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
-        if: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'fluent-mechanical/wf_fm_02_mechanical.py'
         run: |
@@ -246,7 +246,7 @@ jobs:
           xvfb-run make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
           name: fluent-mechanical-docs
