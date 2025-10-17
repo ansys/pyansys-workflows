@@ -153,21 +153,24 @@ jobs:
         uses: actions/checkout@v5.0.0
         with:
           sparse-checkout: |
-            .github/workflows/setup-python-mechanical
             geometry-mechanical-dpf
             doc
 
       - name: "Set up Python and activate virtual environment"
-        uses: ./.github/workflows/setup-python-mechanical/
-        with:
-          cache-version: ${{ matrix.ansys-release }}
-          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+        shell: bash
+        run: |
+          apt update
+          apt install lsb-release xvfb git curl make -y
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          uv python install python${{ env.MAIN_PYTHON_VERSION }}
+          uv venv /.venv
 
       - name: Install dependencies
         run: |
           . /.venv/bin/activate
-          python -m pip install --upgrade pip
-          pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+          uv pip install --upgrade pip
+          uv pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v5
@@ -228,7 +231,7 @@ jobs:
         run: |
           . /.venv/bin/activate
           find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\geometry-mechanical-dpf\\images\\|./images/|g' {} +
-          pip install -r ./doc/requirements.txt
+          uv pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
 
@@ -238,7 +241,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
           . /.venv/bin/activate
-          pip install -r ./doc/requirements.txt
+          uv pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat dpf-docs-logs${{ matrix.ansys-release }}.txt
 
