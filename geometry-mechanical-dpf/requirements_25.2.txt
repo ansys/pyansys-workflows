@@ -1,0 +1,4 @@
+ansys-geometry-core[all]==0.11.0
+ansys-mechanical-core==0.11.34
+ansys-dpf-core[plotting]==14.1
+ansys-tools-visualization-interface<0.10
