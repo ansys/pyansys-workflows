@@ -23,7 +23,7 @@ on:
       - 'geometry-mesh-fluent/**'
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.10'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
   FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/fluent'
   FLUENT_DOCKER_EXEC_COMMAND: ${{ secrets.FLUENT_DOCKER_EXEC_COMMAND }}
