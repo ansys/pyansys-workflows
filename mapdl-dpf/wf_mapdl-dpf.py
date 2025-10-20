@@ -176,7 +176,7 @@ def define_bcs(mapdl):
     pass
 
 
-def Get_boundary(mapdl):
+def get_boundary(mapdl):
     # Enter PREP7 in MAPDL
     mapdl.prep7()
 
@@ -214,10 +214,10 @@ def Get_boundary(mapdl):
 
 
 # Define the boundary conditions and the loading for the global model
-define_BCs(mapdl_global)
+define_bcs(mapdl_global)
 
 # Get the DPF field with the boundary nodes of the local model
-boundary_coords = Get_boundary(mapdl_local)
+boundary_coords = get_boundary(mapdl_local)
 
 ###############################################################################
 # Set up DPF operators
@@ -229,9 +229,9 @@ boundary_coords = Get_boundary(mapdl_local)
 
 def define_dpf_operators(nCores):
     # Define the DataSources class and link it to the results of the global model
-    dataSources = dpf.DataSources()
+    data_sources = dpf.DataSources()
     for i in range(nCores):
-        dataSources.set_domain_result_file_path(
+        data_sources.set_domain_result_file_path(
             path=Path(f"./outputs/mapdl-dpf/global/file{i}.rst"), key="rst", domain_id=i
         )
 
