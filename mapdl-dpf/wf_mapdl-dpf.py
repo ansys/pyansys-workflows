@@ -22,7 +22,7 @@
 # SOFTWARE.
 
 """
-.. _global-local_1:
+.. _ref_mapdl_dpf:
 
 Consecutive submodeling with MAPDL pool
 ---------------------------------------
@@ -88,7 +88,7 @@ for fdr in folders:
 port_0 = int(os.getenv("PYMAPDL_PORT_0", 21000))
 port_1 = int(os.getenv("PYMAPDL_PORT_1", 21001))
 is_cicd = os.getenv("ON_CICD", False)
-nCores = 2
+n_cores = 2
 
 
 if is_cicd:
@@ -121,8 +121,8 @@ else:
 # # We assign the instances to the local and global model, then use
 # # ``mapdl.cdread`` to load their geometry and mesh. Note the the .cdb files
 # # include named selections for the faces we want to apply the boundary conditions and the loads.
-# # The function ``define_BCs`` defines the global model’s boundary conditions and applied loads.
-# # The function ``Get_boundary`` is used to record the local model’s cut-boundary
+# # The function ``define_bcs`` defines the global model’s boundary conditions and applied loads.
+# # The function ``get_boundary`` is used to record the local model’s cut-boundary
 # # node coordinates as a dpf.field which will be later used in the DPF interpolator input
 
 cwd = Path.cwd()  # Get current working directory
@@ -142,7 +142,7 @@ mapdl_local.cdread("db", local_cdb)  # Load local model
 mapdl_local.cwd(cwd / Path("outputs/mapdl-dpf/local"))  # Set directory of the local model
 
 
-def define_BCs(mapdl):
+def define_bcs(mapdl):
     # Enter PREP7 in MAPDL
     mapdl.prep7()
 
