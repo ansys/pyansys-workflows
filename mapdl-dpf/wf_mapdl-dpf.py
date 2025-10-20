@@ -227,11 +227,11 @@ boundary_coords = get_boundary(mapdl_local)
 # model. The ``DataSources`` class to link results with the DPF operator inputs.
 
 
-def define_dpf_operators(nCores):
+def define_dpf_operators(n_cores):
     # Define the DataSources class and link it to the results of the global model
-    data_sources = dpf.DataSources()
-    for i in range(nCores):
-        data_sources.set_domain_result_file_path(
+    dataSources = dpf.DataSources()
+    for i in range(n_cores):
+        dataSources.set_domain_result_file_path(
             path=Path(f"./outputs/mapdl-dpf/global/file{i}.rst"), key="rst", domain_id=i
         )
 
