@@ -100,6 +100,12 @@ jobs:
           name: speos-optislang-docs
           path: doc/
 
+      - name: Download artifacts for pymapdl-dpf
+        uses: actions/download-artifact@v5
+        with:
+          name: pymapdl-dpf-docs
+          path: doc/
+
       - name: Build the documentation
         run: |
           cd doc

@@ -183,7 +183,7 @@ jobs:
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v4
         with:
-          name: mapdl-dpf-docs-stage-mapdl
+          name: mapdl-dpf-docs
           path: |
             doc/_build/
             doc/source/examples/mapdl-dpf/
