@@ -73,16 +73,13 @@ import numpy as np
 
 folders = ["./outputs/mapdl-dpf/global", "./outputs/mapdl-dpf/local"]
 for fdr in folders:
-    try:
-        shutil.rmtree(fdr, ignore_errors=True)
-        os.makedirs(fdr)
-    except:
-        pass
+    shutil.rmtree(fdr, ignore_errors=True)
+    Path(fdr).mkdir(parents=True, exist_ok=True)
 
 # ##############################################################################
-# Create Mapdl pool
-# ~~~~~~~~~~~~~~~~~
-# We use the ``MapdlPool`` class to create two separate instances — one dedicated to
+# Create a pool of MAPDL instances
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# We use the ``MapdlPool`` class to create two separate instances: one dedicated to
 # the global simulation and the other to the local simulation
 
 port_0 = int(os.getenv("PYMAPDL_PORT_0", 21000))
@@ -100,6 +97,9 @@ else:
     mapdl_pool = MapdlPool(2)
 
 ###############################################################################
+# Connect to DPF server
+# ~~~~~~~~~~~~~~~~~~~~~
+# We connect to a local or remote DPF server.
 # If you are working with a remote server, you might need to upload the ``RST``
 # file before working with it.
 # Then you can create the :class:`DPF Model <ansys.dpf.core.model.Model>`.
@@ -116,14 +116,14 @@ else:
 
 
 # ###############################################################################
-# # Set up Global and Local FE models
-# # ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# # We assign the instances to the local and global model, then use
-# # ``mapdl.cdread`` to load their geometry and mesh. Note the the .cdb files
-# # include named selections for the faces we want to apply the boundary conditions and the loads.
-# # The function ``define_bcs`` defines the global model’s boundary conditions and applied loads.
-# # The function ``get_boundary`` is used to record the local model’s cut-boundary
-# # node coordinates as a dpf.field which will be later used in the DPF interpolator input
+# Set up global and local FE models
+# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# We assign the instances to the local and global model, then use
+# ``mapdl.cdread`` to load their geometry and mesh. Note the ``.cdb`` files
+# include named selections for the faces we want to apply the boundary conditions and the loads.
+# The function ``define_bcs`` defines the global model’s boundary conditions and applied loads.
+# The function ``get_boundary`` is used to record the local model’s cut-boundary
+# node coordinates as a ``dpf.Field`` which will be later used in the DPF interpolator input.
 
 cwd = Path.cwd()  # Get current working directory
 
@@ -143,6 +143,14 @@ mapdl_local.cwd(cwd / Path("outputs/mapdl-dpf/local"))  # Set directory of the l
 
 
 def define_bcs(mapdl):
+    """
+    Define boundary conditions and loading for the global model.
+    
+    Parameters
+    ----------
+    mapdl : Mapdl
+        MAPDL instance for the global model.
+    """
     # Enter PREP7 in MAPDL
     mapdl.prep7()
 
@@ -177,6 +185,19 @@ def define_bcs(mapdl):
 
 
 def get_boundary(mapdl):
+    """
+    Get the boundary node coordinates of the local model as a DPF field.
+
+    Parameters
+    ----------
+    mapdl : Mapdl
+        MAPDL instance for the local model.
+    
+    Returns
+    -------
+    dpf.Field
+        DPF field containing the coordinates of the boundary nodes of the local model.
+    """
     # Enter PREP7 in MAPDL
     mapdl.prep7()
 
@@ -221,17 +242,34 @@ boundary_coords = get_boundary(mapdl_local)
 
 ###############################################################################
 # Set up DPF operators
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-# We define two dpf operators: the first reads the displacement results from the global model,
+# ~~~~~~~~~~~~~~~~~~~~
+# We define two DPF operators: the first reads the displacement results from the global model,
 # and the second interpolates those displacements onto the boundary coordinates of the local
 # model. The ``DataSources`` class to link results with the DPF operator inputs.
 
 
 def define_dpf_operators(n_cores):
+    """
+    Define DPF operators for the global model.
+
+    Parameters
+    ----------
+    n_cores : int
+        Number of cores used in the global model.
+    
+    Returns
+    -------
+    dpf.Model
+        DPF model for the global model.
+    dpf.Operator
+        DPF operator to read nodal displacements from the global model.
+    dpf.Operator
+        DPF operator to interpolate displacements onto local model boundary coordinates.
+    """
     # Define the DataSources class and link it to the results of the global model
-    dataSources = dpf.DataSources()
+    data_sources = dpf.DataSources()
     for i in range(n_cores):
-        dataSources.set_domain_result_file_path(
+        data_sources.set_domain_result_file_path(
             path=Path(f"./outputs/mapdl-dpf/global/file{i}.rst"), key="rst", domain_id=i
         )
 
@@ -248,12 +286,24 @@ def define_dpf_operators(n_cores):
 
 def initialize_dpf_interpolator(
     global_model,
-    local_Bc_coords,
+    local_bc_coords,
     disp_interpolator,
 ):
+    """
+    Initialize the DPF interpolator for the local model.
+
+    Parameters
+    ----------
+    global_model : dpf.Model
+        DPF model for the global model.
+    local_bc_coords : dpf.Field
+        DPF field containing the coordinates of the boundary nodes of the local model.
+    disp_interpolator : dpf.Operator
+        DPF operator to interpolate displacements onto local model boundary coordinates.
+    """
     my_mesh = global_model.metadata.meshed_region  # Global model's mesh
     disp_interpolator.inputs.coordinates.connect(
-        local_Bc_coords
+        local_bc_coords
     )  # Link interpolator inputs with the local model's boundary coordinates
     disp_interpolator.inputs.mesh.connect(
         my_mesh
@@ -277,12 +327,12 @@ def interpolate_data(timestep):
     return local_disp
 
 
-# Define the two dpf operators
+# Define the two DPF operators
 global_model, global_disp_op, disp_interpolator = define_dpf_operators(n_cores)
 
 ###############################################################################
 # Set up simulation loop
-# ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+# ~~~~~~~~~~~~~~~~~~~~~~
 # We solve the two models sequentially for each loading step.
 # First the global model is run producing a .rst results file.
 # Then we extract the global displacements and use them to define
@@ -290,9 +340,22 @@ global_model, global_disp_op, disp_interpolator = define_dpf_operators(n_cores)
 # (an input string command will be used for faster excecution time).
 
 
-def define_cut_boundary_constraint_template(local_Bc_coords):
+def define_cut_boundary_constraint_template(local_bc_coords):
+    """
+    Define template of input string command to apply the displacement constraints.
+    
+    Parameters
+    ----------
+    local_bc_coords : dpf.Field
+        DPF field containing the coordinates of the boundary nodes of the local model.
+
+    Returns
+    -------
+    str
+        Template of input string command to apply the displacement constraints.
+    """
     # Define template of input string command to apply the displacement constraints
-    local_nids = local_Bc_coords.scoping.ids
+    local_nids = local_bc_coords.scoping.ids
     # Get Node ID of boundary nodes of the local model
     template = ""
     for nid in local_nids:
@@ -308,8 +371,21 @@ def define_cut_boundary_constraint_template(local_Bc_coords):
     return template
 
 
-def solve_global_local(mapdl_global, mapdl_local, timesteps, local_Bc_coords):
+def solve_global_local(mapdl_global, mapdl_local, timesteps, local_bc_coords):
+    """
+    Solve the global and local models sequentially for each timestep.
 
+    Parameters
+    ----------
+    mapdl_global : Mapdl
+        MAPDL instance for the global model.
+    mapdl_local : Mapdl
+        MAPDL instance for the local model.
+    timesteps : int
+        Number of timesteps to solve.
+    local_bc_coords : dpf.Field
+        DPF field containing the coordinates of the boundary nodes of the local model.
+    """
     # Enter solution processor
     mapdl_global.solution()
     mapdl_local.solution()
@@ -318,7 +394,7 @@ def solve_global_local(mapdl_global, mapdl_local, timesteps, local_Bc_coords):
     mapdl_global.antype("STATIC")
     mapdl_local.antype("STATIC")
 
-    constraint_template = define_cut_boundary_constraint_template(local_Bc_coords)
+    constraint_template = define_cut_boundary_constraint_template(local_bc_coords)
 
     for i in range(1, timesteps + 1):  # Iterate timesteps
         print(f"Timestep: {i}")
@@ -336,7 +412,7 @@ def solve_global_local(mapdl_global, mapdl_local, timesteps, local_Bc_coords):
 
         # Initialize interpolator
         if i == 1:
-            initialize_dpf_interpolator(global_model, local_Bc_coords, disp_interpolator)
+            initialize_dpf_interpolator(global_model, local_bc_coords, disp_interpolator)
         # Read  & Interpolate displacement data
         local_disp = interpolate_data(timestep=i)
         # Run MAPDL input string command to apply the displacement constraints
@@ -389,5 +465,6 @@ visualize(mapdl_global)
 visualize(mapdl_local)
 
 ###############################################################################
-# Exit MAPDL pool instances
+# Exit MAPDL instances
+# ~~~~~~~~~~~~~~~~~~~~
 mapdl_pool.exit()
