@@ -23,7 +23,7 @@ on:
       - 'geometry-mesh-fluent/**'
 
 env:
-  MAIN_PYTHON_VERSION: '3.12'
+  MAIN_PYTHON_VERSION: '3.10'
   GEOMETRY_DOCKER_IMAGE: 'ghcr.io/ansys/geometry'
   FLUENT_DOCKER_IMAGE: 'ghcr.io/ansys/fluent'
   FLUENT_DOCKER_EXEC_COMMAND: ${{ secrets.FLUENT_DOCKER_EXEC_COMMAND }}
@@ -31,7 +31,7 @@ env:
   ANSRV_GEO_LICENSE_SERVER: ${{ secrets.LICENSE_SERVER }}
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
-  ANSYS_RELEASE_FOR_DOCS: 24.1
+  ANSYS_RELEASE_FOR_DOCS: 25.1
 
 jobs:
 
@@ -47,8 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
-        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
 
       - name: Checkout code
@@ -139,8 +138,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
-        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
 
       - name: Checkout code
@@ -245,8 +243,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
-        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
 
       - name: Checkout code
