@@ -145,7 +145,7 @@ mapdl_local.cwd(cwd / Path("outputs/mapdl-dpf/local"))  # Set directory of the l
 def define_bcs(mapdl):
     """
     Define boundary conditions and loading for the global model.
-    
+
     Parameters
     ----------
     mapdl : Mapdl
@@ -192,7 +192,7 @@ def get_boundary(mapdl):
     ----------
     mapdl : Mapdl
         MAPDL instance for the local model.
-    
+
     Returns
     -------
     dpf.Field
@@ -256,7 +256,7 @@ def define_dpf_operators(n_cores):
     ----------
     n_cores : int
         Number of cores used in the global model.
-    
+
     Returns
     -------
     dpf.Model
@@ -343,7 +343,7 @@ global_model, global_disp_op, disp_interpolator = define_dpf_operators(n_cores)
 def define_cut_boundary_constraint_template(local_bc_coords):
     """
     Define template of input string command to apply the displacement constraints.
-    
+
     Parameters
     ----------
     local_bc_coords : dpf.Field
