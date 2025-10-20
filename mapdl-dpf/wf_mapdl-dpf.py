@@ -235,11 +235,11 @@ def define_dpf_operators(nCores):
             path=Path(f"./outputs/mapdl-dpf/global/file{i}.rst"), key="rst", domain_id=i
         )
 
-    global_model = dpf.Model(dataSources)
+    global_model = dpf.Model(data_sources)
     # Define displacement result operator to read nodal displacements
     global_disp_op = dpf.operators.result.displacement()
     # Connect displacement result operator with the global model's results file
-    global_disp_op.inputs.data_sources.connect(dataSources)
+    global_disp_op.inputs.data_sources.connect(data_sources)
     # Define interpolator to interpolate the results inside the mesh elements
     # with shape functions
     disp_interpolator = dpf.operators.mapping.on_coordinates()
@@ -278,7 +278,7 @@ def interpolate_data(timestep):
 
 
 # Define the two dpf operators
-global_model, global_disp_op, disp_interpolator = define_dpf_operators(nCores)
+global_model, global_disp_op, disp_interpolator = define_dpf_operators(n_cores)
 
 ###############################################################################
 # Set up simulation loop
