@@ -49,7 +49,7 @@ from ansys.api.lumerical.lumapi import FDTD
 # Check if the __file__ variable is defined. If not, set it.
 # This is a workaround to run the script in Sphinx-Gallery.
 if "__file__" not in locals():
-    __file__ = Path(os.getcwd(), "wf_so_01_light_guide_robustness_study.py")
+    __file__ = Path(os.getcwd(), "wf_ml_01_ion_trap_modelling.py")
 # sphinx_gallery_end_ignore
 
 # sys.path.append("C:\\Program Files\\Lumerical\\v251\\api\\python\\")
