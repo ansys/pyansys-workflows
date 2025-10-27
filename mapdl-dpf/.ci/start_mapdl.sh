@@ -122,6 +122,11 @@ echo "  OMPI_ALLOW_RUN_AS_ROOT: $OMPI_ALLOW_RUN_AS_ROOT"
 echo "  OMPI_ALLOW_RUN_AS_ROOT_CONFIRM: $OMPI_ALLOW_RUN_AS_ROOT_CONFIRM"
 echo "  ANSYS_DPF_ACCEPT_LA: $ANSYS_DPF_ACCEPT_LA"
 
+# Check if the port is already in use
+if lsof -i :"$PYMAPDL_PORT" >/dev/null; then
+    echo "ERROR: Port $PYMAPDL_PORT is already in use."
+    exit 1
+fi
 # Start MAPDL using the entrypoint logic directly
 echo "Starting MAPDL with: $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE"
 
@@ -131,7 +136,8 @@ touch "${INSTANCE_NAME}.log"
 # Start MAPDL in background
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 >> "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
-
+# Ensure MAPDL stops when the script exits
+trap 'kill $MAPDL_PID 2>/dev/null || true' EXIT
 # Give MAPDL time to initialize
 echo "Waiting for MAPDL to initialize..."
 
