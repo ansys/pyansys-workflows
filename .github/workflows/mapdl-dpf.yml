@@ -178,6 +178,7 @@ jobs:
           cd doc
           pip install -r requirements.txt --root-user-action=ignore
           xvfb-run make html
+          pymapdl stop --all
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
@@ -193,5 +194,6 @@ jobs:
         if: failure()
         shell: bash
         run: |
+          pymapdl stop --all
           echo "Printing MAPDL log for debugging..."
           cat MAPDL_0.log

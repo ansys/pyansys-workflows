@@ -136,8 +136,6 @@ touch "${INSTANCE_NAME}.log"
 # Start MAPDL in background
 nohup $EXEC_PATH -grpc -port $PYMAPDL_PORT -$DISTRIBUTED_MODE -np 2 >> "${INSTANCE_NAME}.log" 2>&1 &
 MAPDL_PID=$!
-# Ensure MAPDL stops when the script exits
-trap 'kill $MAPDL_PID 2>/dev/null || true' EXIT
 # Give MAPDL time to initialize
 echo "Waiting for MAPDL to initialize..."
 
