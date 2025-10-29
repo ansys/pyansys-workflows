@@ -224,4 +224,5 @@ ExtAPI.Graphics.ExportImage(
 # Mechanical file (mechdb) contains results for each analysis
 #
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
+print(f"Mechanical file saved to: {OUTPUT_DIR / 'pcb.mechdb'}")
 app.close()

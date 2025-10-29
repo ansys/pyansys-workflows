@@ -184,6 +184,13 @@ jobs:
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
+      - name: List all files including hidden ones
+        run: |
+          echo "Listing all files (including hidden) under geometry-mechanical-dpf/outputs"
+          find geometry-mechanical-dpf/outputs -print
+          echo "Detailed file listing:"
+          find geometry-mechanical-dpf/outputs -type f -exec ls -lah {} +
+
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
@@ -241,8 +248,8 @@ jobs:
 
       - name: Update dependencies
         run: |
-          apt update
-          apt install -y xvfb git curl make
+          sudo apt update
+          sudo apt install -y xvfb git curl make
 
       - name: Checkout code
         uses: actions/checkout@v5.0.0
@@ -257,7 +264,7 @@ jobs:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
       - name: "Install requirements"
-        run: install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+        run: pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Check out the mechanical outputs
         uses: actions/download-artifact@v5
