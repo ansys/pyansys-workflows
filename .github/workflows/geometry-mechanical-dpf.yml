@@ -31,6 +31,7 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
+  ANSYS_DPF_ACCEPT_LA: 'Y'
 
 jobs:
 
@@ -130,8 +131,8 @@ jobs:
               docker rm -f $dockerContainers
           }
 
-  mech-dpf:
-    name: Mechanical - Dpf
+  mechanical:
+    name: Mechanical
     runs-on: public-ubuntu-latest-8-cores
     needs: [geometry, is-only-docs-required]
     strategy:
@@ -183,20 +184,13 @@ jobs:
           xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_02_mechanical.py > pymechlogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
-      - name: Run the PyDPF script
-        env:
-          ANSYS_DPF_ACCEPT_LA: 'Y'
-        run: |
-          . /.venv/bin/activate
-          xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
-          cat pydpflogs${{ matrix.ansys-release }}.txt
-
       - name: Store the outputs
         uses: actions/upload-artifact@v4
         with:
           name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
-          path: geometry-mechanical-dpf/outputs
-
+          path: |
+            geometry-mechanical-dpf/outputs/
+            geometry-mechanical-dpf/outputs/**/*
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v5
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
@@ -218,6 +212,90 @@ jobs:
           uv pip install -r ./doc/requirements.txt
           xvfb-run mechanical-env make -C doc html > pymech-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pymech-docs-logs${{ matrix.ansys-release }}.txt
+      - name: (DOCS) Adapt the documentation paths
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        run: |
+          find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/examples/geometry-mechanical-dpf/images|./images/|g' {} +
+
+      - name: (DOCS) Upload docs artifacts
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mechanical-dpf-docs-stage-mechanical
+          path: |
+            outputs/
+            doc/_build/
+            doc/source/examples/geometry-mechanical-dpf/
+          overwrite: true
+
+  dpf:
+    name: Mechanical - Dpf
+    runs-on: public-ubuntu-latest-8-cores
+    needs: [geometry, is-only-docs-required]
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
+    steps:
+
+      - name: Checkout code
+        uses: actions/checkout@v5.0.0
+        with:
+          sparse-checkout: |
+            geometry-mechanical-dpf
+            doc
+
+      - name: "Set up Python and activate virtual environment"
+        shell: bash
+        run: |
+          apt update
+          apt install lsb-release xvfb git curl make -y
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          uv python install python${{ env.MAIN_PYTHON_VERSION }}
+          uv venv /.venv
+
+      - name: Install dependencies
+        run: |
+          . /.venv/bin/activate
+          uv pip install --upgrade pip
+          uv pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Check out the mechanical outputs
+        uses: actions/download-artifact@v5
+        with:
+          name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
+
+      - name: Set numeric ANSYS version
+        run: echo "ANSYS_VERSION=${{ matrix.ansys-release }}" | tr -d '.' >> $GITHUB_ENV
+
+      - name: "Install DPF"
+        id: set-server-path
+        uses: ansys/pydpf-actions/install-dpf-docker@v2.3
+        with:
+          dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
+          ANSYS_VERSION: ${{ env.ANSYS_VERSION }}
+
+      - name: "Check licences of packages"
+        uses: ansys/pydpf-actions/check-licenses@v2.3
+      - name: Run the PyDPF script
+        run: |
+          . /.venv/bin/activate
+          python geometry-mechanical-dpf/wf_gmd_02_mechanical.py
+
+      - name: Store the outputs
+        uses: actions/upload-artifact@v4
+        with:
+          name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
+          path: geometry-mechanical-dpf/outputs
+
+      - name: (DOCS) Download the docs artifacts
+        uses: actions/download-artifact@v5
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        with:
+          name: geometry-mechanical-dpf-docs-stage-mechanical
+          path: doc
 
       - name: (DOCS) Build the documentation for the DPF script (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
@@ -226,8 +304,7 @@ jobs:
         run: |
           . /.venv/bin/activate
           uv pip install -r ./doc/requirements.txt
-          xvfb-run make -C doc html > dpf-docs-logs${{ matrix.ansys-release }}.txt 2>&1 || true
-          cat dpf-docs-logs${{ matrix.ansys-release }}.txt
+          xvfb-run make -C doc html
 
       - name: (DOCS) Adapt the documentation paths
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
