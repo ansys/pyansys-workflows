@@ -87,7 +87,7 @@ jobs:
         with:
           name: geometry-mechanical-dpf-docs
           path: doc/
-  
+
       - name: Download artifacts for fluent-mechanical
         uses: actions/download-artifact@v6
         with:
