@@ -191,6 +191,7 @@ jobs:
           path: |
             geometry-mechanical-dpf/outputs/
             geometry-mechanical-dpf/outputs/**/*
+          include-hidden-files: true
       - name: (DOCS) Download the docs artifacts
         uses: actions/download-artifact@v5
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
@@ -229,14 +230,19 @@ jobs:
           overwrite: true
 
   dpf:
-    name: Mechanical - Dpf
+    name: Dpf
     runs-on: public-ubuntu-latest-8-cores
-    needs: [geometry, is-only-docs-required]
+    needs: [mechanical, is-only-docs-required]
     strategy:
       fail-fast: false
       matrix:
         ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
     steps:
+
+      - name: Update dependencies
+        run: |
+          apt update
+          apt install -y xvfb git curl make
 
       - name: Checkout code
         uses: actions/checkout@v5.0.0
@@ -245,21 +251,13 @@ jobs:
             geometry-mechanical-dpf
             doc
 
-      - name: "Set up Python and activate virtual environment"
-        shell: bash
-        run: |
-          apt update
-          apt install lsb-release xvfb git curl make -y
-          curl -LsSf https://astral.sh/uv/install.sh | sh
-          export PATH="$HOME/.local/bin:$PATH"
-          uv python install python${{ env.MAIN_PYTHON_VERSION }}
-          uv venv /.venv
+      - name: "Setup Python"
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-      - name: Install dependencies
-        run: |
-          . /.venv/bin/activate
-          uv pip install --upgrade pip
-          uv pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
+      - name: "Install requirements"
+        run: install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Check out the mechanical outputs
         uses: actions/download-artifact@v5
@@ -281,7 +279,6 @@ jobs:
         uses: ansys/pydpf-actions/check-licenses@v2.3
       - name: Run the PyDPF script
         run: |
-          . /.venv/bin/activate
           python geometry-mechanical-dpf/wf_gmd_02_mechanical.py
 
       - name: Store the outputs
@@ -302,8 +299,7 @@ jobs:
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mechanical-dpf/wf_gmd_03_dpf.py'
         run: |
-          . /.venv/bin/activate
-          uv pip install -r ./doc/requirements.txt
+          pip install -r ./doc/requirements.txt
           xvfb-run make -C doc html
 
       - name: (DOCS) Adapt the documentation paths
