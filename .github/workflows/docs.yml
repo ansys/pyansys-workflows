@@ -35,6 +35,12 @@ jobs:
     with:
       doc-build: true
 
+  mapdl-dpf:
+    uses: ./.github/workflows/mapdl-dpf.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   speos-optislang:
     uses: ./.github/workflows/speos-optislang.yml
     secrets: inherit
@@ -92,6 +98,12 @@ jobs:
         uses: actions/download-artifact@v6
         with:
           name: speos-optislang-docs
+          path: doc/
+
+      - name: Download artifacts for pymapdl-dpf
+        uses: actions/download-artifact@v5
+        with:
+          name: pymapdl-dpf-docs
           path: doc/
 
       - name: Build the documentation
