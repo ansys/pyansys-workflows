@@ -184,9 +184,11 @@ jobs:
           cat pymechlogs${{ matrix.ansys-release }}.txt
 
       - name: Run the PyDPF script
+        env:
+          ANSYS_DPF_ACCEPT_LA: 'Y'
         run: |
           . /.venv/bin/activate
-          xvfb-run python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
+          xvfb-run mechanical-env python geometry-mechanical-dpf/wf_gmd_03_dpf.py > pydpflogs${{ matrix.ansys-release }}.txt 2>&1 || true
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
       - name: Store the outputs
