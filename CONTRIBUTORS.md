@@ -7,7 +7,10 @@
 ## Individual Contributors
 
 * [Abhishek Chitwar](https://github.com/abhishekchitwar)
+* [Camille Latapie](https://github.com/clatapie)
 * [Dipin](https://github.com/dipinknair)
 * [Maxime Rey](https://github.com/MaxJPRey)
+* [Pengyuan LU](https://github.com/pluAtAnsys)
 * [Rajesh Meena](https://github.com/MeenaBytes)
 * [Raphael Luciano](https://github.com/raph-luc)
+* [Sébastien Morais](https://github.com/SMoraisAnsys)
