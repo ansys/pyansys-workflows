@@ -100,7 +100,7 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_01_geometry.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -117,7 +117,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs-stage-geometry
           path: |
@@ -185,7 +185,7 @@ jobs:
           docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -197,7 +197,7 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: |
@@ -211,7 +211,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mesh-fluent-docs-stage-geometry
@@ -230,7 +230,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs-stage-mesh
           path: |
@@ -291,7 +291,7 @@ jobs:
           docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the meshing outputs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -303,7 +303,7 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_03_fluent_solver.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-fluent-solve-outputs-${{ matrix.ansys-release }}
           path: |
@@ -319,7 +319,7 @@ jobs:
           fi
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mesh-fluent-docs-stage-mesh
@@ -337,7 +337,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs
           path: |
