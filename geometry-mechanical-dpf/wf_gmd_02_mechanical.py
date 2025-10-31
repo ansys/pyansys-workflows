@@ -210,11 +210,19 @@ temperature_probe2.GeometryLocation = ic1
 #
 transient_solution.Solve(True)
 
+# TODO :Remove once completed
+# Export mesh image
+Tree.Activate([transient_temperature_result])
+ExtAPI.Graphics.Camera.SetFit()
+ExtAPI.Graphics.ExportImage(
+    os.path.join(OUTPUT_DIR, "temperature.png"), image_export_format, settings_720p
+)
+
 ###############################################################################
 # Save files and close Mechanical
 # -------------------------------
 # Mechanical file (mechdb) contains results for each analysis
 #
 app.save(os.path.join(OUTPUT_DIR, "pcb.mechdb"))
-project_directory = ExtAPI.DataModel.Project.ProjectDirectory
-app.exit()
+print(f"Mechanical file saved to: {OUTPUT_DIR / 'pcb.mechdb'}")
+app.close()
