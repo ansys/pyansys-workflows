@@ -274,21 +274,9 @@ jobs:
 
       - name: Set numeric ANSYS version
         run: echo "ANSYS_VERSION=${{ matrix.ansys-release }}" | tr -d '.' >> $GITHUB_ENV
-
-      - name: Fix CentOS yum mirror URLs
-        run: |
-          sed -i 's|mirrorlist=|#mirrorlist=|g' /etc/yum.repos.d/CentOS-Base.repo
-          sed -i 's|#baseurl=|baseurl=|g' /etc/yum.repos.d/CentOS-Base.repo
-          sed -i 's|baseurl=http://mirror.centos.org/centos/\$releasever|baseurl=https://vault.centos.org/7.9.2009|g' /etc/yum.repos.d/CentOS-Base.repo
-          yum clean all
-          yum makecache
-
-      - name: Install unzip
-        run: yum -y install unzip
-
       - name: "Install DPF"
         id: set-server-path
-        uses: ansys/pydpf-actions/install-dpf-docker@v2.3
+        uses: ansys/pydpf-actions/install-dpf-server@v2.3
         with:
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           ANSYS_VERSION: ${{ env.ANSYS_VERSION }}
@@ -297,7 +285,7 @@ jobs:
         uses: ansys/pydpf-actions/check-licenses@v2.3
       - name: Run the PyDPF script
         run: |
-          python geometry-mechanical-dpf/wf_gmd_02_mechanical.py
+          python geometry-mechanical-dpf/wf_gmd_03_dpf.py
 
       - name: Store the outputs
         uses: actions/upload-artifact@v4
