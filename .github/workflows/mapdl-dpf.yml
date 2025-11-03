@@ -180,11 +180,9 @@ jobs:
           xvfb-run make html
           pymapdl stop --all
 
-      - name : (DOCS) Adapt the documentation paths 
-        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS 
-        run: | 
-          find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/mapdl-dpf/_static|./_static/|g' {} + 
-
+      - name: (DOCS) Adapt the documentation paths
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        run: "find . -type f -exec sed -i 's|/__w/pyansys-workflows/pyansys-workflows/doc/source/mapdl-dpf/_static|./_static/|g' {} + \n  #magic___^_^___line\n"
       - name: (DOCS) Upload docs artifacts
         # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS - TO BE UNCOMMENTED
         uses: actions/upload-artifact@v5
