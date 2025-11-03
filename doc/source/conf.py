@@ -26,10 +26,10 @@ from datetime import datetime
 import os
 import re
 
+import ansys.tools.visualization_interface as viz_interface
 from ansys_sphinx_theme import ansys_favicon, pyansys_logo_white
 import pyvista as pv
 from pyvista.plotting.utilities.sphinx_gallery import DynamicScraper
-import ansys.tools.visualization_interface as viz_interface
 
 # Env vars
 os.environ["DOC_BUILD"] = "true"
@@ -182,7 +182,10 @@ sphinx_gallery_conf = {
     "remove_config_comments": True,
     "default_thumb_file": pyansys_logo_white,
     "show_signature": False,
-    "image_scrapers": (DynamicScraper(), "matplotlib", ),
+    "image_scrapers": (
+        DynamicScraper(),
+        "matplotlib",
+    ),
 }
 
 
