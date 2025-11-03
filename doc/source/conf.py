@@ -36,7 +36,7 @@ os.environ["DOC_BUILD"] = "true"
 os.environ["PYANSYS_VISUALIZER_DOC_MODE"] = "true"
 pv.OFF_SCREEN = True
 pv.BUILDING_GALLERY = True
-viz_interface.BUILDING_GALLERY = True
+viz_interface.DOCUMENTATION_BUILD = True
 
 # If PyMechanical is installed, enable building gallery
 try:
