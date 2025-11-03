@@ -169,7 +169,7 @@ jobs:
           apt-get update -qq && apt-get install -y make
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS - TO BE UNCOMMENTED
         shell: bash
         env:
           BUILD_DOCS_SCRIPT: 'mapdl-dpf/wf_mapdl-dpf.py'
@@ -181,7 +181,7 @@ jobs:
           pymapdl stop --all
 
       - name: (DOCS) Upload docs artifacts
-        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS - TO BE UNCOMMENTED
         uses: actions/upload-artifact@v4
         with:
           name: mapdl-dpf-docs
