@@ -47,7 +47,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.1]') || fromJSON('[24.1, 24.2, 25.1]') }}
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
     steps:
 
       - name: Checkout code
