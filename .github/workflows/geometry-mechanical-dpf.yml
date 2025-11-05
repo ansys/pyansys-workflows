@@ -172,7 +172,7 @@ jobs:
       - name: Check out the geometry outputs
         uses: actions/download-artifact@v6
         with:
-          name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
+          name: geometry-mechanical-dpf-workflow-geometry-outputs-24.1 # We are only running one version against geometry workflow
           path: geometry-mechanical-dpf/outputs
 
       - name: Run the PyMechanical script
