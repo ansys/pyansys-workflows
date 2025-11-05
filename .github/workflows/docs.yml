@@ -54,13 +54,13 @@ jobs:
     # needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, speos-optislang]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v5
         with:
           ref: main
           fetch-depth: 0
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -101,7 +101,7 @@ jobs:
           path: doc/
 
       - name: Download artifacts for pymapdl-dpf
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: mapdl-dpf-docs
           path: doc/
