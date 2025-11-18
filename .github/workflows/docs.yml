@@ -23,11 +23,11 @@ jobs:
       doc-build: true
 
   # TODO: enable when issues in PyMechanical are resolved
-  # geometry-mechanical-dpf:
-  #   uses: ./.github/workflows/geometry-mechanical-dpf.yml
-  #   secrets: inherit
-  #   with:
-  #     doc-build: true
+  geometry-mechanical-dpf:
+    uses: ./.github/workflows/geometry-mechanical-dpf.yml
+    secrets: inherit
+    with:
+      doc-build: true
 
   fluent-mechanical:
     uses: ./.github/workflows/fluent-mechanical.yml
@@ -50,8 +50,8 @@ jobs:
   compile-docs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
-    # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, speos-optislang]
-    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, speos-optislang]
+    needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, speos-optislang]
+    # needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, speos-optislang]
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
@@ -82,11 +82,11 @@ jobs:
           path: doc/
 
       # TODO: enable when issues in PyMechanical are resolved
-      # - name: Download artifacts for geometry-mechanical-dpf
-      #   uses: actions/download-artifact@v6
-      #   with:
-      #     name: geometry-mechanical-dpf-docs
-      #     path: doc/
+      - name: Download artifacts for geometry-mechanical-dpf
+        uses: actions/download-artifact@v5
+        with:
+          name: geometry-mechanical-dpf-docs
+          path: doc/
 
       - name: Download artifacts for fluent-mechanical
         uses: actions/download-artifact@v6
