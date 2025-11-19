@@ -182,10 +182,7 @@ sphinx_gallery_conf = {
     "remove_config_comments": True,
     "default_thumb_file": pyansys_logo_white,
     "show_signature": False,
-    "image_scrapers": (
-        DynamicScraper(),
-        "matplotlib",
-    ),
+    "image_scrapers": (DynamicScraper(), "matplotlib"),
 }
 
 
