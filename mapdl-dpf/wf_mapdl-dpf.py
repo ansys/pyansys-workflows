@@ -48,7 +48,7 @@ Loading:
 .. figure:: ../../_static/mapdl-dpf/bvp.png
    :width: 500
    :align: center
-   
+
    Problem sketch
 
 Modeling notes:
