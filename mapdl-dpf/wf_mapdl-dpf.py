@@ -45,9 +45,11 @@ Loading:
  - Total displacement of -1 mm in the Y-direction at the top surface,
    ramped linearly over 10 timesteps
 
-.. image:: ../../_static/mapdl-dpf/bvp.png
+.. figure:: ../../_static/mapdl-dpf/bvp.png
    :width: 500
-   :alt: Problem sketch
+   :align: center
+   
+   Problem sketch
 
 Modeling notes:
  - At each timestep, the global model is solved with the specified boundary
