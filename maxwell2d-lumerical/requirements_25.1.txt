@@ -1,0 +1,2 @@
+.pyaedt [all]==0.17.3
+.PIL
