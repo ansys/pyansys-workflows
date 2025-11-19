@@ -51,7 +51,7 @@ jobs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
     # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, speos-optislang]
-    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, speos-optislang]
+    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang]
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
