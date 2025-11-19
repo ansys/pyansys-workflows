@@ -45,7 +45,7 @@ Loading:
  - Total displacement of -1 mm in the Y-direction at the top surface,
    ramped linearly over 10 timesteps
 
-.. image:: ../../_static/bvp.png
+.. image:: ./_static/bvp.png
    :width: 500
    :alt: Problem sketch
 
