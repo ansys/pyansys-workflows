@@ -40,10 +40,12 @@ import os
 from pathlib import Path
 import tempfile
 import time
+import shutil
+import numpy as np
+import matplotlib.pyplot as plt
 
-# from PIL import Image
 from ansys.aedt.core import Maxwell2d
-from ansys.api.lumerical.lumapi import FDTD
+import ansys.lumerical.core as lumapi
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -52,16 +54,9 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_ml_01_ion_trap_modelling.py")
 # sphinx_gallery_end_ignore
 
-# sys.path.append("C:\\Program Files\\Lumerical\\v251\\api\\python\\")
-# sys.path.append(os.path.dirname(__file__))  # Current directory
-# my_path = r"D:/2025/17_IonTrap/PyAnsys_GC_test/"  # Directory where Lumerical Scripts are stored
-# my_node_filename = "NodePositionTable.tab"
-# my_node_filename_lum = "legend.txt"
-
-
 # Define constants.
 
-AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.1")  # Set your AEDT version here
+AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
 NG_MODE = False  # Open AEDT UI when it is launched.
 NODE_FILENAME = "NodePositionTable.tab"
@@ -72,7 +67,7 @@ PARENT_DIR_PATH = Path(__file__).parent.absolute()
 #
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
-lumerical_script_folder = temp_folder / "lumerical_scripts"
+lumerical_script_folder = Path(temp_folder.name)#/ "lumerical_scripts"
 
 # ## Launch AEDT and application
 #
@@ -160,7 +155,7 @@ region = m2d.modeler.create_region(
     pad_value=[100, 0, 100, 0], pad_type="Absolute Offset", name="Region"
 )
 center_line = m2d.modeler.create_polyline(
-    points=[["0", "metal_thickness/2", "0"], ["0", "metal_thickness/2+300um", "0"]],
+    points=[["0", "metal_thickness/2", "0"], ["0", "metal_thickness/2+200um", "0"]],
     name="center_line",
 )
 
@@ -254,52 +249,56 @@ e_line = m2d.post.fields_calculator.add_expression(calculation="e_line", assignm
 my_plots = m2d.post.fields_calculator.expression_plot(
     calculation="e_line", assignment="center_line", names=[e_line]
 )
-my_plots[1].edit_x_axis_scaling(min_scale="20um", max_scale="280um")
+my_plots[1].edit_x_axis_scaling(min_scale="20um", max_scale="200um")
 my_plots[1].update_trace_in_report(
     my_plots[1].get_solution_data().expressions, variations={"div": ["All"]}, context="center_line"
 )
 my_plots[1].add_cartesian_y_marker("0")
 my_plots[1].add_trace_characteristics(
-    "XAtYVal", arguments=["0"], solution_range=["Full", "20", "280"]
+    "XAtYVal", arguments=["0"], solution_range=["Full", "20", "200"]
 )
-file_path = lumerical_script_folder / NODE_FILENAME
-my_plots[1].export_table_to_file(my_plots[1].plot_name, str(file_path), "Legend")
-
-# ## Release AEDT
-
-m2d.save_project()
-m2d.release_desktop()
+write_path = lumerical_script_folder / NODE_FILENAME
+my_plots[1].export_table_to_file(my_plots[1].plot_name, write_path.__str__(),table_type="Legend")
 
 # ## Edit the outputted file to be read in by Lumerical
 
 new_line = []
-with open(lumerical_script_folder / NODE_FILENAME, "r", encoding="utf-8") as f:
+with open((lumerical_script_folder / NODE_FILENAME).__str__(), "r", encoding="utf-8") as f:
     lines = f.readlines()
 new_line.append(lines[0])
 for line in lines[1:]:
     new_line.append(line.split("\t")[0])
     new_line.append("\n" + line.split("\t")[1].lstrip())
-with open(lumerical_script_folder + LEGEND_FILENAME, "w", encoding="utf-8") as f:
+with open((lumerical_script_folder / LEGEND_FILENAME).__str__(), "w", encoding="utf-8") as f:
     for line in new_line:
         f.write(line)
 
-# ## Start the Lumerical Process
+# ## Copy Lumerical scripts to the local folder
+#from ansys.aedt.core.examples.downloads import download_leaf
+#file_name_xlsx = download_file(
+#    source="field_line_traces", name="my_copper.xlsx", local_path=temp_folder.name
+#)
+scripts_source_path = Path(r"C:\AnsysDev\AnsysWorkflows\maxwell2d-lumerical")
+shutil.copy((scripts_source_path/Path("GC_farfield.lsf")).__str__(),lumerical_script_folder.__str__())
+shutil.copy((scripts_source_path/Path("GC_Opt.lsf")).__str__(),lumerical_script_folder.__str__())
+shutil.copy((scripts_source_path/Path("Readata.lsf")).__str__(),lumerical_script_folder.__str__())
+shutil.copy((scripts_source_path/Path("img_001.jpg")).__str__(),lumerical_script_folder.__str__())
 
-gc_0 = FDTD(
-    str(PARENT_DIR_PATH / "GC_Opt.lsf")
-)  # Run the first script: Build geometry & Run optimization
-gc_1 = FDTD(str(PARENT_DIR_PATH / "Readata.lsf"))
+# ## Start the Lumerical Process
+fdtd = lumapi.FDTD()
+gc_0 = lumapi.FDTD((lumerical_script_folder/Path("GC_Opt.lsf")).__str__())  # Run the first script: Build geometry & Run optimization
+gc_1 = lumapi.FDTD((lumerical_script_folder/Path("Readata.lsf")).__str__())
 print(
     "Optimize for the Nodal point located",
     str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
-gc_2 = FDTD(
-    str(lumerical_script_folder / "Testsim_Intensity_best_solution")
-)  # Run the optimized design
-gc_2.save(str(lumerical_script_folder / "GC_farfields_calc"))
+# Run the optimized design
+gc_2 = lumapi.FDTD((lumerical_script_folder/Path("Testsim_Intensity_best_solution")).__str__())
+gc_2.save((lumerical_script_folder/Path("GC_farfields_calc")).__str__())
 gc_2.run()
-gc_2.feval(str(PARENT_DIR_PATH / "GC_farfield.lsf"))  # Run the second script for calculating plots
+# Run the second script for calculating plots
+gc_2.feval((lumerical_script_folder/Path("GC_farfield.lsf")).__str__())
 print("Target focal distance of output laser beam, (um) :", str(gc_2.getv("Mselect") * 1000000))
 print(
     "Actual focal distance for the optimised geometry, (um)  :", str(gc_2.getv("Mactual") * 1000000)
@@ -313,7 +312,13 @@ print("Waveguide etch depth, (nm) ", str(gc_2.getv("GC_etch") * 1000000000))
 print("Grating period (P), (nm) ", str(gc_2.getv("GC_period") * 1000000000))
 print("Grating minimum duty cycle:", str(gc_2.getv("GC_DCmin")))
 
-# Grating_Schema = Image.open(my_path + "img_001.jpg")
+from PIL import Image
+Grating_Schema = Image.open("img_001.jpg")
+Grating_Schema
+
+# ## Release AEDT
+
+m2d.save_project()
 
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
