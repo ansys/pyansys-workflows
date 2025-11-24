@@ -106,6 +106,7 @@ DEBUG_DIR = OUTPUT_DIR / "dpf_debug"
 os.environ["DATAPROCESSING_DEBUG"] = str(DEBUG_DIR)
 server = dpf.start_local_server()
 print(server)
+print(dpf.Operator("mapdl::stream_provider"))
 
 
 ###############################################################################
