@@ -101,6 +101,7 @@ jobs:
           python geometry-mechanical-dpf/wf_gmd_01_geometry.py
 
       - name: Store the outputs
+        if: always()
         uses: actions/upload-artifact@v5
         with:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
