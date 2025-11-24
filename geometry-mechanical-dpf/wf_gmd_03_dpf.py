@@ -99,6 +99,14 @@ print(transient_rth_file)
 decimal_precision = 6
 
 ###############################################################################
+# Add DPF Debug commands
+DEBUG_DIR = OUTPUT_DIR / "dpf_debug"
+os.environ["DATAPROCESSING_DEBUG"] = str(DEBUG_DIR)
+server = dpf.start_local_server()
+print(server)
+
+
+###############################################################################
 # Steady state thermal results
 # ----------------------------
 # Create model
