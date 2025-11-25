@@ -76,10 +76,10 @@ project_directory = os.path.join(OUTPUT_DIR, "pcb_Mech_Files")
 
 steady_state_rth_file = find_files(
     os.path.join(project_directory, "SteadyStateThermal"), extension_to_find
-)
+)[0]
 transient_rth_file = find_files(
     os.path.join(project_directory, "TransientThermal"), extension_to_find
-)
+)[0]
 
 if steady_state_rth_file and transient_rth_file:
     print(f"Found {extension_to_find} files.")
@@ -87,7 +87,9 @@ else:
     print("No .rst files found.")
 
 print(steady_state_rth_file)
+print(Path(str(steady_state_rth_file)).exists())
 print(transient_rth_file)
+print(Path(str(transient_rth_file)).exists())
 
 
 ###############################################################################
@@ -99,11 +101,21 @@ print(transient_rth_file)
 decimal_precision = 6
 
 ###############################################################################
+# Add DPF Debug commands
+DEBUG_DIR = OUTPUT_DIR / "dpf_debug"
+os.environ["DATAPROCESSING_DEBUG"] = str(DEBUG_DIR)
+server = dpf.start_local_server()
+print(server)
+print(dpf.Operator("mapdl::stream_provider"))
+
+
+###############################################################################
 # Steady state thermal results
 # ----------------------------
 # Create model
-
-steady_state_model = dpf.Model(steady_state_rth_file[0])
+ds = dpf.DataSources()
+ds.set_result_file_path(filepath=steady_state_rth_file, key="rth")
+steady_state_model = dpf.Model(data_sources=ds)
 print(steady_state_model)
 
 # Get temperature distribution
@@ -119,7 +131,7 @@ if GRAPHICS_BOOL:
 # -------------------------
 # Create model
 
-model = dpf.Model(transient_rth_file[0])
+model = dpf.Model(transient_rth_file)
 print(steady_state_model)
 
 # Get temperature distribution
