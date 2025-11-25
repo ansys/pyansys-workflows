@@ -287,7 +287,7 @@ jobs:
       - name: "Test DPF"
         id: test_dpf
         run: |
-          strace dpf-standalone/v241/ansys/dpf/server_2024_1_pre1/aisol/bin/linx64/Ans.Dpf.Grpc.sh
+          strace -f dpf-standalone/v241/ansys/dpf/server_2024_1_pre1/aisol/bin/linx64/Ans.Dpf.Grpc.sh
 
       - name: "Check licences of packages"
         uses: ansys/pydpf-actions/check-licenses@v2.3
