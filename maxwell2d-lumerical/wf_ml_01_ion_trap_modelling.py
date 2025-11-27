@@ -38,14 +38,14 @@
 
 import os
 from pathlib import Path
+import shutil
 import tempfile
 import time
-import shutil
-import numpy as np
-import matplotlib.pyplot as plt
 
 from ansys.aedt.core import Maxwell2d
 import ansys.lumerical.core as lumapi
+import matplotlib.pyplot as plt
+import numpy as np
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -67,7 +67,7 @@ PARENT_DIR_PATH = Path(__file__).parent.absolute()
 #
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
-lumerical_script_folder = Path(temp_folder.name)#/ "lumerical_scripts"
+lumerical_script_folder = Path(temp_folder.name)  # / "lumerical_scripts"
 
 # ## Launch AEDT and application
 #
@@ -258,7 +258,7 @@ my_plots[1].add_trace_characteristics(
     "XAtYVal", arguments=["0"], solution_range=["Full", "20", "200"]
 )
 write_path = lumerical_script_folder / NODE_FILENAME
-my_plots[1].export_table_to_file(my_plots[1].plot_name, write_path.__str__(),table_type="Legend")
+my_plots[1].export_table_to_file(my_plots[1].plot_name, write_path.__str__(), table_type="Legend")
 
 # ## Edit the outputted file to be read in by Lumerical
 
@@ -274,31 +274,39 @@ with open((lumerical_script_folder / LEGEND_FILENAME).__str__(), "w", encoding="
         f.write(line)
 
 # ## Copy Lumerical scripts to the local folder
-#from ansys.aedt.core.examples.downloads import download_leaf
-#file_name_xlsx = download_file(
+# from ansys.aedt.core.examples.downloads import download_leaf
+# file_name_xlsx = download_file(
 #    source="field_line_traces", name="my_copper.xlsx", local_path=temp_folder.name
-#)
+# )
 scripts_source_path = Path(r"C:\AnsysDev\AnsysWorkflows\maxwell2d-lumerical")
-shutil.copy((scripts_source_path/Path("GC_farfield.lsf")).__str__(),lumerical_script_folder.__str__())
-shutil.copy((scripts_source_path/Path("GC_Opt.lsf")).__str__(),lumerical_script_folder.__str__())
-shutil.copy((scripts_source_path/Path("Readata.lsf")).__str__(),lumerical_script_folder.__str__())
-shutil.copy((scripts_source_path/Path("img_001.jpg")).__str__(),lumerical_script_folder.__str__())
+shutil.copy(
+    (scripts_source_path / Path("GC_farfield.lsf")).__str__(), lumerical_script_folder.__str__()
+)
+shutil.copy((scripts_source_path / Path("GC_Opt.lsf")).__str__(), lumerical_script_folder.__str__())
+shutil.copy(
+    (scripts_source_path / Path("Readata.lsf")).__str__(), lumerical_script_folder.__str__()
+)
+shutil.copy(
+    (scripts_source_path / Path("img_001.jpg")).__str__(), lumerical_script_folder.__str__()
+)
 
 # ## Start the Lumerical Process
 fdtd = lumapi.FDTD()
-gc_0 = lumapi.FDTD((lumerical_script_folder/Path("GC_Opt.lsf")).__str__())  # Run the first script: Build geometry & Run optimization
-gc_1 = lumapi.FDTD((lumerical_script_folder/Path("Readata.lsf")).__str__())
+gc_0 = lumapi.FDTD(
+    (lumerical_script_folder / Path("GC_Opt.lsf")).__str__()
+)  # Run the first script: Build geometry & Run optimization
+gc_1 = lumapi.FDTD((lumerical_script_folder / Path("Readata.lsf")).__str__())
 print(
     "Optimize for the Nodal point located",
     str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
 # Run the optimized design
-gc_2 = lumapi.FDTD((lumerical_script_folder/Path("Testsim_Intensity_best_solution")).__str__())
-gc_2.save((lumerical_script_folder/Path("GC_farfields_calc")).__str__())
+gc_2 = lumapi.FDTD((lumerical_script_folder / Path("Testsim_Intensity_best_solution")).__str__())
+gc_2.save((lumerical_script_folder / Path("GC_farfields_calc")).__str__())
 gc_2.run()
 # Run the second script for calculating plots
-gc_2.feval((lumerical_script_folder/Path("GC_farfield.lsf")).__str__())
+gc_2.feval((lumerical_script_folder / Path("GC_farfield.lsf")).__str__())
 print("Target focal distance of output laser beam, (um) :", str(gc_2.getv("Mselect") * 1000000))
 print(
     "Actual focal distance for the optimised geometry, (um)  :", str(gc_2.getv("Mactual") * 1000000)
@@ -313,6 +321,7 @@ print("Grating period (P), (nm) ", str(gc_2.getv("GC_period") * 1000000000))
 print("Grating minimum duty cycle:", str(gc_2.getv("GC_DCmin")))
 
 from PIL import Image
+
 Grating_Schema = Image.open("img_001.jpg")
 Grating_Schema
 
