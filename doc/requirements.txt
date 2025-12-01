@@ -2,7 +2,7 @@
 ansys-sphinx-theme==1.6.3
 myst-parser==4.0.1
 sphinx_design==0.6.1
-sphinx==8.2.3
+sphinx==9.0.0
 sphinx-autobuild==2025.8.25
 sphinx-autodoc-typehints==3.5.2
 sphinxcontrib-websupport==2.0.0
