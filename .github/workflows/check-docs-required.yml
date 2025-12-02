@@ -1,0 +1,32 @@
+name: Check if only docs are required
+
+on:
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+    outputs:
+      only-docs:
+        description: 'Whether only documentation build is required'
+        value: ${{ jobs.check-docs-required.outputs.only-docs }}
+
+jobs:
+  check-docs-required:
+    name: Is only docs required?
+    runs-on: ubuntu-latest
+    outputs:
+      only-docs: ${{ steps.check-only-docs.outputs.only-docs }}
+    steps:
+      - name: Check if only docs are required
+        id: check-only-docs
+        run: |
+          if ([ "${{ github.event_name }}" == "workflow_dispatch" ] || [ "${{ github.event_name }}" == "schedule" ]) && [ "${{ inputs.doc-build }}" == "true" ]; then
+            echo "Only documentation build requested."
+            echo "only-docs=true" >> $GITHUB_OUTPUT
+          else
+            echo "Full workflow run required."
+            echo "only-docs=false" >> $GITHUB_OUTPUT
+          fi

@@ -165,6 +165,9 @@ if "DOC_BUILD" in os.environ:
     GRAPHICS_BOOL = True
 # sphinx_gallery_end_ignore
 
+ANSYS_RELEASE = os.getenv("ANSYS_RELEASE_COMPACT", "252")
+"""ANSYS release version."""
+
 ###############################################################################
 # Define functions
 # ----------------
@@ -532,7 +535,7 @@ def get_executable(version) -> Path:
     return osl_com
 
 
-osl_executable = get_executable(252)
+osl_executable = get_executable(ANSYS_RELEASE)
 my_osl = Optislang(
     executable=osl_executable,
     ini_timeout=60,
@@ -543,7 +546,7 @@ print(f"Using optiSLang version {my_osl.osl_version_string}")
 
 ################################################################################
 # Create optiSLang workflow
-# ---------------------
+# -------------------------
 # Create robustness workflow and define criteria definition
 #
 def create_workflow(osl, user_input_json):
@@ -669,7 +672,7 @@ print("Variation Analysis: started.")
 
 ################################################################################
 # Execute Robustness analysis
-# ---------------------
+# ---------------------------
 # loop until get_status() and returns "Processing done" for the root system
 #
 
@@ -691,7 +694,7 @@ def calculate(designs) -> list:
     # create speos instance
     from ansys.speos.core import launcher
 
-    speos = launcher.launch_local_speos_rpc_server(version="252")
+    speos = launcher.launch_local_speos_rpc_server(version=ANSYS_RELEASE)
 
     # run speos simulation
     result_design_list = []
@@ -721,7 +724,7 @@ print("Variation Analysis: Done!")
 
 ################################################################################
 # Get quality values
-# ---------------------
+# ------------------
 # Get the robustness result and display in the console.
 #
 def get_design_quality_values(osl):
@@ -798,7 +801,7 @@ print("*" * 50)
 
 ################################################################################
 # Close optiSLang
-# ---------------------
+# ---------------
 #
 my_osl.dispose()
 print("OSL Project finished.")

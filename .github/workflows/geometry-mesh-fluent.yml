@@ -32,27 +32,34 @@ env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 24.1
-  RUN_DOC_BUILD: false
 
 jobs:
+
+  is-only-docs-required:
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build || false }}
+
   geometry:
     name: Geometry
     runs-on: [self-hosted, Windows, pyansys-workflows]
+    needs: is-only-docs-required
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -93,25 +100,13 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_01_geometry.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          Write-Host "Requested to build docs..."
-          if ("${{ matrix.ansys-release }}" -eq $env:ANSYS_RELEASE_FOR_DOCS) {
-            Write-Host "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $env:GITHUB_ENV
-          } else {
-            Write-Host "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $env:GITHUB_ENV
-          }
-
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_01_geometry.py'
         run: |
@@ -121,8 +116,8 @@ jobs:
           ./make.bat html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs-stage-geometry
           path: |
@@ -140,22 +135,23 @@ jobs:
   fluent-mesh:
     name: Fluent Meshing
     runs-on: public-ubuntu-latest-8-cores
-    needs: geometry
+    needs: [geometry, is-only-docs-required]
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -189,7 +185,7 @@ jobs:
           docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: geometry-mesh-fluent-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -201,7 +197,7 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: |
@@ -214,27 +210,15 @@ jobs:
               docker rm -f $(docker ps -a -q)
           fi
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v5
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/download-artifact@v6
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mesh-fluent-docs-stage-geometry
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py'
@@ -245,8 +229,8 @@ jobs:
           make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs-stage-mesh
           path: |
@@ -257,22 +241,23 @@ jobs:
   fluent-solve:
     name: Fluent Solver
     runs-on: public-ubuntu-latest-8-cores # Potential memory issues with 24.1 otherwise
-    needs: fluent-mesh
+    needs: [fluent-mesh, is-only-docs-required]
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [24.1] # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        # [24.1, 24.2, 25.1] -- HACK FOR FLUENT: 24.2 is in reality a 24.1 container, and 25.1 has issues with CAD import currently
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[24.1]') || fromJSON('[24.1]') }}
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6
         with:
           sparse-checkout: |
             geometry-mesh-fluent
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -306,7 +291,7 @@ jobs:
           docker pull ${{ env.FLUENT_DOCKER_IMAGE }}
 
       - name: Check out the meshing outputs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           name: geometry-mesh-fluent-workflow-fluent-mesh-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh-fluent/outputs
@@ -318,7 +303,7 @@ jobs:
           python geometry-mesh-fluent/wf_gmf_03_fluent_solver.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-workflow-fluent-solve-outputs-${{ matrix.ansys-release }}
           path: |
@@ -333,27 +318,15 @@ jobs:
               docker rm -f $(docker ps -a -q)
           fi
 
-      - name: (DOCS) Check if docs should be built
-        if: (github.event_name == 'workflow_dispatch' || github.event_name == 'schedule') && inputs.doc-build
-        run: |
-          echo "Requested to build docs..."
-          if [ "${{ matrix.ansys-release }}" == "${{ env.ANSYS_RELEASE_FOR_DOCS }}" ]; then
-            echo "Building docs"
-            echo "RUN_DOC_BUILD=true" >> $GITHUB_ENV
-          else
-            echo "Not building docs - since not primary release"
-            echo "RUN_DOC_BUILD=false" >> $GITHUB_ENV
-          fi
-
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v5
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        uses: actions/download-artifact@v6
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mesh-fluent-docs-stage-mesh
           path: doc
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           FLUENT_IMAGE_TAG: v${{ matrix.ansys-release }}.0
           BUILD_DOCS_SCRIPT: 'geometry-mesh-fluent/wf_gmf_03_fluent_solver.py'
@@ -363,8 +336,8 @@ jobs:
           make html
 
       - name: (DOCS) Upload docs artifacts
-        if: ${{ env.RUN_DOC_BUILD == 'true' }}
-        uses: actions/upload-artifact@v4
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v5
         with:
           name: geometry-mesh-fluent-docs
           path: |
