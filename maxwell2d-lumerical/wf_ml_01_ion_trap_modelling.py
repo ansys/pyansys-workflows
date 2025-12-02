@@ -19,22 +19,25 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
 
-# # Maxwell2D - Simplified IonTrap Modelling
-#
-# Description:
-#
-# First step of a multi-tool workflow: Maxwell 2D model to identify electric field node in Ion Trap
-# 1. Set up the Maxwell 2D Parametric Model
-# 2. Identify the Electric Field Node Point for Each Design Point
-# 3. Export the Node Coordinates for the subsequent Lumerical Step
-# 4. Launch the Lumerical Scripts
-#
-# Keywords: **Ion Trap**, **Electrostatic**
+Maxwell2D and Lumerical - Simplified IonTrap Modelling
+######################################################
 
-# ## Perform imports and define constants
-#
-# Perform required imports.
+This example shows a multi-tool workflow: at first how to generate a model representing 
+surface electrodes using ANSYS Maxwell to identify electric field node in the Ion Trap; 
+in the next step it is shown how to simulate grating couplers using ANSYS Lumerical,
+follwoing the steps:
+1. Set up the Maxwell 2D Parametric Model
+2. Identify the Electric Field Node Point for Each Design Point
+3. Export the Node Coordinates for the subsequent Lumerical Step
+4. Launch the Lumerical Scripts
+Keywords: **Ion Trap**, **Electrostatic**
+"""  # noqa: D400, D415
+
+###############################################################################
+# Perform required imports and define constants
+# ---------------------------------------------
 
 import os
 from pathlib import Path
@@ -54,7 +57,9 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_ml_01_ion_trap_modelling.py")
 # sphinx_gallery_end_ignore
 
-# Define constants.
+###############################################################################
+# Define constants
+# ----------------
 
 AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
@@ -63,14 +68,16 @@ NODE_FILENAME = "NodePositionTable.tab"
 LEGEND_FILENAME = "legend.txt"
 PARENT_DIR_PATH = Path(__file__).parent.absolute()
 
-# ## Create temporary directory
-#
+###############################################################################
+# Create temporary directory
+# --------------------------
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
 lumerical_script_folder = Path(temp_folder.name)#/ "lumerical_scripts"
 
-# ## Launch AEDT and application
-#
+###############################################################################
+# Launch AEDT and application
+# ---------------------------
 
 project_name = os.path.join(temp_folder.name, "IonTrapMaxwell.aedt")
 m2d = Maxwell2d(
@@ -83,9 +90,9 @@ m2d = Maxwell2d(
 )
 m2d.modeler.model_units = "um"
 
-# ## Preprocess
-#
+###############################################################################
 # Initialize dictionaries for design variables
+# --------------------------------------------
 
 geom_params = {
     "div": str(73 / 41),
@@ -99,12 +106,16 @@ geom_params = {
     "y_dummy": "300um",
 }
 
+###############################################################################
 # Define variables from dictionaries
+# ----------------------------------
 
 for k, v in geom_params.items():
     m2d[k] = v
 
+###############################################################################
 # Create Design Geometry
+# ----------------------
 
 dc = m2d.modeler.create_rectangle(
     origin=["-w_dc/2", "-metal_thickness/2", "0"],
@@ -113,28 +124,24 @@ dc = m2d.modeler.create_rectangle(
     material="aluminum",
 )
 # dc.color = (0, 0, 255)  # rgb
-
 gnd = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-(metal_thickness/2+glass_thickness)", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness", 0],
     name="gnd",
     material="aluminum",
 )
-
 rf = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf)", "-metal_thickness/2", "0"],
     sizes=["w_rf", "metal_thickness", 0],
     name="RF",
     material="aluminum",
 )
-
 sub_glass = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness/2", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-glass_thickness", 0],
     name="RF",
     material="glass",
 )
-
 ins = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut)", "-metal_thickness/2", "0"],
     sizes=["w_cut", "metal_thickness", 0],
@@ -142,7 +149,9 @@ ins = m2d.modeler.create_rectangle(
     material="vacuum",
 )
 
+###############################################################################
 # Create dummy objects for mesh and center_line for Post Processing and Region
+# ----------------------------------------------------------------------------
 
 dummy = m2d.modeler.create_rectangle(
     origin=["0", "metal_thickness/2", "0"],
@@ -150,7 +159,6 @@ dummy = m2d.modeler.create_rectangle(
     name="dummy",
     material="vacuum",
 )
-
 region = m2d.modeler.create_region(
     pad_value=[100, 0, 100, 0], pad_type="Absolute Offset", name="Region"
 )
@@ -159,15 +167,19 @@ center_line = m2d.modeler.create_polyline(
     name="center_line",
 )
 
+###############################################################################
 # Define Excitations
+# ------------------
 
 m2d.assign_voltage(assignment=gnd.id, amplitude=0, name="ground")
 m2d.assign_voltage(assignment=dc.id, amplitude=0, name="V_dc")
 m2d.assign_voltage(assignment=rf.id, amplitude=1, name="V_rf")
 
+###############################################################################
 # Define Mesh Settings
+# --------------------
 # For good quality results, please uncomment the following  mesh operations lines
-#
+
 # m2d.mesh.assign_length_mesh(
 #     assignment=center_line.id,
 #     maximum_length=1e-7,
@@ -199,7 +211,9 @@ m2d.assign_voltage(assignment=rf.id, amplitude=1, name="V_rf")
 #     name="gnd_10um",
 # )
 
+###############################################################################
 # Duplicate structures and assignments to complete the model
+# ----------------------------------------------------------
 
 m2d.modeler.duplicate_and_mirror(
     assignment=[rf.id, dummy.id, ins.id],
@@ -208,7 +222,9 @@ m2d.modeler.duplicate_and_mirror(
     duplicate_assignment=True,
 )
 
+###############################################################################
 # Create, validate, and analyze setup
+# -----------------------------------
 
 setup_name = "MySetupAuto"
 setup = m2d.create_setup(name=setup_name)
@@ -217,8 +233,9 @@ setup.update()
 m2d.validate_simple()
 m2d.analyze_setup(name=setup_name, use_auto_settings=False, cores=NUM_CORES)
 
-#  Create parametric sweep
-
+###############################################################################
+# Create parametric sweep
+# -----------------------
 # Keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
 
 div_sweep_start = 1.4
@@ -237,8 +254,9 @@ for p in add_points:
 sweep["SaveFields"] = True
 sweep.analyze(cores=NUM_CORES)
 
-# ## Postprocess
-#
+###############################################################################
+# Postprocess
+# -----------
 # Create the Ey expression in the PyAEDT Advanced Field Calculator
 # Due to the symmetric nature of this specific geometry, the electric field
 # node will be located along the center line. The electric field node is the
@@ -260,7 +278,9 @@ my_plots[1].add_trace_characteristics(
 write_path = lumerical_script_folder / NODE_FILENAME
 my_plots[1].export_table_to_file(my_plots[1].plot_name, write_path.__str__(),table_type="Legend")
 
-# ## Edit the outputted file to be read in by Lumerical
+###############################################################################
+# Edit the outputted file to be read in by Lumerical
+# --------------------------------------------------
 
 new_line = []
 with open((lumerical_script_folder / NODE_FILENAME).__str__(), "r", encoding="utf-8") as f:
@@ -272,19 +292,22 @@ for line in lines[1:]:
 with open((lumerical_script_folder / LEGEND_FILENAME).__str__(), "w", encoding="utf-8") as f:
     for line in new_line:
         f.write(line)
+f.close()
 
-# ## Copy Lumerical scripts to the local folder
-#from ansys.aedt.core.examples.downloads import download_leaf
-#file_name_xlsx = download_file(
-#    source="field_line_traces", name="my_copper.xlsx", local_path=temp_folder.name
-#)
+###############################################################################
+# Copy Lumerical scripts to the local folder
+# ------------------------------------------
+
 scripts_source_path = Path(r"C:\AnsysDev\AnsysWorkflows\maxwell2d-lumerical")
 shutil.copy((scripts_source_path/Path("GC_farfield.lsf")).__str__(),lumerical_script_folder.__str__())
 shutil.copy((scripts_source_path/Path("GC_Opt.lsf")).__str__(),lumerical_script_folder.__str__())
 shutil.copy((scripts_source_path/Path("Readata.lsf")).__str__(),lumerical_script_folder.__str__())
 shutil.copy((scripts_source_path/Path("img_001.jpg")).__str__(),lumerical_script_folder.__str__())
 
-# ## Start the Lumerical Process
+###############################################################################
+# Start the Lumerical Process
+# ---------------------------
+
 fdtd = lumapi.FDTD()
 gc_0 = lumapi.FDTD((lumerical_script_folder/Path("GC_Opt.lsf")).__str__())  # Run the first script: Build geometry & Run optimization
 gc_1 = lumapi.FDTD((lumerical_script_folder/Path("Readata.lsf")).__str__())
@@ -293,7 +316,11 @@ print(
     str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
+
+###############################################################################
 # Run the optimized design
+# ------------------------
+
 gc_2 = lumapi.FDTD((lumerical_script_folder/Path("Testsim_Intensity_best_solution")).__str__())
 gc_2.save((lumerical_script_folder/Path("GC_farfields_calc")).__str__())
 gc_2.run()
@@ -316,14 +343,11 @@ from PIL import Image
 Grating_Schema = Image.open("img_001.jpg")
 Grating_Schema
 
-# ## Release AEDT
+###############################################################################
+# Close session and Clean Up
+# --------------------------
 
 m2d.save_project()
-
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
-
-# ## Clean up
-#
-
-temp_folder.cleanup()
+#temp_folder.cleanup()
