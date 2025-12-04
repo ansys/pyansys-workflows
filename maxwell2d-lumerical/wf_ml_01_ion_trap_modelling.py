@@ -42,10 +42,9 @@ import shutil
 import tempfile
 import time
 
+from PIL import Image
 from ansys.aedt.core import Maxwell2d
-import ansys.lumerical.core as lumapi
-import matplotlib.pyplot as plt
-import numpy as np
+from ansys.lumerical.core import FDTD
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -68,6 +67,8 @@ PARENT_DIR_PATH = Path(__file__).parent.absolute()
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
 lumerical_script_folder = Path(temp_folder.name)  # / "lumerical_scripts"
+node_path = lumerical_script_folder / NODE_FILENAME
+legend_path = lumerical_script_folder / LEGEND_FILENAME
 
 # ## Launch AEDT and application
 #
@@ -257,82 +258,96 @@ my_plots[1].add_cartesian_y_marker("0")
 my_plots[1].add_trace_characteristics(
     "XAtYVal", arguments=["0"], solution_range=["Full", "20", "200"]
 )
-write_path = lumerical_script_folder / NODE_FILENAME
-my_plots[1].export_table_to_file(my_plots[1].plot_name, write_path.__str__(), table_type="Legend")
+my_plots[1].export_table_to_file(my_plots[1].plot_name, str(node_path), table_type="Legend")
 
 # ## Edit the outputted file to be read in by Lumerical
 
 new_line = []
-with open((lumerical_script_folder / NODE_FILENAME).__str__(), "r", encoding="utf-8") as f:
+with open(node_path, "r", encoding="utf-8") as f:
     lines = f.readlines()
+
 new_line.append(lines[0])
 for line in lines[1:]:
     new_line.append(line.split("\t")[0])
     new_line.append("\n" + line.split("\t")[1].lstrip())
-with open((lumerical_script_folder / LEGEND_FILENAME).__str__(), "w", encoding="utf-8") as f:
+
+with open(legend_path, "w", encoding="utf-8") as f:
     for line in new_line:
         f.write(line)
 
-# ## Copy Lumerical scripts to the local folder
-# from ansys.aedt.core.examples.downloads import download_leaf
-# file_name_xlsx = download_file(
-#    source="field_line_traces", name="my_copper.xlsx", local_path=temp_folder.name
-# )
-scripts_source_path = Path(r"C:\AnsysDev\AnsysWorkflows\maxwell2d-lumerical")
-shutil.copy(
-    (scripts_source_path / Path("GC_farfield.lsf")).__str__(), lumerical_script_folder.__str__()
-)
-shutil.copy((scripts_source_path / Path("GC_Opt.lsf")).__str__(), lumerical_script_folder.__str__())
-shutil.copy(
-    (scripts_source_path / Path("Readata.lsf")).__str__(), lumerical_script_folder.__str__()
-)
-shutil.copy(
-    (scripts_source_path / Path("img_001.jpg")).__str__(), lumerical_script_folder.__str__()
-)
+# ## Copy Lumerical scripts and illustration to the local folder
+gc_farfiled_path = shutil.copy(PARENT_DIR_PATH / "GC_farfield.lsf", lumerical_script_folder)
+gc_opt_path = shutil.copy(PARENT_DIR_PATH / "GC_Opt.lsf", lumerical_script_folder)
+read_data_path = shutil.copy(PARENT_DIR_PATH / "Readata.lsf", lumerical_script_folder)
+img_path = shutil.copy(PARENT_DIR_PATH / "img_001.jpg", lumerical_script_folder)
+
 
 # ## Start the Lumerical Process
-fdtd = lumapi.FDTD()
-gc_0 = lumapi.FDTD(
-    (lumerical_script_folder / Path("GC_Opt.lsf")).__str__()
-)  # Run the first script: Build geometry & Run optimization
-gc_1 = lumapi.FDTD((lumerical_script_folder / Path("Readata.lsf")).__str__())
+gc_0 = FDTD(gc_opt_path)
+
+# Run the first script: Build geometry & Run optimization
+gc_1 = FDTD(read_data_path)
 print(
     "Optimize for the Nodal point located",
     str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
+
 # Run the optimized design
-gc_2 = lumapi.FDTD((lumerical_script_folder / Path("Testsim_Intensity_best_solution")).__str__())
-gc_2.save((lumerical_script_folder / Path("GC_farfields_calc")).__str__())
+gc_2 = FDTD(str(lumerical_script_folder / "Testsim_Intensity_best_solution"))
+gc_2.save(str(lumerical_script_folder / "GC_farfields_calc"))
 gc_2.run()
+
 # Run the second script for calculating plots
-gc_2.feval((lumerical_script_folder / Path("GC_farfield.lsf")).__str__())
-print("Target focal distance of output laser beam, (um) :", str(gc_2.getv("Mselect") * 1000000))
-print(
-    "Actual focal distance for the optimised geometry, (um)  :", str(gc_2.getv("Mactual") * 1000000)
-)
-print("Relative error:", str(gc_2.getv("RelVal") * 100), "(%)")
-print("FWHM of vertical direction at focus, (um) ", str(gc_2.getv("FWHM_X") * 1000000))
-print("FWHM of horizontal direction at focus, (um) ", str(gc_2.getv("FWHM_Y") * 1000000))
-print("Substrate material :", str(gc_2.getv("Material")))
+gc_2.feval(gc_farfiled_path)
 
-print("Waveguide etch depth, (nm) ", str(gc_2.getv("GC_etch") * 1000000000))
-print("Grating period (P), (nm) ", str(gc_2.getv("GC_period") * 1000000000))
-print("Grating minimum duty cycle:", str(gc_2.getv("GC_DCmin")))
+print(f"Target focal distance of output laser beam: {gc_2.getv('Mselect') * 1000000} (um)")
+print(f"Actual focal distance for the optimised geometry: {gc_2.getv('Mactual') * 1000000} (um)")
+print(f"Relative error: {gc_2.getv('RelVal') * 100}%")
+print(f"FWHM of vertical direction at focus: {gc_2.getv('FWHM_X') * 1000000} (um)")
+print(f"FWHM of horizontal direction at focus {gc_2.getv('FWHM_Y') * 1000000} (um)")
+print(f"Substrate material : {gc_2.getv('Material')}")
 
-from PIL import Image
+print(f"Waveguide etch depth: {gc_2.getv('GC_etch') * 1000000000} (nm)")
+print(f"Grating period (P): {gc_2.getv('GC_period') * 1000000000} (nm)")
+print(f"Grating minimum duty cycle: {gc_2.getv('GC_DCmin')}")
 
-Grating_Schema = Image.open("img_001.jpg")
-Grating_Schema
+# Display Grating Schema Image
 
-# ## Release AEDT
 
+def in_ipython():
+    try:
+        from IPython import get_ipython
+
+        return get_ipython() is not None
+    except ImportError:
+        return False
+
+
+schema_img = Image.open(PARENT_DIR_PATH / "img_001.jpg")
+
+# Show image inside IPython / Jupyter
+if in_ipython():
+    from IPython.display import display
+
+    display(schema_img)
+# Show image using default image viewer
+else:
+    schema_img.show()
+
+schema_img.close()
+
+# ## Close FDTD projects and release AEDT
+
+gc_0.close()
+gc_1.close()
+gc_2.close()
 m2d.save_project()
+m2d.release_desktop()
 
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
 
 # ## Clean up
 #
-
 temp_folder.cleanup()
