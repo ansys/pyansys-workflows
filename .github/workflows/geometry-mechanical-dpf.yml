@@ -276,6 +276,7 @@ jobs:
 
       - name: Set numeric ANSYS version
         run: echo "ANSYS_VERSION=${{ matrix.ansys-release }}" | tr -d '.' >> $GITHUB_ENV
+
       - name: "Install DPF"
         id: set-server-path
         uses: ansys/pydpf-actions/install-dpf-server@v2.3
@@ -283,16 +284,23 @@ jobs:
           dpf-standalone-TOKEN: ${{secrets.PYANSYS_CI_BOT_TOKEN}}
           ANSYS_VERSION: ${{ env.ANSYS_VERSION }}
 
+      - name: "Test DPF"
+        id: test_dpf
+        run: |
+          strace -f -e trace=file dpf-standalone/v241/ansys/dpf/server_2024_1_pre1/aisol/bin/linx64/Ans.Dpf.Grpc.sh
+
       - name: "Check licences of packages"
         uses: ansys/pydpf-actions/check-licenses@v2.3
+
       - name: Run the PyDPF script
         run: |
           python geometry-mechanical-dpf/wf_gmd_03_dpf.py
 
       - name: Store the outputs
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
+          name: dpf-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
       - name: (DOCS) Download the docs artifacts
