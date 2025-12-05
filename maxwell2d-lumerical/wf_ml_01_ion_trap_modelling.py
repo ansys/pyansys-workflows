@@ -331,6 +331,7 @@ print(f"Grating minimum duty cycle: {gc_2.getv('GC_DCmin')}")
 
 # Display Grating Schema Image
 
+
 def in_ipython():
     try:
         from IPython import get_ipython
@@ -338,6 +339,7 @@ def in_ipython():
         return get_ipython() is not None
     except ImportError:
         return False
+
 
 schema_img = Image.open(PARENT_DIR_PATH / "img_001.jpg")
 
