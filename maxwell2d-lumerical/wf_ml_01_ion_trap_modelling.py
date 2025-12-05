@@ -20,6 +20,7 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+
 # # Maxwell2D - Simplified IonTrap Modelling
 #
 # Description:
@@ -32,9 +33,8 @@
 #
 # Keywords: **Ion Trap**, **Electrostatic**
 
-# ## Perform imports and define constants
-#
-# Perform required imports.
+# Perform required imports
+# ------------------------
 
 import os
 from pathlib import Path
@@ -53,7 +53,10 @@ if "__file__" not in locals():
     __file__ = Path(os.getcwd(), "wf_ml_01_ion_trap_modelling.py")
 # sphinx_gallery_end_ignore
 
-# Define constants.
+###############################################################################
+# Prepare and Launch Maxwell
+# --------------------------
+# Define constants
 
 AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
@@ -62,16 +65,14 @@ NODE_FILENAME = "NodePositionTable.tab"
 LEGEND_FILENAME = "legend.txt"
 PARENT_DIR_PATH = Path(__file__).parent.absolute()
 
-# ## Create temporary directory
-#
+# Create temporary directory.
 
 temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
 lumerical_script_folder = Path(temp_folder.name)  # / "lumerical_scripts"
 node_path = lumerical_script_folder / NODE_FILENAME
 legend_path = lumerical_script_folder / LEGEND_FILENAME
 
-# ## Launch AEDT and application
-#
+# Launch AEDT and start a Maxwell2D Design.
 
 project_name = os.path.join(temp_folder.name, "IonTrapMaxwell.aedt")
 m2d = Maxwell2d(
@@ -84,9 +85,10 @@ m2d = Maxwell2d(
 )
 m2d.modeler.model_units = "um"
 
-# ## Preprocess
-#
-# Initialize dictionaries for design variables
+###############################################################################
+# Preprocess
+# ----------
+# Initialize dictionaries for design variables.
 
 geom_params = {
     "div": str(73 / 41),
@@ -100,12 +102,12 @@ geom_params = {
     "y_dummy": "300um",
 }
 
-# Define variables from dictionaries
+# Define design variables from dictionaries.
 
 for k, v in geom_params.items():
     m2d[k] = v
 
-# Create Design Geometry
+# Create design geometry
 
 dc = m2d.modeler.create_rectangle(
     origin=["-w_dc/2", "-metal_thickness/2", "0"],
@@ -114,28 +116,24 @@ dc = m2d.modeler.create_rectangle(
     material="aluminum",
 )
 # dc.color = (0, 0, 255)  # rgb
-
 gnd = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-(metal_thickness/2+glass_thickness)", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness", 0],
     name="gnd",
     material="aluminum",
 )
-
 rf = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf)", "-metal_thickness/2", "0"],
     sizes=["w_rf", "metal_thickness", 0],
     name="RF",
     material="aluminum",
 )
-
 sub_glass = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness/2", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-glass_thickness", 0],
     name="RF",
     material="glass",
 )
-
 ins = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut)", "-metal_thickness/2", "0"],
     sizes=["w_cut", "metal_thickness", 0],
@@ -152,9 +150,14 @@ dummy = m2d.modeler.create_rectangle(
     material="vacuum",
 )
 
+# Create region
+
 region = m2d.modeler.create_region(
     pad_value=[100, 0, 100, 0], pad_type="Absolute Offset", name="Region"
 )
+
+# Create the center line for electric field maximum point identification
+
 center_line = m2d.modeler.create_polyline(
     points=[["0", "metal_thickness/2", "0"], ["0", "metal_thickness/2+200um", "0"]],
     name="center_line",
@@ -209,6 +212,9 @@ m2d.modeler.duplicate_and_mirror(
     duplicate_assignment=True,
 )
 
+###############################################################################
+# Run simulation adn parametric sweep
+# -----------------------------------
 # Create, validate, and analyze setup
 
 setup_name = "MySetupAuto"
@@ -218,9 +224,8 @@ setup.update()
 m2d.validate_simple()
 m2d.analyze_setup(name=setup_name, use_auto_settings=False, cores=NUM_CORES)
 
-#  Create parametric sweep
-
-# Keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
+#  Create and solve parametric sweep
+#  Keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
 
 div_sweep_start = 1.4
 div_sweep_stop = 2
@@ -238,8 +243,9 @@ for p in add_points:
 sweep["SaveFields"] = True
 sweep.analyze(cores=NUM_CORES)
 
-# ## Postprocess
-#
+###############################################################################
+# Postprocess
+# -----------
 # Create the Ey expression in the PyAEDT Advanced Field Calculator
 # Due to the symmetric nature of this specific geometry, the electric field
 # node will be located along the center line. The electric field node is the
@@ -254,13 +260,21 @@ my_plots[1].edit_x_axis_scaling(min_scale="20um", max_scale="200um")
 my_plots[1].update_trace_in_report(
     my_plots[1].get_solution_data().expressions, variations={"div": ["All"]}, context="center_line"
 )
+
+# Identify the zero point for each trace.
+
 my_plots[1].add_cartesian_y_marker("0")
 my_plots[1].add_trace_characteristics(
     "XAtYVal", arguments=["0"], solution_range=["Full", "20", "200"]
 )
+
+# Export the points at which Ey=0 to a TXT file
 my_plots[1].export_table_to_file(my_plots[1].plot_name, str(node_path), table_type="Legend")
 
-# ## Edit the outputted file to be read in by Lumerical
+###############################################################################
+# Prepare and Run Lumerical Simulation
+# ------------------------------------
+# Edit the file outputted by Maxwell to be read in by Lumerical
 
 new_line = []
 with open(node_path, "r", encoding="utf-8") as f:
@@ -275,17 +289,19 @@ with open(legend_path, "w", encoding="utf-8") as f:
     for line in new_line:
         f.write(line)
 
-# ## Copy Lumerical scripts and illustration to the local folder
+# Copy Lumerical scripts and illustration to the local folder
+
 gc_farfiled_path = shutil.copy(PARENT_DIR_PATH / "GC_farfield.lsf", lumerical_script_folder)
 gc_opt_path = shutil.copy(PARENT_DIR_PATH / "GC_Opt.lsf", lumerical_script_folder)
 read_data_path = shutil.copy(PARENT_DIR_PATH / "Readata.lsf", lumerical_script_folder)
 img_path = shutil.copy(PARENT_DIR_PATH / "img_001.jpg", lumerical_script_folder)
 
+# Start the Lumerical Process
 
-# ## Start the Lumerical Process
 gc_0 = FDTD(gc_opt_path)
 
 # Run the first script: Build geometry & Run optimization
+
 gc_1 = FDTD(read_data_path)
 print(
     "Optimize for the Nodal point located",
@@ -294,13 +310,14 @@ print(
 )
 
 # Run the optimized design
+
 gc_2 = FDTD(str(lumerical_script_folder / "Testsim_Intensity_best_solution"))
 gc_2.save(str(lumerical_script_folder / "GC_farfields_calc"))
 gc_2.run()
 
 # Run the second script for calculating plots
-gc_2.feval(gc_farfiled_path)
 
+gc_2.feval(gc_farfiled_path)
 print(f"Target focal distance of output laser beam: {gc_2.getv('Mselect') * 1000000} (um)")
 print(f"Actual focal distance for the optimised geometry: {gc_2.getv('Mactual') * 1000000} (um)")
 print(f"Relative error: {gc_2.getv('RelVal') * 100}%")
@@ -314,7 +331,6 @@ print(f"Grating minimum duty cycle: {gc_2.getv('GC_DCmin')}")
 
 # Display Grating Schema Image
 
-
 def in_ipython():
     try:
         from IPython import get_ipython
@@ -323,10 +339,10 @@ def in_ipython():
     except ImportError:
         return False
 
-
 schema_img = Image.open(PARENT_DIR_PATH / "img_001.jpg")
 
 # Show image inside IPython / Jupyter
+
 if in_ipython():
     from IPython.display import display
 
@@ -337,17 +353,18 @@ else:
 
 schema_img.close()
 
-# ## Close FDTD projects and release AEDT
-
+###############################################################################
+# Exit the Solver
+# ---------------
+# Close FDTD projects and release AEDT.
+#
 gc_0.close()
 gc_1.close()
 gc_2.close()
 m2d.save_project()
-m2d.release_desktop()
-
+m2d.desktop_class.release_desktop()
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
-
-# ## Clean up
+# Clean up
 #
 temp_folder.cleanup()
