@@ -24,10 +24,9 @@ on:
 
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
-  ANSYS_RELEASE_FOR_DOCS: 25.2.0
+  ANSYS_RELEASE_FOR_DOCS: 25.2
   # AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
   MAIN_PYTHON_VERSION: '3.12'
-  # ON_CI: true
   RUN_DOC_BUILD: false
 
 jobs:
@@ -38,7 +37,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ansys-release: [25.1, 25.2]
+        ansys-release: [25.2] # Temporarily limiting to only one version, might be extended to 25.1
     steps:
       - name: Checkout code
         uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
@@ -52,15 +51,6 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
-      # - name: Set up environment variables
-      #   shell: bash
-      #   run: |
-      #     VERSION="${{ matrix.ansys-release }}"
-      #     ANSYS_RELEASE_SHORT="${VERSION%.*}"
-      #     echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
-      #     ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
-      #     echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
-
       - name: Install dependencies
         shell: bash
         run: |
@@ -70,6 +60,8 @@ jobs:
           pip install -r maxwell2d-lumerical/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Run the workflow script
+        env:
+          AEDT_VERSION: ${{ matrix.ansys-release }}
         shell: bash
         run: |
           source .venv/Scripts/activate
