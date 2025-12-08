@@ -11,6 +11,7 @@ Workflow examples
    examples/geometry-mesh/index
    examples/geometry-mesh-fluent/index
    examples/mapdl-dpf/index
+   examples/maxwell2d-lumerical/index
    examples/speos-optislang/index
    .. TODO: enable when issues in PyMechanical are resolved
       examples/geometry-mechanical-dpf/index
