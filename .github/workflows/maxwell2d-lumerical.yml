@@ -25,7 +25,7 @@ on:
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
-  # AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
+  ANSYSEM_ROOT252: 'C:\Program Files\ANSYS Inc\v252\AnsysEM'
   MAIN_PYTHON_VERSION: '3.12'
   RUN_DOC_BUILD: false
 
