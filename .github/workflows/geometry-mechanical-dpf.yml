@@ -98,7 +98,7 @@ jobs:
           python geometry-mechanical-dpf/wf_gmd_01_geometry.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
@@ -115,7 +115,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mechanical-dpf-docs-stage-geometry
           path: |
@@ -167,7 +167,7 @@ jobs:
           uv pip install -r geometry-mechanical-dpf/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mechanical-dpf-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
@@ -190,13 +190,13 @@ jobs:
           cat pydpflogs${{ matrix.ansys-release }}.txt
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mechanical-dpf-workflow-mechanical-dpf-outputs-${{ matrix.ansys-release }}
           path: geometry-mechanical-dpf/outputs
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mechanical-dpf-docs-stage-geometry
@@ -234,7 +234,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mechanical-dpf-docs
           path: |
