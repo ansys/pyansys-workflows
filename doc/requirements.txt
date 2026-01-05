@@ -4,7 +4,7 @@ myst-parser==4.0.1
 sphinx_design==0.6.1
 sphinx==8.2.3
 sphinx-autobuild==2025.8.25
-sphinx-autodoc-typehints==3.5.2
+sphinx-autodoc-typehints==3.6.2
 sphinxcontrib-websupport==2.0.0
 sphinx-copybutton==0.5.2
 sphinx-gallery==0.20.0
@@ -14,10 +14,10 @@ imageio-ffmpeg==0.6.0
 jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
 matplotlib==3.10.8
-panel==1.8.4
+panel==1.8.5
 plotly==6.5.0
 pythreejs==2.4.2
-pillow==12.0.0
+pillow==12.1.0
 ipyvtklink==0.2.3
 ipykernel==7.1.0
 pyvista[jupyter]==0.45.3
