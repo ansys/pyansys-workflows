@@ -51,14 +51,14 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             fluent-mechanical
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -103,7 +103,7 @@ jobs:
           xvfb-run python fluent-mechanical/wf_fm_01_fluent.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
           path: |
@@ -129,7 +129,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fluent-mechanical-docs-stage-fluent
           path: |
@@ -148,14 +148,14 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             fluent-mechanical
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -212,7 +212,7 @@ jobs:
           fi
 
       - name: Check out the fluent outputs
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: fluent-mechanical-workflow-fluent-outputs-${{ matrix.ansys-release }}
           path: fluent-mechanical/outputs
@@ -223,13 +223,13 @@ jobs:
           xvfb-run python fluent-mechanical/wf_fm_02_mechanical.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fluent-mechanical-workflow-mechanical-outputs-${{ matrix.ansys-release }}
           path: fluent-mechanical/outputs
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: fluent-mechanical-docs-stage-fluent
@@ -247,7 +247,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: fluent-mechanical-docs
           path: |

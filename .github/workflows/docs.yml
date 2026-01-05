@@ -35,6 +35,12 @@ jobs:
     with:
       doc-build: true
 
+  mapdl-dpf:
+    uses: ./.github/workflows/mapdl-dpf.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   speos-optislang:
     uses: ./.github/workflows/speos-optislang.yml
     secrets: inherit
@@ -45,16 +51,16 @@ jobs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
     # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, speos-optislang]
-    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, speos-optislang]
+    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v5.0.0
+        uses: actions/checkout@v6.0.1
         with:
           ref: main
           fetch-depth: 0
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.0.0
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -64,34 +70,40 @@ jobs:
           pip install -r doc/requirements.txt
 
       - name: Download artifacts for geometry-mesh
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mesh-docs
           path: doc/
 
       - name: Download artifacts for geometry-mesh-fluent
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mesh-fluent-docs
           path: doc/
 
       # TODO: enable when issues in PyMechanical are resolved
       # - name: Download artifacts for geometry-mechanical-dpf
-      #   uses: actions/download-artifact@v5
+      #   uses: actions/download-artifact@v7
       #   with:
       #     name: geometry-mechanical-dpf-docs
       #     path: doc/
 
       - name: Download artifacts for fluent-mechanical
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: fluent-mechanical-docs
           path: doc/
 
       - name: Download artifacts for speos-optislang
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: speos-optislang-docs
+          path: doc/
+
+      - name: Download artifacts for pymapdl-dpf
+        uses: actions/download-artifact@v7
+        with:
+          name: mapdl-dpf-docs
           path: doc/
 
       - name: Build the documentation
@@ -100,7 +112,7 @@ jobs:
           make html
 
       - name: Upload the documentation
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v6
         with:
           name: documentation-html
           path: doc/_build/html/
@@ -110,7 +122,7 @@ jobs:
     needs: [compile-docs]
     steps:
       - name: "Download the documentation artifact"
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v7
         with:
           name: documentation-html
           path: doc
