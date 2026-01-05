@@ -89,7 +89,7 @@ if "DOC_BUILD" in os.environ:
 # modeler object is used to create designs, sketches, and perform modeling
 # operations.
 #
-modeler = launch_modeler(image=image)
+modeler = launch_modeler(image=image, transport_mode=transport_mode)
 print(modeler)
 
 ###############################################################################
