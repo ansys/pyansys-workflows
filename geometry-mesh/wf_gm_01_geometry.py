@@ -51,12 +51,14 @@ from ansys.geometry.core.sketch import Sketch
 # If you are running this script outside of a workflow, you can ignore this section.
 #
 image = None
+transport_mode = None
 if "ANSYS_GEOMETRY_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
     for geom_services in GeometryContainers:
         if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
             print(f"Using {image_tag} image")
             image = geom_services
+            transport_mode = "insecure"
             break
 
 # sphinx_gallery_start_ignore
