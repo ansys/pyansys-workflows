@@ -1,4 +1,4 @@
-ansys-geometry-core[all]==0.14.1
+ansys-geometry-core[all]==0.14.2
 ansys-meshing-prime==0.7.0
 numpy<2.3
 ansys-tools-visualization-interface<0.10
