@@ -36,7 +36,8 @@ import os
 from pathlib import Path
 
 from ansys.geometry.core import launch_modeler
-from ansys.geometry.core.connection import GEOMETRY_SERVICE_DOCKER_IMAGE, GeometryContainers
+from ansys.geometry.core.connection import GeometryContainers
+import ansys.geometry.core.connection.defaults as pygeom_defaults
 from ansys.geometry.core.designer import DesignFileFormat
 from ansys.geometry.core.math import Plane, Point2D, Point3D, UnitVector3D
 from ansys.geometry.core.misc import DEFAULT_UNITS, UNITS
@@ -50,12 +51,14 @@ from ansys.geometry.core.sketch import Sketch
 # If you are running this script outside of a workflow, you can ignore this section.
 #
 image = None
+transport_mode = None
 if "ANSYS_GEOMETRY_RELEASE" in os.environ:
     image_tag = os.environ["ANSYS_GEOMETRY_RELEASE"]
     for geom_services in GeometryContainers:
-        if image_tag == f"{GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
+        if image_tag == f"{pygeom_defaults.GEOMETRY_SERVICE_DOCKER_IMAGE}:{geom_services.value[2]}":
             print(f"Using {image_tag} image")
             image = geom_services
+            transport_mode = "insecure"
             break
 
 # sphinx_gallery_start_ignore
@@ -88,7 +91,7 @@ if "DOC_BUILD" in os.environ:
 # operations.
 #
 
-modeler = launch_modeler(image=image)
+modeler = launch_modeler(image=image, transport_mode=transport_mode)
 print(modeler)
 
 ###############################################################################
