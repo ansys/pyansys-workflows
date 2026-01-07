@@ -4,7 +4,7 @@ myst-parser==4.0.1
 sphinx_design==0.6.1
 sphinx==8.2.3
 sphinx-autobuild==2025.8.25
-sphinx-autodoc-typehints==3.6.2
+sphinx-autodoc-typehints==3.5.2
 sphinxcontrib-websupport==2.0.0
 sphinx-copybutton==0.5.2
 sphinx-gallery==0.20.0
