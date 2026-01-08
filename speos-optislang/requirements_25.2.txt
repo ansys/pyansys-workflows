@@ -1,2 +1,2 @@
-ansys-speos-core[graphics]==0.7.0
-ansys-optislang-core==1.4.1
+ansys-speos-core[graphics]==0.5.1
+ansys-optislang-core==1.0.0
