@@ -54,7 +54,7 @@ jobs:
     needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang]
     steps:
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           ref: main
           fetch-depth: 0
@@ -70,38 +70,38 @@ jobs:
           pip install -r doc/requirements.txt
 
       - name: Download artifacts for geometry-mesh
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mesh-docs
           path: doc/
 
       - name: Download artifacts for geometry-mesh-fluent
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mesh-fluent-docs
           path: doc/
 
       # TODO: enable when issues in PyMechanical are resolved
       # - name: Download artifacts for geometry-mechanical-dpf
-      #   uses: actions/download-artifact@v6
+      #   uses: actions/download-artifact@v7
       #   with:
       #     name: geometry-mechanical-dpf-docs
       #     path: doc/
 
       - name: Download artifacts for fluent-mechanical
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: fluent-mechanical-docs
           path: doc/
 
       - name: Download artifacts for speos-optislang
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: speos-optislang-docs
           path: doc/
 
       - name: Download artifacts for pymapdl-dpf
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: mapdl-dpf-docs
           path: doc/
@@ -112,7 +112,7 @@ jobs:
           make html
 
       - name: Upload the documentation
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: documentation-html
           path: doc/_build/html/
@@ -122,7 +122,7 @@ jobs:
     needs: [compile-docs]
     steps:
       - name: "Download the documentation artifact"
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: documentation-html
           path: doc

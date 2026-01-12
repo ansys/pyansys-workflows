@@ -49,7 +49,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             geometry-mesh
@@ -97,7 +97,7 @@ jobs:
           python geometry-mesh/wf_gm_01_geometry.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mesh-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
@@ -114,7 +114,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mesh-docs-stage-geometry
           path: |
@@ -140,7 +140,7 @@ jobs:
     steps:
 
       - name: Checkout code
-        uses: actions/checkout@v6
+        uses: actions/checkout@v6.0.1
         with:
           sparse-checkout: |
             geometry-mesh
@@ -170,7 +170,7 @@ jobs:
         run: docker pull ${{ env.PRIME_DOCKER_IMAGE }}:${{ matrix.ansys-release }}
 
       - name: Check out the geometry outputs
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         with:
           name: geometry-mesh-workflow-geometry-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
@@ -182,13 +182,13 @@ jobs:
           python geometry-mesh/wf_gm_02_mesh.py
 
       - name: Store the outputs
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mesh-workflow-prime-outputs-${{ matrix.ansys-release }}
           path: geometry-mesh/outputs
 
       - name: (DOCS) Download the docs artifacts
-        uses: actions/download-artifact@v6
+        uses: actions/download-artifact@v7
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         with:
           name: geometry-mesh-docs-stage-geometry
@@ -207,7 +207,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: geometry-mesh-docs
           path: |

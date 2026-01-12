@@ -46,7 +46,7 @@ jobs:
         ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2]') || fromJSON('[25.2]') }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v4.2.2
+        uses: actions/checkout@8e8c483db84b4bee98b60c0593521ed34d9990e8 # v4.2.2
         with:
           sparse-checkout: |
             speos-optislang
@@ -64,6 +64,19 @@ jobs:
           echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
           ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
           echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
+
+      - name: Modify ansyslmd.ini file
+        shell: bash
+        run: |
+          # Define the path to the license file
+          LIC_FILE_PATH="C:\Program Files\ANSYS Inc\Shared Files\licensing\ansyslmd.ini"
+          # Verify that the file exists
+          if [ ! -f "$LIC_FILE_PATH" ]; then
+            echo "License file not found at $LIC_FILE_PATH"
+            exit 1
+          fi
+          # REPLACE the line starting with SERVER by something like: SERVER=1055@XX.XXX.XX.XX
+          sed -i "s|^SERVER=.*|SERVER=${{ env.ANSYSLMD_LICENSE_FILE }}|" "$LIC_FILE_PATH"
 
       - name: Install dependencies
         shell: bash
@@ -98,7 +111,7 @@ jobs:
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: speos-optislang-docs
           path: |
