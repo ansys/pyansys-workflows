@@ -15,7 +15,7 @@ jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
 matplotlib==3.10.8
 panel==1.8.5
-plotly==6.5.0
+plotly==6.5.1
 pythreejs==2.4.2
 pillow==12.1.0
 ipyvtklink==0.2.3
