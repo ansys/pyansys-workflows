@@ -1,6 +1,6 @@
 # Documentation dependencies
 ansys-sphinx-theme==1.6.4
-myst-parser==4.0.1
+myst-parser==5.0.0
 sphinx_design==0.6.1
 sphinx==8.2.3
 sphinx-autobuild==2025.8.25
@@ -15,7 +15,7 @@ jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
 matplotlib==3.10.8
 panel==1.8.5
-plotly==6.5.1
+plotly==6.5.2
 pythreejs==2.4.2
 pillow==12.1.0
 ipyvtklink==0.2.3
