@@ -160,8 +160,7 @@ for input_file_name, input_file_path in all_input_files.items():
 # -----------------------------------
 #
 
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 ExtAPI.Graphics.Camera.SetSpecificViewOrientation(
     Ansys.Mechanical.DataModel.Enums.ViewOrientationType.Iso
 )
@@ -175,16 +174,14 @@ settings_720p.Background = Ansys.Mechanical.DataModel.Enums.GraphicsBackgroundTy
 settings_720p.Width = 1280
 settings_720p.Height = 720
 settings_720p.CurrentGraphicsDisplay = False
-"""
-)
+""")
 
 ###############################################################################
 # Import geometry
 # ---------------
 #
 
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 import os
 geometry_import_group = Model.GeometryImportGroup
 geometry_import = geometry_import_group.AddGeometryImport()
@@ -204,8 +201,7 @@ ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "geometry.png"), image_export_format, settings_720p
 )
-"""
-)
+""")
 
 # Download the geometry image and display it
 mechanical.download(files=os.path.join(project_directory, "geometry.png"), target_dir=OUTPUT_DIR)
@@ -217,8 +213,7 @@ if GRAPHICS_BOOL:
 # Import material, assign it to the bodies and create Named Selections
 # --------------------------------------------------------------------
 #
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 materials = ExtAPI.DataModel.Project.Model.Materials
 materials.Import(material_path)
 materials.RefreshMaterials()
@@ -255,15 +250,13 @@ SPACERS_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "spacers"
 EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == "em_outer_surface"][
     0
 ]
-"""
-)
+""")
 
 ###############################################################################
 # Set up the mesh and generate
 # ----------------------------
 #
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 MESH = Model.Mesh
 
 MESH.UseAdaptiveSizing = True
@@ -278,8 +271,7 @@ ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "mesh.png"), image_export_format, settings_720p
 )
-"""
-)
+""")
 
 # Download the mesh image and display it
 mechanical.download(files=os.path.join(project_directory, "mesh.png"), target_dir=OUTPUT_DIR)
@@ -291,8 +283,7 @@ if GRAPHICS_BOOL:
 # ---------------------------------------------------------------
 #
 
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 Model.AddTransientThermalAnalysis()
 
 # Store all main tree nodes as variables
@@ -475,23 +466,19 @@ External_Convection_Load_3.AmbientTemperature.Output.DiscreteValues = [
 group_list = [External_Convection_Load_1, External_Convection_Load_2, External_Convection_Load_3]
 grouping_folder = Tree.Group(group_list)
 tree_grouping_folder_70 = DataModel.GetObjectsByName("New Folder")
-"""
-)
+""")
 
 ###############################################################################
 # Use the output from Fluent to import the temperature and HTC data
 # -----------------------------------------------------------------
 #
 # Add imported convection
-result = mechanical.run_python_script(
-    """
+result = mechanical.run_python_script("""
 Imported_Load_Group = TRANS_THERM.AddImportedLoadExternalData()
 imported_load_group_61=Imported_Load_Group
 imported_convection_62 = Imported_Load_Group.AddImportedConvection()
-"""
-)
-result = mechanical.run_python_script(
-    """
+""")
+result = mechanical.run_python_script("""
 external_data_files = Ansys.Mechanical.ExternalData.ExternalDataFileCollection()
 external_data_files.SaveFilesWithProject = False
 
@@ -604,11 +591,9 @@ import_settings.UseColumn(
 )
 
 imported_load_group_61.ImportExternalDataFiles(external_data_files)
-"""
-)
+""")
 
-result = mechanical.run_python_script(
-    """
+result = mechanical.run_python_script("""
 table = imported_load_group_61.Children[0].GetTableByName("Film Coefficient")
 numofsteps = 15
 Film_Coeff = [
@@ -638,11 +623,9 @@ selection = NS_GRP.Children[4]
 imported_convection_62.Location = selection
 imported_load_id = imported_convection_62.ObjectId
 imported_load = DataModel.GetObjectById(imported_load_id)
-"""
-)
+""")
 
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 imported_load.ImportLoad()
 
 Tree.Activate([imported_load])
@@ -650,8 +633,7 @@ ExtAPI.Graphics.Camera.SetFit()
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "imported_temperature.png"), image_export_format, settings_720p
 )
-"""
-)
+""")
 mechanical.download(
     files=os.path.join(project_directory, "imported_temperature.png"), target_dir=OUTPUT_DIR
 )
@@ -662,8 +644,7 @@ if GRAPHICS_BOOL:
 # Solve and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 # Insert results objects
 
 Temp = TRANS_THERM_SOLN.AddTemperature()
@@ -683,8 +664,7 @@ ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "temperature.png"), image_export_format, settings_720p
 )
-"""
-)
+""")
 
 # Download the temperature image and display it
 mechanical.download(files=os.path.join(project_directory, "temperature.png"), target_dir=OUTPUT_DIR)
@@ -696,8 +676,7 @@ if GRAPHICS_BOOL:
 # Setup Structural Analysis
 # -------------------------
 #
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 Model.AddStaticStructuralAnalysis()
 
 # Define analysis settings
@@ -756,15 +735,13 @@ imported_load.ImportLoad()
 Fixed_Support = STAT_STRUC.AddFixedSupport()
 selection = NS_GRP.Children[3]
 Fixed_Support.Location = selection
-"""
-)
+""")
 
 ###############################################################################
 # Solve and post-process the results
 # ----------------------------------
 #
-mechanical.run_python_script(
-    """
+mechanical.run_python_script("""
 SOLN = STAT_STRUC.Solution
 
 TOT_DEF1 = SOLN.AddTotalDeformation()
@@ -803,8 +780,7 @@ Tree.Activate([EQV_PLAS_STRN1])
 ExtAPI.Graphics.ExportImage(
     os.path.join(project_directory, "plastic_strain.png"), image_export_format, settings_720p
 )
-"""
-)
+""")
 
 # Download the results images to local directory
 mechanical.download(files=os.path.join(project_directory, "deformation.png"), target_dir=OUTPUT_DIR)

@@ -32,7 +32,6 @@ specific case, FMD).
 
 """  # noqa: D400, D415
 
-
 import os
 from pathlib import Path
 
