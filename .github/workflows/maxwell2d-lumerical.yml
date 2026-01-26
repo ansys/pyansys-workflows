@@ -28,6 +28,7 @@ env:
   ANSYSEM_ROOT252: 'C:\Program Files\ANSYS Inc\v252\AnsysEM'
   MAIN_PYTHON_VERSION: '3.12'
   RUN_DOC_BUILD: false
+  ON_CI: true
 
 jobs:
 

@@ -60,7 +60,9 @@ if "__file__" not in locals():
 
 AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
-NG_MODE = False  # Open AEDT UI when it is launched.
+NG_MODE = (
+    os.getenv("ON_CI", "false").lower() == "true"
+)  # Open AEDT UI when it is launched, unless running in CI
 NODE_FILENAME = "NodePositionTable.tab"
 LEGEND_FILENAME = "legend.txt"
 PARENT_DIR_PATH = Path(__file__).parent.absolute()
