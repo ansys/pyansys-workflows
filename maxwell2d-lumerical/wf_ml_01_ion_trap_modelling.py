@@ -19,19 +19,32 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+.. _ref_wf_ml_01_ion_trap_modelling:
 
+Maxwell2D - Simplified IonTrap Modelling
+########################################
 
-# # Maxwell2D - Simplified IonTrap Modelling
-#
-# Description:
-#
-# First step of a multi-tool workflow: Maxwell 2D model to identify electric field node in Ion Trap
-# 1. Set up the Maxwell 2D Parametric Model
-# 2. Identify the Electric Field Node Point for Each Design Point
-# 3. Export the Node Coordinates for the subsequent Lumerical Step
-# 4. Launch the Lumerical Scripts
-#
-# Keywords: **Ion Trap**, **Electrostatic**
+Problem description
+-------------------
+
+Surface electrodes adjacent to grating couplers render an integrated ion trap.
+In this workflow surface electrodes are modeled using ANSYS Maxwell and grating couplers using
+ANSYS Lumerical. ANSYS Maxwell electrostatic solver, based on the finite element method, allows to
+evaluate the ion trap height.Then the coordinates of the ion trap are passed to an optimization
+algorithm to define the optimal two dimensional grating coupler design, which will focus the laser
+beam at the ion trap height.
+
+The workflow is explained in detail in this article:
+https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
+
+The workflow includes the following steps:
+- Set up the Maxwell 2D Parametric Model
+- Identify the Electric Field Node Point for Each Design Point
+- Export the Node Coordinates for the subsequent Lumerical Step
+- Launch the Lumerical Scripts
+
+"""  # noqa: D400, D415
 
 # Perform required imports
 # ------------------------
