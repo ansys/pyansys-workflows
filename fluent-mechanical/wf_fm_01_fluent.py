@@ -74,7 +74,6 @@ This workflow will generate the following files as output:
 
 """  # noqa: D400, D415
 
-
 # Perform required imports
 # ------------------------
 # Perform required imports, which includes downloading the mesh file from the

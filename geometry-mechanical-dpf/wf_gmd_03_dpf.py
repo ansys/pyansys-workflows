@@ -29,6 +29,7 @@ This examples shows how dataprocessing framework can be used to extract results
 and analyze them.
 
 """  # noqa: D400, D415
+
 import os
 from pathlib import Path
 
