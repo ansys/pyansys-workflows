@@ -87,7 +87,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'maxwell2d-lumerical/wf_ml_01_ion_trap_modelling.py'
         shell: bash
         run: |
-          .venv/Scripts/activate
+          source .venv/Scripts/activate
           cd doc
           pip install -r requirements.txt
           ./make.bat html
@@ -96,7 +96,7 @@ jobs:
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
         shell: bash
         run: |
-          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\maxwell2d-lumerical\\images\\|./images/|g' {} +
+          find doc/_build -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\maxwell2d-lumerical\\images\\|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
         if: ${{ env.RUN_DOC_BUILD == 'true' }}
