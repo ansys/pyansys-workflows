@@ -49,14 +49,14 @@ for every part of the simulation process. The available workflows are:
     - For optical analysis: Ansys Speos
     - For robustness analysis: Ansys optiSLang
 
-- [Maxwell2D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/maxwell2d-lumerical): this workflow 
-  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes. 
-  ANSYS Maxwell computes the electrostatic response of a 3-rail surface electrode design, while ANSYS Lumerical retrieves the data 
-  from ANSYS Maxwell to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams. 
+- [Maxwell2D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/maxwell2d-lumerical): this workflow
+  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes.
+  ANSYS Maxwell computes the electrostatic response of a 3-rail surface electrode design, while ANSYS Lumerical retrieves the data
+  from ANSYS Maxwell to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.
   Additional details can be found in the following article:
-  https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electr… 
-  where multiple grating couplers can provide a platform for more complex field distributions and optical force calculation 
-  over various nano-objects. 
+  https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electr…
+  where multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
+  over various nano-objects.
 
 
 ## How to run the workflows
