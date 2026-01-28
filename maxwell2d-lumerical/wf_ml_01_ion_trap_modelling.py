@@ -67,7 +67,7 @@ if "__file__" not in locals():
 # sphinx_gallery_end_ignore
 
 ###############################################################################
-# Prepare and Launch Maxwell
+# Prepare and launch Maxwell
 # --------------------------
 # Define constants
 
@@ -103,6 +103,12 @@ m2d.modeler.model_units = "um"
 ###############################################################################
 # Preprocess
 # ----------
+# The preprocessing is performed using the following steps:
+# 1. Define design variables.
+# 2. Create design geometry.
+# 3. Define excitations.
+# 4. (Optional) Define mesh settings.
+
 # Initialize dictionaries for design variables.
 
 geom_params = {
@@ -178,13 +184,13 @@ center_line = m2d.modeler.create_polyline(
     name="center_line",
 )
 
-# Define Excitations
+# Define excitations
 
 m2d.assign_voltage(assignment=gnd.id, amplitude=0, name="ground")
 m2d.assign_voltage(assignment=dc.id, amplitude=0, name="V_dc")
 m2d.assign_voltage(assignment=rf.id, amplitude=1, name="V_rf")
 
-# Define Mesh Settings
+# Define mesh settings
 # For good quality results, please uncomment the following  mesh operations lines
 #
 # m2d.mesh.assign_length_mesh(
