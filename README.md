@@ -49,12 +49,12 @@ for every part of the simulation process. The available workflows are:
     - For optical analysis: Ansys Speos
     - For robustness analysis: Ansys optiSLang
 
-- [Maxwell2D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/maxwell2d-lumerical): this workflow shows how to compute the electrostatic response of the ion trap 
-  using the surface electrodes in a 3-rail surface electrode design using ANSYS Maxwell. 
-  Then the coordinates of the ion trap to the PS optimization algorithm with the goal to define the optimal 2D grating coupler design, 
-  which will focus the laser beam at the ion trap heigh. The optimized parameters of the grating are employed in a 3D FDTD space, 
-  o to get the 3D field distribution. It is also shown how multiple grating couplers can provide a platform for more complex field 
-  distributions. Eventually, through a parametric sweep, the excited optical force is computed on a 100nm polystyrene bead from a 
+- [Maxwell2D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/maxwell2d-lumerical): this workflow shows how to compute the electrostatic response of the ion trap
+  using the surface electrodes in a 3-rail surface electrode design using ANSYS Maxwell.
+  Then the coordinates of the ion trap to the PS optimization algorithm with the goal to define the optimal 2D grating coupler design,
+  which will focus the laser beam at the ion trap heigh. The optimized parameters of the grating are employed in a 3D FDTD space,
+  o to get the 3D field distribution. It is also shown how multiple grating couplers can provide a platform for more complex field
+  distributions. Eventually, through a parametric sweep, the excited optical force is computed on a 100nm polystyrene bead from a
   2 by 2 grating coupler array to define the stability of the optical trap. More details are described in this article:
   https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
 
