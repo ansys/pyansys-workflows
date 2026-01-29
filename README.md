@@ -58,7 +58,6 @@ for every part of the simulation process. The available workflows are:
   where multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
   over various nano-objects.
 
-
 ## How to run the workflows
 
 All workflows are structured in the same way, with a Python script for each part of the simulation process.
