@@ -39,10 +39,10 @@ The workflow is explained in detail in this article:
 https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
 
 The workflow includes the following steps:
-- Set up the Maxwell 2D Parametric Model
-- Identify the Electric Field Node Point for Each Design Point
-- Export the Node Coordinates for the subsequent Lumerical Step
-- Launch the Lumerical Scripts
+- Set up the Maxwell 2D parametric model
+- Identify the electric field node point for each design point
+- Export the node coordinates for the subsequent Lumerical step
+- Launch the Lumerical scripts
 
 """  # noqa: D400, D415
 
@@ -69,7 +69,7 @@ if "__file__" not in locals():
 ###############################################################################
 # Prepare and launch Maxwell
 # --------------------------
-# Define constants
+# Define constants.
 
 AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
@@ -87,7 +87,7 @@ lumerical_script_folder = Path(temp_folder.name)  # / "lumerical_scripts"
 node_path = lumerical_script_folder / NODE_FILENAME
 legend_path = lumerical_script_folder / LEGEND_FILENAME
 
-# Launch AEDT and start a Maxwell2D Design.
+# Launch AEDT and start a Maxwell2D design.
 
 project_name = os.path.join(temp_folder.name, "IonTrapMaxwell.aedt")
 m2d = Maxwell2d(
@@ -137,6 +137,7 @@ dc = m2d.modeler.create_rectangle(
     material="aluminum",
 )
 # dc.color = (0, 0, 255)  # rgb
+
 gnd = m2d.modeler.create_rectangle(
     origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-(metal_thickness/2+glass_thickness)", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness", 0],
@@ -162,7 +163,7 @@ ins = m2d.modeler.create_rectangle(
     material="vacuum",
 )
 
-# Create dummy objects for mesh and center_line for Post Processing and Region
+# Create dummy objects for mesh and center_line for post processing and region
 
 dummy = m2d.modeler.create_rectangle(
     origin=["0", "metal_thickness/2", "0"],
@@ -234,9 +235,9 @@ m2d.modeler.duplicate_and_mirror(
 )
 
 ###############################################################################
-# Run simulation adn parametric sweep
+# Run simulation and parametric sweep
 # -----------------------------------
-# Create, validate, and analyze setup
+# Create, validate, and analyze setup.
 
 setup_name = "MySetupAuto"
 setup = m2d.create_setup(name=setup_name)
@@ -267,11 +268,11 @@ sweep.analyze(cores=NUM_CORES)
 ###############################################################################
 # Postprocess
 # -----------
-# Create the Ey expression in the PyAEDT Advanced Field Calculator
+# Create the Ey expression in the PyAEDT advanced field calculator
 # Due to the symmetric nature of this specific geometry, the electric field
 # node will be located along the center line. The electric field node is the
 # point where the Ey will be zero and can be found directly by Maxwell post
-# processing features
+# processing features.
 
 e_line = m2d.post.fields_calculator.add_expression(calculation="e_line", assignment=None)
 my_plots = m2d.post.fields_calculator.expression_plot(
@@ -293,7 +294,7 @@ my_plots[1].add_trace_characteristics(
 my_plots[1].export_table_to_file(my_plots[1].plot_name, str(node_path), table_type="Legend")
 
 ###############################################################################
-# Prepare and Run Lumerical Simulation
+# Prepare and run Lumerical simulation
 # ------------------------------------
 # Edit the file outputted by Maxwell to be read in by Lumerical
 
@@ -317,11 +318,11 @@ gc_opt_path = shutil.copy(PARENT_DIR_PATH / "GC_Opt.lsf", lumerical_script_folde
 read_data_path = shutil.copy(PARENT_DIR_PATH / "Readata.lsf", lumerical_script_folder)
 img_path = shutil.copy(PARENT_DIR_PATH / "img_001.jpg", lumerical_script_folder)
 
-# Start the Lumerical Process
+# Start the Lumerical process
 
 gc_0 = FDTD(gc_opt_path)
 
-# Run the first script: Build geometry & Run optimization
+# Run the first script: build geometry & run optimization
 
 gc_1 = FDTD(read_data_path)
 print(
@@ -350,7 +351,7 @@ print(f"Waveguide etch depth: {gc_2.getv('GC_etch') * 1000000000} (nm)")
 print(f"Grating period (P): {gc_2.getv('GC_period') * 1000000000} (nm)")
 print(f"Grating minimum duty cycle: {gc_2.getv('GC_DCmin')}")
 
-# Display Grating Schema Image
+# Display grating schema image
 
 
 def in_ipython():
@@ -365,7 +366,6 @@ def in_ipython():
 schema_img = Image.open(PARENT_DIR_PATH / "img_001.jpg")
 
 # Show image inside IPython / Jupyter
-
 if in_ipython():
     from IPython.display import display
 
@@ -377,17 +377,19 @@ else:
 schema_img.close()
 
 ###############################################################################
-# Exit the Solver
+# Exit the solver
 # ---------------
 # Close FDTD projects and release AEDT.
 #
+
 gc_0.close()
 gc_1.close()
 gc_2.close()
 m2d.save_project()
 m2d.desktop_class.release_desktop()
+
 # Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
 time.sleep(3)
-# Clean up
-#
+
+# Clean up the temporary folder
 temp_folder.cleanup()
