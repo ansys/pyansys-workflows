@@ -54,7 +54,7 @@ for every part of the simulation process. The available workflows are:
   ANSYS Maxwell computes the electrostatic response of a 3-rail surface electrode design, while ANSYS Lumerical retrieves the data
   from ANSYS Maxwell to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.
   Additional details can be found in the following article:
-  https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electr…
+    https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
   where multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
   over various nano-objects.
 
