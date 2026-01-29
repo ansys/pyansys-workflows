@@ -47,6 +47,12 @@ jobs:
     with:
       doc-build: true
 
+  maxwell2d-lumerical:
+    uses: ./.github/workflows/maxwell2d-lumerical.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   compile-docs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
@@ -104,6 +110,12 @@ jobs:
         uses: actions/download-artifact@v7
         with:
           name: mapdl-dpf-docs
+          path: doc/
+
+      - name: Download artifacts for maxwell2d-lumerical
+        uses: actions/download-artifact@v7
+        with:
+          name: maxwell2d-lumerical-docs
           path: doc/
 
       - name: Build the documentation

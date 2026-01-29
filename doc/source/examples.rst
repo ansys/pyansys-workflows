@@ -12,8 +12,10 @@ Workflow examples
    examples/geometry-mesh-fluent/index
    examples/mapdl-dpf/index
    examples/speos-optislang/index
+   examples/maxwell2d-lumerical/index
    .. TODO: enable when issues in PyMechanical are resolved
       examples/geometry-mechanical-dpf/index
+
 
 .. include:: examples/fluent-mechanical/index.rst
     :start-line: 1
@@ -29,6 +31,10 @@ Workflow examples
     :end-before: .. toctree
 
 .. include:: examples/geometry-mesh-fluent/index.rst
+    :start-line: 1
+    :end-before: .. toctree
+
+.. include:: examples/maxwell2d-lumerical/index.rst
     :start-line: 1
     :end-before: .. toctree
 

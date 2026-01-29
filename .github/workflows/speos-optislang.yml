@@ -98,7 +98,7 @@ jobs:
           BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
         shell: bash
         run: |
-          .venv/Scripts/activate
+          source .venv/Scripts/activate
           cd doc
           pip install -r requirements.txt
           ./make.bat html
