@@ -34,11 +34,11 @@ Workflow examples
     :start-line: 1
     :end-before: .. toctree
 
-.. include:: examples/maxwell2d-lumerical/index.rst
+.. include:: examples/mapdl-dpf/index.rst
     :start-line: 1
     :end-before: .. toctree
 
-.. include:: examples/mapdl-dpf/index.rst
+.. include:: examples/maxwell2d-lumerical/index.rst
     :start-line: 1
     :end-before: .. toctree
 
