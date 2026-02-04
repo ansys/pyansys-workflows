@@ -326,7 +326,7 @@ gc_0 = FDTD(gc_opt_path)
 
 gc_1 = FDTD(read_data_path)
 print(
-    "Optimize for the Nodal point located",
+    "Optimize for the nodal point located",
     str(gc_1.getv("T5")),
     "um, above the linearly apodized grating coupler",
 )
