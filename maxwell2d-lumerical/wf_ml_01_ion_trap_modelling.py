@@ -192,7 +192,7 @@ m2d.assign_voltage(assignment=dc.id, amplitude=0, name="V_dc")
 m2d.assign_voltage(assignment=rf.id, amplitude=1, name="V_rf")
 
 # Define mesh settings
-# For good quality results, please uncomment the following  mesh operations lines
+# For good quality results, uncomment the following mesh operations lines
 #
 # m2d.mesh.assign_length_mesh(
 #     assignment=center_line.id,
