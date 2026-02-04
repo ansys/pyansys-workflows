@@ -247,7 +247,7 @@ m2d.validate_simple()
 m2d.analyze_setup(name=setup_name, use_auto_settings=False, cores=NUM_CORES)
 
 #  Create and solve parametric sweep
-#  Keeping w_rf constant, we recompute the w_dc values from the desired ratios w_rf/w_dc
+#  Keeping w_rf constant, recompute the w_dc values from the desired ratios w_rf/w_dc
 
 div_sweep_start = 1.4
 div_sweep_stop = 2
