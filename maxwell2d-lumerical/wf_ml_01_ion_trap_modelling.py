@@ -22,8 +22,8 @@
 """
 .. _ref_wf_ml_01_ion_trap_modelling:
 
-Maxwell2D - Simplified IonTrap Modelling
-########################################
+Maxwell 2D - Simplified ion trap modeling
+#########################################
 
 Problem description
 -------------------
