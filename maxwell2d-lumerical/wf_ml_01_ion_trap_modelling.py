@@ -379,7 +379,7 @@ schema_img.close()
 ###############################################################################
 # Exit the solver
 # ---------------
-# Close FDTD projects and release AEDT.
+# Close FDTD projects and release AEDT
 #
 
 gc_0.close()
