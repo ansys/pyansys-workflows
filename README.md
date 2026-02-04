@@ -35,7 +35,7 @@ for every part of the simulation process. The available workflows are:
   All temperature results in different chips are displayed using DPF. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For simulation: Ansys Mechanical
-    - For post-procesing: Ansys Data Processing Framework
+    - For postprocesing: Ansys Data Processing Framework
 
 - [Fluent and mechanical analysis](https://github.com/ansys/pyansys-workflows/tree/main/fluent-mechanical): this workflow demonstrates how to perform a Conjugate Heat Transfer (CHT) analysis for an exhaust manifold to simulate heat transfer between solid and fluid domains, calculate heat transfer coefficients (HTCs) and temperature distribution, and export results for thermo-mechanical analysis. The workflow then performs thermo-mechanical assessment to evaluate the exhaust manifold's performance under thermal cycling, aiding in design optimization for durability
   These Ansys products are used:
