@@ -283,7 +283,7 @@ my_plots[1].update_trace_in_report(
     my_plots[1].get_solution_data().expressions, variations={"div": ["All"]}, context="center_line"
 )
 
-# Identify the zero point for each trace.
+# Identify the zero point for each trace
 
 my_plots[1].add_cartesian_y_marker("0")
 my_plots[1].add_trace_characteristics(
