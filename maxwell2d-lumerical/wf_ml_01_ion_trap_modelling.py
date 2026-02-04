@@ -388,7 +388,7 @@ gc_2.close()
 m2d.save_project()
 m2d.desktop_class.release_desktop()
 
-# Wait 3 seconds to allow AEDT to shut down before cleaning the temporary directory.
+# Wait three seconds to allow AEDT to shut down before cleaning the temporary directory
 time.sleep(3)
 
 # Clean up the temporary folder
