@@ -123,7 +123,7 @@ geom_params = {
     "y_dummy": "300um",
 }
 
-# Define design variables from dictionaries.
+# Define design variables from dictionaries
 
 for k, v in geom_params.items():
     m2d[k] = v
