@@ -54,7 +54,7 @@ These Ansys products are used:
   from Maxwell to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.
   For additional information, see this article:
     https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
-  where multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
+  In this article is also shown how multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
   over various nano-objects.
 
 ## How to run the workflows
