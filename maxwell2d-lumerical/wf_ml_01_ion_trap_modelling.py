@@ -271,8 +271,8 @@ sweep.analyze(cores=NUM_CORES)
 # Create the Ey expression in the PyAEDT advanced field calculator.
 # Due to the symmetric nature of this specific geometry, the electric field
 # node will be located along the center line. The electric field node is the
-# point where the Ey will be zero and can be found directly by Maxwell post
-# processing features.
+# point where the Ey will be zero and can be found directly by Maxwell
+# postprocessing features.
 
 e_line = m2d.post.fields_calculator.add_expression(calculation="e_line", assignment=None)
 my_plots = m2d.post.fields_calculator.expression_plot(
