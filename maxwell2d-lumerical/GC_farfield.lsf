@@ -74,7 +74,7 @@ ny = length(y);
 e2 = E2_far;
 #Get the maximum intensity value
 indexE2_far = find(e2, max(e2));
-#Create the grids that will be used to extract the actual position values
+#Create the grids to use to extract the actual position values
 X = meshgridx(x,y);
 Y = meshgridy(x,y);
 ?Mselect;
