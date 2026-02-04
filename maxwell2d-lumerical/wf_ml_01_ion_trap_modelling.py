@@ -237,7 +237,7 @@ m2d.modeler.duplicate_and_mirror(
 ###############################################################################
 # Run simulation and parametric sweep
 # -----------------------------------
-# Create, validate, and analyze setup.
+# Create, validate, and analyze setup
 
 setup_name = "MySetupAuto"
 setup = m2d.create_setup(name=setup_name)
