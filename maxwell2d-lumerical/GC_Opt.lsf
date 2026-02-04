@@ -2,7 +2,7 @@
 # entirely using script commands, with the goal to focus the output laser beam at a specific distance. Objects are added to the simulation file
 # using the specific add commands. Then the script reads the coordinates of the nodal points calculated from Maxwell
 # and sets the fifth solution as the target distance of the focused beam. An optimization is created based on the defined FoM in the analysis group and uses
-# as optimization parameters, the pitch, the etch depth and the minimum duty cycle of the GC.
+# as optimization parameters, the pitch, the etch depth, and the minimum duty cycle of the GC.
 
 clear;
 switchtolayout;
