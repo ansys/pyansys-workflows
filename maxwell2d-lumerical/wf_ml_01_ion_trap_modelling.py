@@ -87,7 +87,7 @@ lumerical_script_folder = Path(temp_folder.name)  # / "lumerical_scripts"
 node_path = lumerical_script_folder / NODE_FILENAME
 legend_path = lumerical_script_folder / LEGEND_FILENAME
 
-# Launch AEDT and start a Maxwell2D design.
+# Launch AEDT and start a Maxwell 2D design.
 
 project_name = os.path.join(temp_folder.name, "IonTrapMaxwell.aedt")
 m2d = Maxwell2d(
