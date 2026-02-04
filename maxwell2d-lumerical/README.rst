@@ -6,7 +6,7 @@ This workflow uses Ansys Maxwell to model surface electrodes and Ansys Lumerical
 algorithm to define the optimal two-dimensional grating coupler design, which focuses the laser
 beam at the ion trap height.
 
-This workflow is explained in detail in this article:
+This article describes the workflow in detail:
 https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
 
 
