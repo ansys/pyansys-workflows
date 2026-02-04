@@ -1,5 +1,5 @@
 cd(filedirectory(currentscriptname));
-## Read Data from ASCII file ##
+## Read data from ASCII file ##
     M=readdata("legend.txt");
 
 
