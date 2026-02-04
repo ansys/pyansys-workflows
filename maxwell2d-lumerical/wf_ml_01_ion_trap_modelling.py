@@ -268,7 +268,7 @@ sweep.analyze(cores=NUM_CORES)
 ###############################################################################
 # Postprocess
 # -----------
-# Create the Ey expression in the PyAEDT advanced field calculator
+# Create the Ey expression in the PyAEDT advanced field calculator.
 # Due to the symmetric nature of this specific geometry, the electric field
 # node will be located along the center line. The electric field node is the
 # point where the Ey will be zero and can be found directly by Maxwell post
