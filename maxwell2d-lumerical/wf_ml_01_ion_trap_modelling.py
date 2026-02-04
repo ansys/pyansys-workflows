@@ -322,7 +322,7 @@ img_path = shutil.copy(PARENT_DIR_PATH / "img_001.jpg", lumerical_script_folder)
 
 gc_0 = FDTD(gc_opt_path)
 
-# Run the first script: build geometry & run optimization
+# Run the first script: build geometry and run optimization
 
 gc_1 = FDTD(read_data_path)
 print(
