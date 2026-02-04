@@ -1,5 +1,5 @@
-Maxwell2D and Lumerical
-=======================
+Maxwell 2D and Lumerical
+========================
 
 Surface electrodes adjacent to grating couplers render an integrated ion trap.
 In this workflow surface electrodes are modeled using ANSYS Maxwell and grating couplers using
