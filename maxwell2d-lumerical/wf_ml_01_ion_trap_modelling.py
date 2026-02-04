@@ -38,11 +38,11 @@ beam at the ion trap height.
 The workflow is explained in detail in this article:
 https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
 
-The workflow includes the following steps:
-- Set up the Maxwell 2D parametric model
-- Identify the electric field node point for each design point
-- Export the node coordinates for the subsequent Lumerical step
-- Launch the Lumerical scripts
+The workflow consists of these steps:
+- Set up the Maxwell 2D parametric model.
+- Identify the electric field node point for each design point.
+- Export the node coordinates for the subsequent Lumerical step.
+- Launch the Lumerical scripts.
 
 """  # noqa: D400, D415
 
