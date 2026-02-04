@@ -163,7 +163,7 @@ ins = m2d.modeler.create_rectangle(
     material="vacuum",
 )
 
-# Create dummy objects for mesh and center_line for post processing and region
+# Create dummy objects for mesh and center line for postprocessing and region
 
 dummy = m2d.modeler.create_rectangle(
     origin=["0", "metal_thickness/2", "0"],
