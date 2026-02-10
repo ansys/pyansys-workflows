@@ -1,4 +1,4 @@
-name: Speos Optislang Workflow
+name: Maxwell2D Lumerical Workflow
 
 on:
   workflow_dispatch:
@@ -20,12 +20,12 @@ on:
       - main
   pull_request:
     paths:
-      - 'speos-optislang/**'
+      - 'maxwell2d-lumerical/**'
 
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 25.2
-  AWP_ROOT252: 'C:\Program Files\ANSYS Inc\v252'
+  ANSYSEM_ROOT252: 'C:\Program Files\ANSYS Inc\v252\AnsysEM'
   MAIN_PYTHON_VERSION: '3.12'
   ON_CI: true
 
@@ -36,8 +36,8 @@ jobs:
     with:
       doc-build: ${{ inputs.doc-build || false }}
 
-  speos-optislang:
-    name: Speos Optislang
+  maxwell2d-lumerical:
+    name: Maxwell2D Lumerical
     runs-on: [self-hosted, Windows, pyansys-workflows]
     needs: is-only-docs-required
     strategy:
@@ -46,37 +46,16 @@ jobs:
         ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2]') || fromJSON('[25.2]') }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@0c366fd6a839edf440554fa01a7085ccba70ac98 # v4.2.2
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
         with:
           sparse-checkout: |
-            speos-optislang
+            maxwell2d-lumerical
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@cfd55ca82492758d853442341ad4d8010466803a # v5.6.0
+        uses: actions/setup-python@2e3e4b15a884dc73a63f962bff250a855150a234 # v5.6.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
-
-      - name: Set up environment variables
-        shell: bash
-        run: |
-          ANSYS_RELEASE_SHORT="${{ matrix.ansys-release }}"
-          echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
-          ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
-          echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
-
-      - name: Modify ansyslmd.ini file
-        shell: bash
-        run: |
-          # Define the path to the license file
-          LIC_FILE_PATH="C:\Program Files\ANSYS Inc\Shared Files\licensing\ansyslmd.ini"
-          # Verify that the file exists
-          if [ ! -f "$LIC_FILE_PATH" ]; then
-            echo "License file not found at $LIC_FILE_PATH"
-            exit 1
-          fi
-          # REPLACE the line starting with SERVER by something like: SERVER=1055@XX.XXX.XX.XX
-          sed -i "s|^SERVER=.*|SERVER=${{ env.ANSYSLMD_LICENSE_FILE }}|" "$LIC_FILE_PATH"
 
       - name: Install dependencies
         shell: bash
@@ -84,18 +63,20 @@ jobs:
           python -m pip install --upgrade pip
           python -m venv .venv
           source .venv/Scripts/activate
-          pip install -r speos-optislang/requirements_${{ matrix.ansys-release }}.txt
+          pip install -r maxwell2d-lumerical/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Run the workflow script
+        env:
+          AEDT_VERSION: ${{ matrix.ansys-release }}
         shell: bash
         run: |
           source .venv/Scripts/activate
-          python speos-optislang/wf_so_01_light_guide_robustness_study.py
+          python maxwell2d-lumerical/wf_ml_01_ion_trap_modelling.py
 
-      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
-          BUILD_DOCS_SCRIPT: 'speos-optislang/wf_so_01_light_guide_robustness_study.py'
+          BUILD_DOCS_SCRIPT: 'maxwell2d-lumerical/wf_ml_01_ion_trap_modelling.py'
         shell: bash
         run: |
           source .venv/Scripts/activate
@@ -107,14 +88,14 @@ jobs:
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         shell: bash
         run: |
-          find . -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\speos-optislang\\images\\|./images/|g' {} +
+          find doc/_build -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\maxwell2d-lumerical\\images\\|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
-        uses: actions/upload-artifact@v6
+        uses: actions/upload-artifact@v4
         with:
-          name: speos-optislang-docs
+          name: maxwell2d-lumerical-docs
           path: |
             doc/_build/
-            doc/source/examples/speos-optislang/
+            doc/source/examples/maxwell2d-lumerical/
           overwrite: true

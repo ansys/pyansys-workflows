@@ -26,25 +26,36 @@ for every part of the simulation process. The available workflows are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For meshing: Ansys Fluent Meshing
     - For simulation: Ansys Fluent Solver
-- [Geometry, mechanical and post-processing](https://github.com/ansys/pyansys-workflows/tree/main/geometry-mechanical-dpf): this workflow demonstrates how to
+
+- [Geometry, mechanical and postprocessing](https://github.com/ansys/pyansys-workflows/tree/main/geometry-mechanical-dpf): this workflow demonstrates how to
   create a printed circuit board (PCB) geometry, mesh, run steady state and transient thermal analysis,
-  and post-process using DPF. The geometry generated is a simple PCB with multiple chips.
+  and postprocess using DPF. The geometry generated is a simple PCB with multiple chips.
   The exported CAD file (PMDB format) is then imported inside Ansys Mechanical
   to run a steady-state thermal analysis followed by transient analysis.
   All temperature results in different chips are displayed using DPF. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
     - For simulation: Ansys Mechanical
-    - For post-procesing: Ansys Data Processing Framework
-- [Fluent and mechanical analysis](https://github.com/ansys/pyansys-workflows/tree/main/fluent-mechanical): this workflow demonstrates how to perform a Conjugate Heat Transfer (CHT) analysis for an exhaust manifold to simulate heat transfer between solid and fluid domains, calculate heat transfer coefficients (HTCs) and temperature distribution, and export results for thermo-mechanical analysis. The thermo-mechanical assessment is then performed to evaluate the exhaust manifold's performance under thermal cycling, aiding in design optimization for durability
-  The involved Ansys products are:
+    - For postprocesing: Ansys Data Processing Framework
+
+- [Fluent and mechanical analysis](https://github.com/ansys/pyansys-workflows/tree/main/fluent-mechanical): this workflow demonstrates how to perform a Conjugate Heat Transfer (CHT) analysis for an exhaust manifold to simulate heat transfer between solid and fluid domains, calculate heat transfer coefficients (HTCs) and temperature distribution, and export results for thermo-mechanical analysis. The workflow then performs thermo-mechanical assessment to evaluate the exhaust manifold's performance under thermal cycling, aiding in design optimization for durability
+  These Ansys products are used:
     - For fluids analysis: Ansys Fluent
     - For thermal analysis: Ansys Mechanical
-- [Speos and optiSLang robustness analysis](https://github.com/ansys/pyansys-workflows/tree/main/speos-optislang): this workflow performs a robustness
-   study to evaluate how variations in LED source power and position influence lightguide performance using PySpeos and PyOptiSLang. The analysis quantifies performance
-   through key metrics such as RMS contrast, average luminance, and the number of failed regulations.
-  The involved Ansys products are:
+
+- [Speos and optiSLang robustness analysis](https://github.com/ansys/pyansys-workflows/tree/main/speos-optislang): this workflow performs a robustness study to evaluate how variations in LED source power and position influence lightguide performance. The analysis quantifies performance through key metrics such as RMS contrast, average luminance, and the number of failed regulations.
+
+These Ansys products are used:
     - For optical analysis: Ansys Speos
     - For robustness analysis: Ansys optiSLang
+
+- [Maxwell2D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/maxwell2d-lumerical): this workflow
+  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes.
+  Ansys Maxwell computes the electrostatic response of a three-rail surface electrode design, while Ansys Lumerical retrieves the data
+  from Maxwell to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.
+  For additional information, see this article:
+    https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
+  In this article is also shown how multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
+  over various nano-objects.
 
 ## How to run the workflows
 
