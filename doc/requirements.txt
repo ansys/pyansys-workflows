@@ -21,5 +21,5 @@ pillow==12.1.1
 ipyvtklink==0.2.3
 ipykernel==7.2.0
 pyvista[jupyter]==0.45.3
-trame-vtk!=2.8.16
+trame-vtk<2.10.3
 vtk==9.4.2
