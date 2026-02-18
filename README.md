@@ -57,6 +57,17 @@ These Ansys products are used:
   In this article is also shown how multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
   over various nano-objects.
 
+
+- [Q3D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/q3d-lumerical-new): this workflow
+  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes. 
+  It implements the same configuration as the previous example, where the electromagnetic analysis is performed in 3D and based on the boundary element method.
+  Ansys Q3D computes the electrostatic response of a three-rail surface electrode design, while Ansys Lumerical retrieves the data
+  from Q3D to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.
+  For additional information, see this article:
+    https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
+  In this article is also shown how multiple grating couplers can provide a platform for more complex field distributions and optical force calculation
+  over various nano-objects.
+
 ## How to run the workflows
 
 All workflows are structured in the same way, with a Python script for each part of the simulation process.

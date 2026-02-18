@@ -76,7 +76,7 @@ jobs:
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
-          BUILD_DOCS_SCRIPT: 'maxwell2d-lumerical/wf_ml_01_ion_trap_modelling.py'
+          BUILD_DOCS_SCRIPT: 'maxwell2d-lumerical/wf_q3l_01_ion_trap_modelling.py'
         shell: bash
         run: |
           source .venv/Scripts/activate
