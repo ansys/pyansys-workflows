@@ -59,7 +59,7 @@ These Ansys products are used:
 
 
 - [Q3D and Lumerical ion trap modelling](https://github.com/ansys/pyansys-workflows/tree/main/q3d-lumerical-new): this workflow
-  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes. 
+  is fully automated and models a chip-based ion trap that incorporates optical antennas with surface electrodes.
   It implements the same configuration as the previous example, where the electromagnetic analysis is performed in 3D and based on the boundary element method.
   Ansys Q3D computes the electrostatic response of a three-rail surface electrode design, while Ansys Lumerical retrieves the data
   from Q3D to optimize the grating coupler design that operates as an optical antenna for tightly focused laser beams.

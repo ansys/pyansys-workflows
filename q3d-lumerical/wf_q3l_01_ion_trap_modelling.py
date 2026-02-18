@@ -95,7 +95,7 @@ q3d = Q3d(
     design="01_Q3D_IonTrap_3rails",
     version=AEDT_VERSION,
     non_graphical=NG_MODE,
-    new_desktop=True
+    new_desktop=True,
 )
 q3d.modeler.model_units = "um"
 
@@ -111,7 +111,7 @@ q3d.modeler.model_units = "um"
 # Initialize dictionaries for design variables.
 
 geom_params = {
-    "div": str(73/41),
+    "div": str(73 / 41),
     "w_rf": "41um",
     "w_dc": "41um*div",
     "w_cut": "4um",
@@ -120,7 +120,7 @@ geom_params = {
     "glass_thickness": "10um",
     "x_dummy": "2um",
     "y_dummy": "300um",
-    "Z_length": "300um"
+    "Z_length": "300um",
 }
 
 # Define design variables from dictionaries
@@ -131,68 +131,78 @@ for k, v in geom_params.items():
 # Create design geometry
 
 dc = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["-w_dc/2" ,"-metal_thickness/2" ,"0"],
+    orientation="XY",
+    origin=["-w_dc/2", "-metal_thickness/2", "0"],
     sizes=["w_dc", "metal_thickness"],
     name="DC",
-    material="aluminum"
+    material="aluminum",
 )
 # dc.color = (0, 0, 255)  # rgb
 
 gnd = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["-(w_dc/2+w_cut+w_rf+offset_glass)" ,"-(metal_thickness/2+glass_thickness)" ,"0"],
+    orientation="XY",
+    origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-(metal_thickness/2+glass_thickness)", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness"],
     name="gnd",
-    material="aluminum"
+    material="aluminum",
 )
 rf = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["-(w_dc/2+w_cut+w_rf)" ,"-metal_thickness/2" ,"0"],
+    orientation="XY",
+    origin=["-(w_dc/2+w_cut+w_rf)", "-metal_thickness/2", "0"],
     sizes=["w_rf", "metal_thickness"],
     name="RF",
-    material="aluminum"
+    material="aluminum",
 )
 sub_glass = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["-(w_dc/2+w_cut+w_rf+offset_glass)" ,"-metal_thickness/2" ,"0"],
+    orientation="XY",
+    origin=["-(w_dc/2+w_cut+w_rf+offset_glass)", "-metal_thickness/2", "0"],
     sizes=["2*(w_dc/2+w_cut+w_rf+offset_glass)", "-glass_thickness"],
     name="substrate_glass",
-    material="glass"
+    material="glass",
 )
 ins = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["-(w_dc/2+w_cut)" ,"-metal_thickness/2" ,"0"],
+    orientation="XY",
+    origin=["-(w_dc/2+w_cut)", "-metal_thickness/2", "0"],
     sizes=["w_cut", "metal_thickness"],
     name="ins",
-    material="vacuum"
+    material="vacuum",
 )
 
 # Create dummy objects for mesh and center line for postprocessing and region
 
 dummy = q3d.modeler.create_rectangle(
-    orientation = "XY",
-    origin=["0" ,"metal_thickness/2" ,"0"],
+    orientation="XY",
+    origin=["0", "metal_thickness/2", "0"],
     sizes=["-x_dummy", "y_dummy"],
     name="dummy",
-    material="vacuum"
+    material="vacuum",
 )
 
 # Extrude in z-direction
 
-q3d.modeler.sweep_along_vector(assignment=q3d.modeler._get_model_objects(),
-                               sweep_vector=[0,0,"Z_length"],
-                               draft_angle=0,
-                               draft_type='Round')
+q3d.modeler.sweep_along_vector(
+    assignment=q3d.modeler._get_model_objects(),
+    sweep_vector=[0, 0, "Z_length"],
+    draft_angle=0,
+    draft_type="Round",
+)
 
 # Create center line for post-processing
 
-center_line_length = 300*1e-6 #300 um
-center_line_length_str = str(center_line_length*1e6) #in um
-mid_center_line_length_str = str(0.5*center_line_length*1e6) #in um
-center_line = q3d.modeler.create_polyline(points=[["0","metal_thickness/2",str(mid_center_line_length_str)+"um"],
-                                                  ["0","metal_thickness/2+"+center_line_length_str+"um",str(mid_center_line_length_str)+"um"]],
-                                          name='center_line')
+center_line_length = 300 * 1e-6  # 300 um
+center_line_length_str = str(center_line_length * 1e6)  # in um
+mid_center_line_length_str = str(0.5 * center_line_length * 1e6)  # in um
+center_line = q3d.modeler.create_polyline(
+    points=[
+        ["0", "metal_thickness/2", str(mid_center_line_length_str) + "um"],
+        [
+            "0",
+            "metal_thickness/2+" + center_line_length_str + "um",
+            str(mid_center_line_length_str) + "um",
+        ],
+    ],
+    name="center_line",
+)
 
 # Define excitations
 
@@ -200,7 +210,7 @@ q3d.auto_identify_nets()
 
 # Define mesh settings
 
-q3d.mesh.assign_initial_mesh(method = "AnsoftClassic")
+q3d.mesh.assign_initial_mesh(method="AnsoftClassic")
 
 # For good quality results, uncomment the following mesh operations lines
 #
@@ -230,10 +240,12 @@ q3d.mesh.assign_initial_mesh(method = "AnsoftClassic")
 
 # Duplicate structures and assignments to complete the model
 
-q3d.modeler.duplicate_and_mirror(assignment= [rf.id,dummy.id,ins.id],
-        origin = ["0","0","0"],
-        vector = ["-1","0","0"],
-        duplicate_assignment=True)
+q3d.modeler.duplicate_and_mirror(
+    assignment=[rf.id, dummy.id, ins.id],
+    origin=["0", "0", "0"],
+    vector=["-1", "0", "0"],
+    duplicate_assignment=True,
+)
 
 ###############################################################################
 # Run simulation and parametric sweep
@@ -241,7 +253,7 @@ q3d.modeler.duplicate_and_mirror(assignment= [rf.id,dummy.id,ins.id],
 # Create, validate, and analyze setup
 
 setup_name = "MySetupAuto"
-setup1 = q3d.create_setup(props={"Name":setup_name,"AdaptiveFreq": "1Hz","SaveFields":True})
+setup1 = q3d.create_setup(props={"Name": setup_name, "AdaptiveFreq": "1Hz", "SaveFields": True})
 setup1.ac_rl_enabled = False
 setup1.dc_enabled = False
 setup1.update()
@@ -251,22 +263,21 @@ q3d.analyze_setup(name=setup_name, use_auto_settings=False, cores=NUM_CORES)
 #  Create and solve parametric sweep
 #  Keeping w_rf constant, recompute the w_dc values from the desired ratios w_rf/w_dc
 
-div_sweep_start=1.4
-div_sweep_stop=2
+div_sweep_start = 1.4
+div_sweep_stop = 2
 sweep = q3d.parametrics.add(
     variable="div",
     start_point=div_sweep_start,
-    end_point = div_sweep_stop,
-    step = 0.2,
+    end_point=div_sweep_stop,
+    step=0.2,
     variation_type="LinearStep",
-    name="w_dc_sweep"
+    name="w_dc_sweep",
 )
-add_points= [1,1.3]
-[sweep.add_variation(
-	sweep_variable="div",
-	start_point=p,
-	variation_type="SingleValue"
-) for p in add_points]
+add_points = [1, 1.3]
+[
+    sweep.add_variation(sweep_variable="div", start_point=p, variation_type="SingleValue")
+    for p in add_points
+]
 sweep["SaveFields"] = True
 sweep.analyze(cores=NUM_CORES)
 
@@ -281,25 +292,41 @@ sweep.analyze(cores=NUM_CORES)
 
 # Edit sources to scale the solution for the actual assigned potentials.
 
-sources_cg = {"DC": ("0V", "0deg"), "gnd": ("0V", "0deg"),"RF": ("1V", "0deg"),"RF_1":("1V", "0deg")}
+sources_cg = {
+    "DC": ("0V", "0deg"),
+    "gnd": ("0V", "0deg"),
+    "RF": ("1V", "0deg"),
+    "RF_1": ("1V", "0deg"),
+}
 q3d.edit_sources(sources_cg)
 
 # Evaluate the E- fieled on the control line and export nodal points
 
 line_name = "Line1"
-q3d.insert_em_field_line(assignment="center_line",points=1000,name = line_name)
-my_plots = q3d.post.create_report(expressions="re(EY)",primary_sweep_variable="NormalizedDistance",report_category="Static EM Fields",plot_type="Rectangular Plot",context=line_name,plot_name ="my_plot")
+q3d.insert_em_field_line(assignment="center_line", points=1000, name=line_name)
+my_plots = q3d.post.create_report(
+    expressions="re(EY)",
+    primary_sweep_variable="NormalizedDistance",
+    report_category="Static EM Fields",
+    plot_type="Rectangular Plot",
+    context=line_name,
+    plot_name="my_plot",
+)
 my_plots.edit_x_axis_scaling(min_scale="0.01", max_scale="1")
-my_plots.update_trace_in_report(my_plots.get_solution_data().expressions,variations={"div": ["All"]}, context=line_name)
+my_plots.update_trace_in_report(
+    my_plots.get_solution_data().expressions, variations={"div": ["All"]}, context=line_name
+)
 
 # Identify the zero point for each trace
 
 my_plots.add_cartesian_y_marker("0")
-my_plots.add_trace_characteristics("XAtYVal", arguments=["0"], solution_range=["Full", "0.01", "1.0"])
+my_plots.add_trace_characteristics(
+    "XAtYVal", arguments=["0"], solution_range=["Full", "0.01", "1.0"]
+)
 
 # Export the points at which Ey=0 to a TXT file
 my_plots.edit_general_settings(use_scientific_notation=True)
-my_plots.export_table_to_file(my_plots.plot_name,str(node_path), "Legend")
+my_plots.export_table_to_file(my_plots.plot_name, str(node_path), "Legend")
 
 ###############################################################################
 # Prepare and run Lumerical simulation
