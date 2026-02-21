@@ -1,0 +1,63 @@
+:orphan:
+
+Geometry and meshing workflow
+=============================
+
+Below is an example of a geometry and meshing workflow using
+PyAnsys Geometry and PyPrimeMesh.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to generate a CAD file using PyAnsys Geometry via the Ansys Geometry Service. The example demonstrates how to create a sketch, perform modeling operations, and export the file in different formats (in this specific case, FMD).">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mesh/images/thumb/sphx_glr_wf_gm_01_geometry_thumb.png
+    :alt:
+
+  :doc:`/examples/geometry-mesh/wf_gm_01_geometry`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Geometry generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example shows how to generate a mesh from a CAD model. The CAD model is imported from a file, and the mesh is generated using the Ansys PRIME API.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mesh/images/thumb/sphx_glr_wf_gm_02_mesh_thumb.png
+    :alt:
+
+  :doc:`/examples/geometry-mesh/wf_gm_02_mesh`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mesh generation</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/geometry-mesh/wf_gm_01_geometry
+   /examples/geometry-mesh/wf_gm_02_mesh
+

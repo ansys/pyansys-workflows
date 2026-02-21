@@ -1,0 +1,1171 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Mesh generation &#8212; PyAnsys Workflows</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing';</script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Fluids simulation" href="wf_gmf_03_fluent_solver.html" />
+    <link rel="prev" title="Geometry generation" href="wf_gmf_01_geometry.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Workflows - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Workflows - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../fluent-mechanical/index.html">Fluent and mechanical heat transfer workflow for exhaust manifold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh/index.html">Geometry and meshing workflow</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Geometry, meshing and fluids workflow</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="wf_gmf_01_geometry.html">Geometry generation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Mesh generation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wf_gmf_03_fluent_solver.html">Fluids simulation</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapdl-dpf/index.html">MAPDL and DPF workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speos-optislang/index.html">Speos, optiSLang workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maxwell2d-lumerical/index.html">Maxwell 2D and Lumerical</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Workflow examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Geometry, meshing and fluids workflow</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Mesh generation</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-geometry-mesh-fluent-wf-gmf-02-fluent-meshing-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="mesh-generation">
+<span id="ref-geometry-mesh-fluent-02-fluent-meshing"></span><span id="sphx-glr-examples-geometry-mesh-fluent-wf-gmf-02-fluent-meshing-py"></span><h1>Mesh generation<a class="headerlink" href="#mesh-generation" title="Link to this heading">#</a></h1>
+<p>This example demonstrates how to generate a mesh for a NACA airfoil using Fluent Meshing.</p>
+<p>Starting from the geometry created in the previous example, the script generates a mesh
+using Fluent Meshing. The parameters are set to generate a mesh with a surface mesh size
+of 2 and 1000, and a volume mesh size of 512. It leverages the Fluent Meshing Workflow
+API to create the mesh.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.fluent.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyfluent</span>
+</pre></div>
+</div>
+<section id="parameters-for-the-script">
+<h2>Parameters for the script<a class="headerlink" href="#parameters-for-the-script" title="Link to this heading">#</a></h2>
+<p>The following parameters are used to control the script execution. You can
+modify these parameters to suit your needs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># NACA 4-digits airfoil geometry</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">NACA_AIRFOIL</span></a> <span class="o">=</span> <span class="s2">&quot;6412&quot;</span>
+
+<span class="c1"># Data directory</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DATA_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/os.path.html#os.path.dirname" title="os.path.dirname" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="generate-the-mesh">
+<h2>Generate the mesh<a class="headerlink" href="#generate-the-mesh" title="Link to this heading">#</a></h2>
+<p>The function <cite>generate_mesh</cite> generates a mesh for a NACA airfoil using Fluent Meshing.
+The function takes the following parameters:</p>
+<ul class="simple">
+<li><p><cite>naca_airfoil</cite>: NACA 4-digits airfoil number.</p></li>
+<li><p><cite>data_dir</cite>: Directory to save the mesh file.</p></li>
+<li><p><cite>ui_mode</cite>: User interface mode. The default is None.</p></li>
+<li><p><cite>container_dict</cite>: Configuration for the Fluent container. The default is None.</p></li>
+</ul>
+<p>The function launches Fluent Meshing and initializes the workflow for watertight geometry.
+It imports the geometry, generates the surface mesh, describes the geometry, updates
+boundaries and regions, adds boundary layers, generates the volume mesh, checks the mesh,
+writes the mesh, and closes Fluent Meshing.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">generate_mesh</span><span class="p">(</span>
+    <span class="n">naca_airfoil</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">data_dir</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">ui_mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="p">:</span> <span class="nb">dict</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate a mesh for a NACA airfoil using Fluent Meshing.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    naca_airfoil : str</span>
+<span class="sd">        NACA 4-digits airfoil number.</span>
+<span class="sd">    data_dir : str</span>
+<span class="sd">        Directory to save the mesh file.</span>
+<span class="sd">    ui_mode : str, optional</span>
+<span class="sd">        User interface mode. The default is None.</span>
+<span class="sd">    container_dict : dict, optional</span>
+<span class="sd">        Configuration for the Fluent container. The default is None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Launch Fluent Meshing</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">meshing</span> <span class="o">=</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">launch_fluent</span><span class="p">(</span>
+            <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="p">,</span>
+            <span class="n">start_container</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+            <span class="n">precision</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+            <span class="n">processor_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;meshing&quot;</span><span class="p">,</span>
+            <span class="n">ui_mode</span><span class="o">=</span><span class="s2">&quot;no_gui_or_graphics&quot;</span><span class="p">,</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+            <span class="n">cleanup_on_exit</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">start_timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">meshing</span> <span class="o">=</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">launch_fluent</span><span class="p">(</span>
+            <span class="n">precision</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+            <span class="n">processor_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+            <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;meshing&quot;</span><span class="p">,</span>
+            <span class="n">ui_mode</span><span class="o">=</span><span class="n">ui_mode</span><span class="p">,</span>
+            <span class="n">cwd</span><span class="o">=</span><span class="n">data_dir</span><span class="p">,</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Initialize workflow - Watertight Geometry</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">InitializeWorkflow</span><span class="p">(</span><span class="n">WorkflowType</span><span class="o">=</span><span class="s2">&quot;Watertight Geometry&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Import the geometry</span>
+    <span class="n">geo_import</span> <span class="o">=</span> <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Import Geometry&quot;</span><span class="p">]</span>
+    <span class="n">geo_import</span><span class="o">.</span><span class="n">Arguments</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;FileName&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;NACA_Airfoil_</span><span class="si">{</span><span class="n">naca_airfoil</span><span class="si">}</span><span class="s2">.pmdb&quot;</span><span class="p">),</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">geo_import</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Generate surface mesh</span>
+    <span class="n">surface_mesh_gen</span> <span class="o">=</span> <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Generate the Surface Mesh&quot;</span><span class="p">]</span>
+    <span class="n">surface_mesh_gen</span><span class="o">.</span><span class="n">Arguments</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;CFDSurfaceMeshControls&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;MaxSize&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span> <span class="s2">&quot;MinSize&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">}}</span>
+    <span class="p">)</span>
+    <span class="n">surface_mesh_gen</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Describe the geometry</span>
+    <span class="n">describe_geo</span> <span class="o">=</span> <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Describe Geometry&quot;</span><span class="p">]</span>
+    <span class="n">describe_geo</span><span class="o">.</span><span class="n">UpdateChildTasks</span><span class="p">(</span><span class="n">SetupTypeChanged</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">describe_geo</span><span class="o">.</span><span class="n">Arguments</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
+        <span class="p">{</span><span class="s2">&quot;SetupType&quot;</span><span class="p">:</span> <span class="s2">&quot;The geometry consists of only fluid regions with no voids&quot;</span><span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">describe_geo</span><span class="o">.</span><span class="n">UpdateChildTasks</span><span class="p">(</span><span class="n">SetupTypeChanged</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">describe_geo</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Update boundaries</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Update Boundaries&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Update regions</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Update Regions&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Add boundary layers</span>
+    <span class="n">add_boundary_layer</span> <span class="o">=</span> <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Add Boundary Layers&quot;</span><span class="p">]</span>
+    <span class="n">add_boundary_layer</span><span class="o">.</span><span class="n">Arguments</span><span class="o">.</span><span class="n">set_state</span><span class="p">({</span><span class="s2">&quot;NumberOfLayers&quot;</span><span class="p">:</span> <span class="mi">12</span><span class="p">})</span>
+    <span class="n">add_boundary_layer</span><span class="o">.</span><span class="n">AddChildAndUpdate</span><span class="p">()</span>
+
+    <span class="c1"># Generate volume mesh</span>
+    <span class="n">volume_mesh_gen</span> <span class="o">=</span> <span class="n">meshing</span><span class="o">.</span><span class="n">workflow</span><span class="o">.</span><span class="n">TaskObject</span><span class="p">[</span><span class="s2">&quot;Generate the Volume Mesh&quot;</span><span class="p">]</span>
+    <span class="n">volume_mesh_gen</span><span class="o">.</span><span class="n">Arguments</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span>
+        <span class="p">{</span>
+            <span class="s2">&quot;VolumeFill&quot;</span><span class="p">:</span> <span class="s2">&quot;poly-hexcore&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;VolumeFillControls&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;HexMaxCellLength&quot;</span><span class="p">:</span> <span class="mi">512</span><span class="p">},</span>
+            <span class="s2">&quot;VolumeMeshPreferences&quot;</span><span class="p">:</span> <span class="p">{</span>
+                <span class="s2">&quot;CheckSelfProximity&quot;</span><span class="p">:</span> <span class="s2">&quot;yes&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;ShowVolumeMeshPreferences&quot;</span><span class="p">:</span> <span class="kc">True</span><span class="p">,</span>
+            <span class="p">},</span>
+        <span class="p">}</span>
+    <span class="p">)</span>
+    <span class="n">volume_mesh_gen</span><span class="o">.</span><span class="n">Execute</span><span class="p">()</span>
+
+    <span class="c1"># Check mesh</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">tui</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">check_mesh</span><span class="p">()</span>
+
+    <span class="c1"># Write mesh</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">tui</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">write_mesh</span><span class="p">(</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><span class="n">data_dir</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;NACA_Airfoil_</span><span class="si">{</span><span class="n">naca_airfoil</span><span class="si">}</span><span class="s2">.msh.h5&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Close Fluent Meshing</span>
+    <span class="n">meshing</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+</section>
+<section id="executing-the-mesh-generation">
+<h2>Executing the mesh generation<a class="headerlink" href="#executing-the-mesh-generation" title="Link to this heading">#</a></h2>
+<p>The previous function is called to generate the mesh for the NACA airfoil.
+The mesh is saved in the <cite>outputs</cite> directory. Depending on the environment,
+the script will run in a container or locally.</p>
+<p>Depending on the environment, the script will run in a container or locally.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;PYANSYS_WORKFLOWS_CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">command_list</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;FLUENT_DOCKER_EXEC_COMMAND&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">()</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">command_list</span></a><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;-meshing&quot;</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fluent_image&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;FLUENT_DOCKER_IMAGE&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">command_list</span></a><span class="p">,</span>
+        <span class="s2">&quot;mount_source&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DATA_DIR</span></a><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="c1"># https://fluent.docs.pyansys.com/version/stable/api/general/launcher/fluent_container.html</span>
+    <span class="n">generate_mesh</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">NACA_AIRFOIL</span></a><span class="p">,</span> <span class="s2">&quot;/home/container/workdir&quot;</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">generate_mesh</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">NACA_AIRFOIL</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">DATA_DIR</span></a><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>pyfluent.launcher WARNING: Configuring Fluent container to mount to /home/runner/work/pyansys-workflows/pyansys-workflows/geometry-mesh-fluent/outputs, with this path available as /home/container/workdir for the Fluent session running inside the container.
+
+Warning: PMDB file will not be saved as the same is being imported.
+
+Importing one geom object per program-controlled and one zone per body ...
+Initializing ANSYS component system ...
+running Ansys.Meshing.FieldMesher.exe ...
+creating FMComponent instance ...
+querying IFieldMesher interface ...
+AnsysFieldMesher build date: Jun  3 2024 10:34:31
+
+argv[0] = /ansys_inc/v242/aisol/CommonFiles/linx64/ansys.meshing.fieldmesher.exe
+argv[1] = -B
+argv[2] = /ansys_inc/v242/commonfiles/CPython/3_10/linx64/Release/python/../Ansys/TGrid/CADReaders.py
+argv[3] = -a
+argv[4] = /home/container/workdir/FM_2fb469153c9a_182/options1771638795.181403182.xml
+argv[5] = -a
+argv[6] = /home/container/workdir/FM_2fb469153c9a_182/options1771638795.181403182.xml
+    /ansys_inc/v242/aisol/CommonFiles/linx64/ansys.meshing.fieldmesher.exe started by root on 2fb469153c9a linx64 on Sat Feb 21 01:53:15 2026
+    using Python 3.10.12 (main, Mar 26 2024, 02:17:48) [GCC 8.2.0]
+
+    using Ansys.Meshing.FieldMesher build Jun  3 2024 10:30:46
+
+    running ANSYS TGrid CADToTGridConverter ...
+    setting up parameters ...
+    setting up parameters done.
+    running conversion ...
+    converting 1 file(s) from Workbench to FLTG using output path &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638795.181403182.tgf&#39;
+    converting file &#39;NACA_Airfoil_6412.pmdb&#39; (1 of 1) from Workbench to FLTG using output path &#39;/home/container/workdir/FM_2fb469153c9a_182&#39;
+    importing data ...
+    importing meshing model from PartMgr from file &#39;/home/container/workdir/NACA_Airfoil_6412.pmdb&#39; ...
+    setting enclosure and symmetry processing to False
+    setting transfer named selections to True
+    setting named selection prefixes to &#39;&#39;
+    setting mixed import resolution type to &#39;SolidAndSurface&#39;
+    setting target application to &#39;FluentMeshing&#39;
+    initializing part manager from file ...
+    processing assembly &#39;NACA_Airfoil_6412&#39; with ID 1 and reference key &#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+    &lt;IdTable xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+      &lt;Table&gt;
+        &lt;Entry&gt;
+          &lt;Text&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:2&quot; /&amp;gt;&lt;/Text&gt;
+          &lt;ExplodedBodyText&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:22&quot; /&amp;gt;&lt;/ExplodedBodyText&gt;
+          &lt;Id&gt;10000&lt;/Id&gt;
+          &lt;IsExploded&gt;true&lt;/IsExploded&gt;
+        &lt;/Entry&gt;
+        &lt;Entry&gt;
+          &lt;Text&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:2&quot; /&amp;gt;&lt;/Text&gt;
+          &lt;ExplodedBodyText&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:4819&quot; /&amp;gt;&lt;/ExplodedBodyText&gt;
+          &lt;Id&gt;10001&lt;/Id&gt;
+          &lt;IsExploded&gt;true&lt;/IsExploded&gt;
+        &lt;/Entry&gt;
+      &lt;/Table&gt;
+    &lt;/IdTable&gt;&#39;
+    length unit = [m]
+    processing part &#39;NACA_Airfoil_6412&#39; with ID 3
+    processing part &#39;NACA_Airfoil_6412&#39; with ID 5
+    processing named selection &#39;Outlet Fluid&#39;
+    processing named selection &#39;Inlet Fluid&#39;
+    processing named selection &#39;Surrounding Faces&#39;
+    processing named selection &#39;Airfoil Faces&#39;
+    processing data ...
+    removing named collections of entities ...
+    removing named collections of entities stopped, no named collections selected.
+    analyzing feature edges ...
+    detecting feature edges, feature angle = 40 [deg] ...
+        Data information
+            Meshing model
+                Attributes:
+                    &#39;LengthUnit&#39;: &#39;[mm]&#39;
+                Entity summary:
+                    Collection: 4
+                    Component : 3
+                    Body      : 2
+                    Shell     : 2
+                    Face      : 406
+                    Loop      : 406
+                    Edge      : 1208
+                    Vertex    : 806
+                    Surface   : 406
+                    Curve     : 1208
+                Tessellation summary:
+                    Face facets  : 1604
+                    Edge segments: 1208
+                Bounding box:
+                    (-4500, -1000, -2000) x (5500, 1000, 3000)
+                Assembly component hierarchy:
+                    &#39;NACA_Airfoil_6412&#39;
+                      &#39;NACA_Airfoil_6412&#39;
+                      &#39;NACA_Airfoil_6412&#39;
+                NamedCollections:
+                    &#39;Outlet Fluid&#39;
+                    &#39;Inlet Fluid&#39;
+                    &#39;Surrounding Faces&#39;
+                    &#39;Airfoil Faces&#39;
+
+
+    exporting FLTG data to file &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638795.181403182.tgf&#39; ...
+    writing face-based mesh file &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638795.181403182.tgf&#39; ...
+    ======== Exported Data ========
+    Entity summary:
+        Object       : 2
+        Object region: 6
+        Zone         : 9
+
+    running conversion done.
+    running ANSYS TGrid CADToTGridConverter done.
+    ran ANSYS TGrid CADToTGridConverter in 0.170 [s]
+
+Reading &quot;/home/container/workdir/FM_2fb469153c9a_182/out1771638795.181403182.tgf&quot;...
+
+nodes: 1612
+edges: 812
+faces: 1604
+cells: 0
+generating pointers...done.
+extracting boundary entities...
+ 1612 boundary nodes.
+ 1604 boundary faces.
+ 4 boundary face zones.
+done.
+analyzing boundary connectivity...done.
+
+
+---------------- Import of NACA_Airfoil_6412, consisting of 2 parts/objects, complete.
+
+Writing &quot;/home/container/workdir/FM_2fb469153c9a_182/TaskObject3.msh.h5&quot; ...
+writing 1 node zones
+writing 5 edge zones
+writing 4 face zones
+writing node curvature data...
+done.
+---------------- The Global Max size was adjusted to 1000
+
+Importing one mesh object per program-controlled and one zone per body ...
+Initializing ANSYS component system ...
+running Ansys.Meshing.FieldMesher.exe ...
+creating FMComponent instance ...
+querying IFieldMesher interface ...
+AnsysFieldMesher build date: Jun  3 2024 10:34:31
+
+argv[0] = /ansys_inc/v242/aisol/CommonFiles/linx64/ansys.meshing.fieldmesher.exe
+argv[1] = -B
+argv[2] = /ansys_inc/v242/commonfiles/CPython/3_10/linx64/Release/python/../Ansys/TGrid/CADReaders.py
+argv[3] = -a
+argv[4] = /home/container/workdir/FM_2fb469153c9a_182/options1771638798.190057182.xml
+argv[5] = -a
+argv[6] = /home/container/workdir/FM_2fb469153c9a_182/options1771638798.190057182.xml
+    /ansys_inc/v242/aisol/CommonFiles/linx64/ansys.meshing.fieldmesher.exe started by root on 2fb469153c9a linx64 on Sat Feb 21 01:53:18 2026
+    using Python 3.10.12 (main, Mar 26 2024, 02:17:48) [GCC 8.2.0]
+
+    using Ansys.Meshing.FieldMesher build Jun  3 2024 10:30:46
+
+    running ANSYS TGrid CADToTGridConverter ...
+    setting up parameters ...
+    setting up parameters done.
+    running conversion ...
+    converting 1 file(s) from Workbench to FLTG using output path &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638798.190057182.tgf&#39;
+    converting file &#39;NACA_Airfoil_6412.pmdb&#39; (1 of 1) from Workbench to FLTG using output path &#39;/home/container/workdir/FM_2fb469153c9a_182&#39;
+    importing data ...
+    importing meshing model from PartMgr from file &#39;/home/container/workdir/NACA_Airfoil_6412.pmdb&#39; ...
+    setting enclosure and symmetry processing to False
+    setting transfer named selections to True
+    setting named selection prefixes to &#39;&#39;
+    setting mixed import resolution type to &#39;SolidAndSurface&#39;
+    setting target application to &#39;FluentMeshing&#39;
+    initializing part manager from file ...
+    processing assembly &#39;NACA_Airfoil_6412&#39; with ID 1 and reference key &#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;utf-16&quot;?&gt;
+    &lt;IdTable xmlns:xsd=&quot;http://www.w3.org/2001/XMLSchema&quot; xmlns:xsi=&quot;http://www.w3.org/2001/XMLSchema-instance&quot;&gt;
+      &lt;Table&gt;
+        &lt;Entry&gt;
+          &lt;Text&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:2&quot; /&amp;gt;&lt;/Text&gt;
+          &lt;ExplodedBodyText&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:22&quot; /&amp;gt;&lt;/ExplodedBodyText&gt;
+          &lt;Id&gt;10000&lt;/Id&gt;
+          &lt;IsExploded&gt;true&lt;/IsExploded&gt;
+        &lt;/Entry&gt;
+        &lt;Entry&gt;
+          &lt;Text&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:2&quot; /&amp;gt;&lt;/Text&gt;
+          &lt;ExplodedBodyText&gt;&amp;lt;SnippetV1 sctype=&quot;SpaceClaim.BasicMoniker`1[[SpaceClaim.IEvaluation, Core]], Core&quot; refId=&quot;e2e34a61-082e-477e-8857-e36ccec069ee:4819&quot; /&amp;gt;&lt;/ExplodedBodyText&gt;
+          &lt;Id&gt;10001&lt;/Id&gt;
+          &lt;IsExploded&gt;true&lt;/IsExploded&gt;
+        &lt;/Entry&gt;
+      &lt;/Table&gt;
+    &lt;/IdTable&gt;&#39;
+    length unit = [m]
+    processing part &#39;NACA_Airfoil_6412&#39; with ID 3
+    processing part &#39;NACA_Airfoil_6412&#39; with ID 5
+    processing named selection &#39;Outlet Fluid&#39;
+    processing named selection &#39;Inlet Fluid&#39;
+    processing named selection &#39;Surrounding Faces&#39;
+    processing named selection &#39;Airfoil Faces&#39;
+    processing data ...
+    saving size function background grid to file &#39;/home/container/workdir/FM_2fb469153c9a_182/NACA_Airfoil_6412.sf&#39; ...
+    writing size function background grid file &#39;/home/container/workdir/FM_2fb469153c9a_182/NACA_Airfoil_6412.sf&#39; ...
+    Vertices already exist
+    initializing size function background grid done in 1.45 [s]
+    tessellating 406 faces done in 2.14 [s]
+    removing named collections of entities ...
+    removing named collections of entities stopped, no named collections selected.
+    analyzing feature edges ...
+    detecting feature edges, feature angle = 40 [deg] ...
+        Data information
+            Meshing model
+                Attributes:
+                    &#39;LengthUnit&#39;: &#39;[mm]&#39;
+                Entity summary:
+                    Collection: 4
+                    Component : 3
+                    Body      : 2
+                    Shell     : 2
+                    Face      : 406
+                    Loop      : 406
+                    Edge      : 1208
+                    Vertex    : 806
+                    Surface   : 406
+                    Curve     : 1208
+                Tessellation summary:
+                    Face facets  : 224320
+                    Edge segments: 97621
+                Bounding box:
+                    (-4500, -1000, -2000) x (5500, 1000, 3000)
+                Assembly component hierarchy:
+                    &#39;NACA_Airfoil_6412&#39;
+                      &#39;NACA_Airfoil_6412&#39;
+                      &#39;NACA_Airfoil_6412&#39;
+                NamedCollections:
+                    &#39;Outlet Fluid&#39;
+                    &#39;Inlet Fluid&#39;
+                    &#39;Surrounding Faces&#39;
+                    &#39;Airfoil Faces&#39;
+
+
+    exporting FLTG data to file &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638798.190057182.tgf&#39; ...
+    writing face-based mesh file &#39;/home/container/workdir/FM_2fb469153c9a_182/out1771638798.190057182.tgf&#39; ...
+    ======== Exported Data ========
+    Entity summary:
+        Object       : 2
+        Object region: 6
+        Zone         : 9
+
+    running conversion done.
+    running ANSYS TGrid CADToTGridConverter done.
+    ran ANSYS TGrid CADToTGridConverter in 4.254 [s]
+
+Reading &quot;/home/container/workdir/FM_2fb469153c9a_182/out1771638798.190057182.tgf&quot;...
+
+nodes: 114040
+edges: 1882
+faces: 224320
+cells: 0
+appending mesh...
+done.
+generating pointers...done.
+extracting boundary entities...
+ 115652 boundary nodes.
+ 225924 boundary faces.
+ 8 boundary face zones.
+done.
+
+Reading &quot;/home/container/workdir/FM_2fb469153c9a_182/NACA_Airfoil_6412.sf&quot;...
+
+ANSYS(R) TGLib(TM) 3D, revision 24.1.0
+ Read 277427 vertices
+0 faces marked.
+
+    computing regions...
+Warning: Region is named after face zone label &quot;airfoil&quot; based on alphabetical order of face zone labels (airfoil airfoil-faces).
+done
+
+---------------- 1 disconnected regions have been detected
+
+
+------------------------- --------------------- -------------------- ---------------- ----------
+                     name skewed-cells (&gt; 0.80)    averaged-skewness maximum-skewness face count
+------------------------- --------------------- -------------------- ---------------- ----------
+
+                    fluid                     0           0.14033419       0.79997719     221212
+                  airfoil                     0           0.14109548       0.79997719     219646
+------------------------- --------------------- -------------------- ---------------- ----------
+                     name skewed-cells (&gt; 0.80)    averaged-skewness maximum-skewness face count
+------------------------- --------------------- -------------------- ---------------- ----------
+
+naca_airfoil_6412-airfoil                     0           0.14033419       0.79997719     221212
+
+---------------- After Surface mesh, the model consists of 2 fluid/solid regions and 0 voids.
+
+---------------- Surface Meshing of NACA_Airfoil_6412 complete in  0.14 minutes, with a maximum skewness of  0.80.
+
+
+---------------- Velocity-inlet zone type was automatically assigned to zones containing the string &#39;*inlet*&#39;.
+
+---------------- Pressure-outlet zone type was automatically assigned to zones containing the string &#39;*outlet*&#39;.
+
+---------------- Describe Geometry task complete in  0.00 minutes.
+
+---------------- Boundary Conditions Updated
+
+---------------- Regions Updated
+
+Created Scoped Prism: smooth-transition_1
+
+---------------- Inflation control added to naca_airfoil_6412-airfoil
+Writing &quot;/home/container/workdir/FM_2fb469153c9a_182/TaskObject11.msh.h5&quot; ...
+writing 2 node zones
+writing 10 edge zones
+writing 8 face zones
+writing node curvature data...
+done.
+    updating regions...
+    done.
+checking object &quot;naca_airfoil_6412-airfoil&quot;...
+    skipping validating regions of mesh object &quot;naca_airfoil_6412-airfoil&quot;...done.
+auto meshing object naca_airfoil_6412-airfoil...
+
+processing scoped prisms...
+    starting orientation...
+done.
+    setting prism growth...done.
+done.
+Identifying Topology...
+
+The octree hexcore cells will be refined using local surface mesh sizes and body of influence (boi) size controls, if there are any defined.
+Generating Prisms...
+
+Generating initial mesh...
+
+Refining mesh...
+
+Create polyhedra ...
+
+delete virtual and dead zones.
+
+Merging zones...
+
+Cleaning up dead entities...
+
+
+Merging Domains...
+done.
+
+                     name       id cells (quality &lt; 0.05)  minimum quality cell count
+------------------------- -------- ---------------------- ---------------- ----------
+                    fluid      120                      0      0.065995142    2179173
+                  airfoil      115                      0       0.10070853    1876929
+
+                     name       id cells (quality &lt; 0.05)  minimum quality cell count
+------------------------- -------- ---------------------- ---------------- ----------
+          Overall Summary     none                      0      0.065995142    4056102
+
+Total Number of Cell Zones : 2
+
+[Quality Measure : Orthogonal Quality]
+
+---------------- Volume mesh creation completed in :  5.05 minutes
+
+---------------- 4056102 cells were created in :  5.18 minutes
+
+---------------- The mesh has a minimum Orthogonal Quality of:  0.07
+
+---------------- The volume meshing of naca_airfoil_6412-airfoil is complete.
+
+
+Domain extents.
+  x-coordinate: min = -4.500000e+03, max = 5.500000e+03.
+  y-coordinate: min = -1.000000e+03, max = 1.000000e+03.
+  z-coordinate: min = -2.000000e+03, max = 3.000000e+03.
+Volume statistics.
+  minimum volume: 9.010892e-04.
+  maximum volume: 1.338319e+08.
+    total volume: 1.000000e+11.
+Face area statistics.
+   minimum face area: 2.752279e-03.
+   maximum face area: 6.653067e+05.
+   average face area: 1.389042e+02.
+Checking number of nodes per edge.
+Checking number of nodes per face.
+Checking number of nodes per cell.
+Checking number of faces/neighbors per cell.
+Checking cell faces/neighbors.
+Checking isolated cells.
+Checking face handedness.
+Checking periodic face pairs.
+Checking face children.
+Checking face zone boundary conditions.
+Checking for invalid node coordinates.
+Checking poly cells.
+Checking zones.
+Checking neighborhood.
+Checking modified centroid.
+Checking non-positive or too small area.
+Checking face zones thread type.
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (5 minutes 55.053 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-geometry-mesh-fluent-wf-gmf-02-fluent-meshing-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/e7591b7a8211e252310394eab0ae1fea/wf_gmf_02_fluent_meshing.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">wf_gmf_02_fluent_meshing.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/76bf8a3918b221f6c7c133d54c4e6cf5/wf_gmf_02_fluent_meshing.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">wf_gmf_02_fluent_meshing.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/7c0e902de64037a691f43ad2cf89503b/wf_gmf_02_fluent_meshing.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">wf_gmf_02_fluent_meshing.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-for-the-script">Parameters for the script</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#generate-the-mesh">Generate the mesh</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#executing-the-mesh-generation">Executing the mesh generation</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

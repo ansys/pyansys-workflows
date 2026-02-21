@@ -1,0 +1,1784 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Conjugate Heat Transfer Workflow for Exhaust Manifold &#8212; PyAnsys Workflows</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/fluent-mechanical/wf_fm_01_fluent';</script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Thermo-mechanical assessment of representative exhaust manifold model" href="wf_fm_02_mechanical.html" />
+    <link rel="prev" title="Fluent and mechanical heat transfer workflow for exhaust manifold" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Workflows - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Workflows - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Fluent and mechanical heat transfer workflow for exhaust manifold</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Conjugate Heat Transfer Workflow for Exhaust Manifold</a></li>
+<li class="toctree-l2"><a class="reference internal" href="wf_fm_02_mechanical.html">Thermo-mechanical assessment of representative exhaust manifold model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh/index.html">Geometry and meshing workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh-fluent/index.html">Geometry, meshing and fluids workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapdl-dpf/index.html">MAPDL and DPF workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speos-optislang/index.html">Speos, optiSLang workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maxwell2d-lumerical/index.html">Maxwell 2D and Lumerical</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Workflow examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Fluent and mechanical heat transfer workflow for exhaust manifold</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Conjugate Heat Transfer Workflow for Exhaust Manifold</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-fluent-mechanical-wf-fm-01-fluent-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="conjugate-heat-transfer-workflow-for-exhaust-manifold">
+<span id="ref-fluent-mechanical-01-fluent"></span><span id="sphx-glr-examples-fluent-mechanical-wf-fm-01-fluent-py"></span><h1>Conjugate Heat Transfer Workflow for Exhaust Manifold<a class="headerlink" href="#conjugate-heat-transfer-workflow-for-exhaust-manifold" title="Link to this heading">#</a></h1>
+<p>This workflow demonstrates the typical solver setup involved in performing a CFD
+simulation for the conjugate heat transfer (CHT) analysis of an exhaust manifold.
+A conjugate heat transfer analysis is a type of simulation that involves the
+simultaneous solution of heat transfer in both solid and fluid domains. In this
+case, the exhaust manifold is a solid domain, and the fluid domain is the gas
+flowing through the manifold. The heat transfer between the solid and fluid domains
+is modeled using the heat transfer coefficient (HTC) at the interface between the two
+domains.
+This workflow provides a step-by-step guide to set up a CHT analysis for an exhaust
+manifold using Ansys Fluent PyFluent APIs. The workflow includes usage of APIs to
+setup the physics, material properties, boundary conditions, solver settings, and
+exporting the results to a CSV file for further use in a Thermo-Mechanical Analysis.</p>
+<section id="problem-description">
+<h2>Problem Description<a class="headerlink" href="#problem-description" title="Link to this heading">#</a></h2>
+<p>The geometry is an exhaust manifold with a fluid domain (gas) and a solid domain(metal)
+meshed with a conformal Polyhedral mesh.The hot gas flows through the manifold,
+and the heat is transferred to the solid domain. The objective is to calculate the
+heat transfer coefficient (HTC) at the interface between the fluid and solid domains,
+the temperature distribution in the solid domain, and export the results to a CSV
+file for further use in a Thermo-Mechanical Analysis.</p>
+<p>The workflow includes the following steps:
+- Launch Fluent
+- Load the mesh file
+- Define the material properties
+- Define the boundary conditions
+- Define the solver settings
+- Initialize the solution
+- Run the solver
+- Export the results to CSV file
+- Close Fluent</p>
+<p>This workflow will generate the following files as output:
+- exhaust_manifold_results_HIGH_TEMP.cas.h5
+- exhaust_manifold_results_MEDIUM_TEMP.cas.h5
+- exhaust_manifold_results_LOW_TEMP.cas.h5
+- exhaust_manifold_results_HIGH_TEMP.dat.h5
+- exhaust_manifold_results_MEDIUM_TEMP.dat.h5
+- exhaust_manifold_results_LOW_TEMP.dat.h5
+- htc_temp_mapping_HIGH_TEMP.csv
+- htc_temp_mapping_MEDIUM_TEMP.csv
+- htc_temp_mapping_LOW_TEMP.csv
+- Fluent transcript file (fluent-YYYYMMDD-HHMMSS-&lt;processID&gt;.trn)</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform required imports</span>
+<span class="c1"># ------------------------</span>
+<span class="c1"># Perform required imports, which includes downloading the mesh file from the</span>
+<span class="c1"># examples.</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">PurePosixPath</span></a>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.fluent.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">pyfluent</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.fluent.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">examples</span>
+
+
+<span class="c1"># Set to True to display the graphics</span>
+<a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># Output directory</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/os.path.html#os.path.dirname" title="os.path.dirname" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">),</span> <span class="s2">&quot;outputs&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/os.html#os.makedirs" title="os.makedirs" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">makedirs</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="p">,</span> <span class="n">exist_ok</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.fluent.visualization</span><span class="w"> </span><span class="kn">import</span> <span class="n">Contour</span><span class="p">,</span> <span class="n">GraphicsWindow</span><span class="p">,</span> <span class="n">config</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.units</span><span class="w"> </span><span class="kn">import</span> <span class="n">VariableCatalog</span>
+
+    <span class="c1"># Set the graphics configuration</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">interactive</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="n">config</span><span class="o">.</span><span class="n">view</span> <span class="o">=</span> <span class="s2">&quot;isometric&quot;</span>
+
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">import_mesh_file</span></a> <span class="o">=</span> <span class="n">examples</span><span class="o">.</span><span class="n">download_file</span><span class="p">(</span>
+    <span class="n">file_name</span><span class="o">=</span><span class="s2">&quot;exhaust_manifold_conf.msh.h5&quot;</span><span class="p">,</span>
+    <span class="n">directory</span><span class="o">=</span><span class="s2">&quot;pyansys-workflow/exhaust-manifold/pyfluent&quot;</span><span class="p">,</span>
+    <span class="n">save_path</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="p">,</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">import_mesh_file</span></a><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>/home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/exhaust_manifold_conf.msh.h5
+</pre></div>
+</div>
+</section>
+<section id="launch-fluent">
+<h2>Launch Fluent<a class="headerlink" href="#launch-fluent" title="Link to this heading">#</a></h2>
+<p>Launch Fluent as a service in solver mode with double precision running on
+four processors and print Fluent version.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;PYANSYS_WORKFLOWS_CI&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Configuring Fluent for CI&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;fluent_image&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;FLUENT_DOCKER_IMAGE&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;command&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;FLUENT_DOCKER_EXEC_COMMAND&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(),</span>
+        <span class="s2">&quot;mount_source&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="p">,</span>
+    <span class="p">}</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">launch_fluent</span><span class="p">(</span>
+        <span class="n">precision</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+        <span class="n">processor_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;solver&quot;</span><span class="p">,</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">container_dict</span></a><span class="p">,</span>
+        <span class="n">start_timeout</span><span class="o">=</span><span class="mi">300</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">FLUENT_WORKING_DIR</span></a> <span class="o">=</span> <span class="s2">&quot;/home/container/workdir&quot;</span>
+
+    <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">import_mesh_file</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">PurePosixPath</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">FLUENT_WORKING_DIR</span></a><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;exhaust_manifold_conf.msh.h5&quot;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Import mesh path for container: </span><span class="si">{</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">import_mesh_file</span></a><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">solver</span> <span class="o">=</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">launch_fluent</span><span class="p">(</span>
+        <span class="n">precision</span><span class="o">=</span><span class="s2">&quot;double&quot;</span><span class="p">,</span>
+        <span class="n">processor_count</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span>
+        <span class="n">mode</span><span class="o">=</span><span class="s2">&quot;solver&quot;</span><span class="p">,</span>
+        <span class="n">cwd</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="p">,</span>
+    <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">get_fluent_version</span><span class="p">(),</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Working directory: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Configuring Fluent for CI
+pyfluent.launcher WARNING: Configuring Fluent container to mount to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs, with this path available as /home/container/workdir for the Fluent session running inside the container.
+
+Import mesh path for container: /home/container/workdir/exhaust_manifold_conf.msh.h5
+
+Ansys Fluent 2025 R1
+Working directory: /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs
+</pre></div>
+</div>
+</section>
+<section id="read-the-mesh-file">
+<h2>Read the mesh file<a class="headerlink" href="#read-the-mesh-file" title="Link to this heading">#</a></h2>
+<p>Read the mesh file into the Fluent solver and check the mesh information.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">read_mesh</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PurePosixPath" title="pathlib.PurePosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">import_mesh_file</span></a><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">mesh</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Fast-loading &quot;/ansys_inc/v251/fluent/fluent25.1.0/addons/afd/lib/hdfio.bin&quot;
+Done.
+
+Reading from 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_conf.msh.h5&quot; in NODE0 mode ...
+  Reading mesh ...
+      231020 cells,     2 cell zones ...
+         162106 polyhedra cells,  zone id: 2199
+          68914 polyhedra cells,  zone id: 2202
+     1435346 faces,    10 face zones ...
+         334717 polygonal interior faces,  zone id: 2201
+        1037400 polygonal interior faces,  zone id: 2198
+           8783 polygonal wall faces,  zone id: 441
+           4519 polygonal wall faces,  zone id: 41
+           1342 polygonal wall faces,  zone id: 40
+          47317 polygonal wall faces,  zone id: 38
+            330 polygonal pressure-outlet faces,  zone id: 46
+            315 polygonal mass-flow-inlet faces,  zone id: 45
+            312 polygonal mass-flow-inlet faces,  zone id: 44
+            311 polygonal mass-flow-inlet faces,  zone id: 43
+     1227270 nodes,    20 node zones ...
+
+Building...
+     mesh
+        distributing mesh
+                parts....,
+                faces....,
+                nodes....,
+                cells....,
+        bandwidth reduction using Reverse Cuthill-McKee: 45512/3134 = 14.522
+  Reading boundary layer flags ...
+  Done.
+
+     materials,
+     interface,
+     domains,
+     zones,
+        interface_solid-shadow
+        Skipping thread 27 of domain 1 (not referenced by grid).
+        Skipping thread 28 of domain 1 (not referenced by grid).
+        Skipping thread 29 of domain 1 (not referenced by grid).
+        Skipping thread 30 of domain 1 (not referenced by grid).
+        Skipping thread 31 of domain 1 (not referenced by grid).
+        Skipping thread 32 of domain 1 (not referenced by grid).
+        Skipping thread 33 of domain 1 (not referenced by grid).
+        Skipping thread 34 of domain 1 (not referenced by grid).
+        Skipping thread 35 of domain 1 (not referenced by grid).
+        Skipping thread 36 of domain 1 (not referenced by grid).
+        Skipping thread 37 of domain 1 (not referenced by grid).
+        Skipping thread 22 of domain 1 (not referenced by grid).
+        Skipping thread 23 of domain 1 (not referenced by grid).
+        Skipping thread 24 of domain 1 (not referenced by grid).
+        Skipping thread 25 of domain 1 (not referenced by grid).
+        Skipping thread 60 of domain 1 (not referenced by grid).
+        Skipping thread 62 of domain 1 (not referenced by grid).
+        Skipping thread 64 of domain 1 (not referenced by grid).
+        Skipping thread 66 of domain 1 (not referenced by grid).
+        Skipping thread 68 of domain 1 (not referenced by grid).
+        Skipping thread 561 of domain 1 (not referenced by grid).
+        Skipping thread 563 of domain 1 (not referenced by grid).
+        Skipping thread 565 of domain 1 (not referenced by grid).
+        Skipping thread 567 of domain 1 (not referenced by grid).
+        Skipping thread 569 of domain 1 (not referenced by grid).
+        Skipping thread 570 of domain 1 (not referenced by grid).
+        Skipping thread 572 of domain 1 (not referenced by grid).
+        Skipping thread 574 of domain 1 (not referenced by grid).
+        Skipping thread 575 of domain 1 (not referenced by grid).
+        Skipping thread 577 of domain 1 (not referenced by grid).
+        interior--fluid
+        interior--solid
+        interface_solid
+        wall_outlet_bolts
+        wall_flange_bolts
+        solid:1
+        pressure_outlet
+        massflow_inlet3
+        massflow_inlet2
+        massflow_inlet1
+        fluid
+        solid
+     parallel,
+Done.
+
+ Domain Extents:
+   x-coordinate: min (m) = -3.627150e-01, max (m) = 1.345894e-02
+   y-coordinate: min (m) = -1.250188e-01, max (m) = 9.445568e-08
+   z-coordinate: min (m) = -1.017994e-01, max (m) = 1.340498e-02
+ Volume statistics:
+   minimum volume (m3): 6.562917e-13
+   maximum volume (m3): 2.782639e-07
+     total volume (m3): 1.510818e-03
+ Face area statistics:
+   minimum face area (m2): 3.325352e-15
+   maximum face area (m2): 5.931152e-05
+ Checking mesh......................................
+Done.
+</pre></div>
+</div>
+</section>
+<section id="define-the-physics">
+<h2>Define the Physics<a class="headerlink" href="#define-the-physics" title="Link to this heading">#</a></h2>
+<p>Define the physics of the problem by setting energy and turbulence models.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">energy</span><span class="o">.</span><span class="n">enabled</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">viscous</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">allowed_values</span><span class="p">()</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">viscous</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="s2">&quot;k-epsilon&quot;</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">viscous</span><span class="o">.</span><span class="n">k_epsilon_model</span> <span class="o">=</span> <span class="s2">&quot;realizable&quot;</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">models</span><span class="o">.</span><span class="n">viscous</span><span class="o">.</span><span class="n">near_wall_treatment</span><span class="o">.</span><span class="n">wall_treatment</span> <span class="o">=</span> <span class="s2">&quot;enhanced-wall-treatment&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Adjusting the following setting:
+Changing Discretization Scheme for Turbulent Kinetic Energy:   from: Second Order Upwind   to: First Order Upwind
+</pre></div>
+</div>
+</section>
+<section id="define-the-material-properties">
+<h2>Define the Material Properties<a class="headerlink" href="#define-the-material-properties" title="Link to this heading">#</a></h2>
+<p>Define the material properties of the fluid, solid and assign the
+material to the appropriate cell zones.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Fluid Material Properties</span>
+<span class="n">fluid_mat</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">fluid</span><span class="p">[</span><span class="s2">&quot;air&quot;</span><span class="p">]</span>
+<span class="n">fluid_mat</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;fluid-material&quot;</span><span class="p">)</span>
+<span class="n">fluid_mat</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">fluid</span><span class="p">[</span><span class="s2">&quot;fluid-material&quot;</span><span class="p">]</span>
+<span class="n">fluid_mat</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">option</span> <span class="o">=</span> <span class="s2">&quot;ideal-gas&quot;</span>
+<span class="n">fluid_mat</span><span class="o">.</span><span class="n">viscosity</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">4.25e-05</span>
+<span class="n">fluid_mat</span><span class="o">.</span><span class="n">specific_heat</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">1148</span>
+<span class="n">fluid_mat</span><span class="o">.</span><span class="n">thermal_conductivity</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">0.0686</span>
+
+<span class="c1"># Solid Material Properties</span>
+<span class="n">solid_mat</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">solid</span><span class="p">[</span><span class="s2">&quot;aluminum&quot;</span><span class="p">]</span>
+<span class="n">solid_mat</span><span class="o">.</span><span class="n">rename</span><span class="p">(</span><span class="s2">&quot;solid-material&quot;</span><span class="p">)</span>
+<span class="n">solid_mat</span> <span class="o">=</span> <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">solid</span><span class="p">[</span><span class="s2">&quot;solid-material&quot;</span><span class="p">]</span>
+<span class="n">solid_mat</span><span class="o">.</span><span class="n">density</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">8030</span>
+<span class="n">solid_mat</span><span class="o">.</span><span class="n">specific_heat</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">502.4</span>
+<span class="n">solid_mat</span><span class="o">.</span><span class="n">thermal_conductivity</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mf">60.5</span>
+
+<span class="c1"># Assign Material to Cell Zones</span>
+<span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">get_fluent_version</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">FluentVersion</span><span class="o">.</span><span class="n">v242</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">fluid</span><span class="p">[</span><span class="s2">&quot;fluid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="s2">&quot;fluid-material&quot;</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">print_state</span><span class="p">()</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">solid</span><span class="p">[</span><span class="s2">&quot;solid&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="s2">&quot;solid-material&quot;</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">fluid</span><span class="p">[</span><span class="s2">&quot;*fluid*&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="s2">&quot;fluid-material&quot;</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">print_state</span><span class="p">()</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">solid</span><span class="p">[</span><span class="s2">&quot;*solid*&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">general</span><span class="o">.</span><span class="n">material</span> <span class="o">=</span> <span class="s2">&quot;solid-material&quot;</span>
+
+<span class="c1"># Print the material properties for verification</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">materials</span><span class="o">.</span><span class="n">print_state</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>database :
+  database_type : fluent-database
+fluid :
+  fluid-material :
+    name : fluid-material
+    chemical_formula :
+    density :
+      option : ideal-gas
+    viscosity :
+      option : constant
+      value : 4.25e-05
+    specific_heat :
+      option : constant
+      value : 1148
+    thermal_conductivity :
+      option : constant
+      value : 0.0686
+    molecular_weight :
+      option : constant
+      value : 28.966
+solid :
+  solid-material :
+    name : solid-material
+    chemical_formula : al
+    density :
+      option : constant
+      value : 8030
+    specific_heat :
+      option : constant
+      value : 502.4
+    thermal_conductivity :
+      option : constant
+      value : 60.5
+
+database :
+  database_type : fluent-database
+fluid :
+  fluid-material :
+    name : fluid-material
+    chemical_formula :
+    density :
+      option : ideal-gas
+    viscosity :
+      option : constant
+      value : 4.25e-05
+    specific_heat :
+      option : constant
+      value : 1148
+    thermal_conductivity :
+      option : constant
+      value : 0.0686
+    molecular_weight :
+      option : constant
+      value : 28.966
+solid :
+  solid-material :
+    name : solid-material
+    chemical_formula : al
+    density :
+      option : constant
+      value : 8030
+    specific_heat :
+      option : constant
+      value : 502.4
+    thermal_conductivity :
+      option : constant
+      value : 60.5
+</pre></div>
+</div>
+</section>
+<section id="define-the-named-expressions">
+<h2>Define the Named Expressions<a class="headerlink" href="#define-the-named-expressions" title="Link to this heading">#</a></h2>
+<p>Define the named expressions for the boundary conditions.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;in_temperature&quot;</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;in_temperature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;1023.15 [K]&quot;</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;in_temperature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">input_parameter</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;mass_flow_rate&quot;</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;mass_flow_rate&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;abs((0.1559 [kg/s] *log(in_temperature/(1 [K^1])))-0.9759 [kg/s])&quot;</span>
+<span class="p">)</span>
+
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;pressure_out&quot;</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;pressure_out&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;(-0.3383 [Pa]*in_temperature^2/(1 [K^2]))+954.75 [Pa]*in_temperature/(1 [K])-356085 [Pa]&quot;</span>
+<span class="p">)</span>
+
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;temperature_out&quot;</span><span class="p">)</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;temperature_out&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="s2">&quot;in_temperature-23.00 [K]&quot;</span>
+</pre></div>
+</div>
+</section>
+<section id="define-the-boundary-conditions">
+<h2>Define the Boundary Conditions<a class="headerlink" href="#define-the-boundary-conditions" title="Link to this heading">#</a></h2>
+<p>Define the boundary conditions for the problem.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Convection Boundary Condition</span>
+
+<span class="c1"># Reference temperature for the convection boundary condition</span>
+<a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ref_temp</span></a> <span class="o">=</span> <span class="mi">200</span> <span class="o">+</span> <span class="mf">273.15</span>
+
+<span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">get_fluent_version</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">FluentVersion</span><span class="o">.</span><span class="n">v242</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">thermal_bc</span> <span class="o">=</span> <span class="s2">&quot;Convection&quot;</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">60</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">tinf</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ref_temp</span></a>
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">thermal_condition</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;Convection&quot;</span>
+    <span class="p">)</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">heat_transfer_coeff</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="mi">60</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">wall</span><span class="p">[</span><span class="s2">&quot;solid:1&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">free_stream_temp</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="p">(</span>
+        <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ref_temp</span></a>
+    <span class="p">)</span>
+
+<span class="c1"># Inlet Boundary Conditions</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">mass_flow_inlet</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">inlet_bc</span></a> <span class="ow">in</span> <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">mass_flow_inlet</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">mass_flow_inlet</span><span class="p">[</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">inlet_bc</span></a>
+    <span class="p">]</span><span class="o">.</span><span class="n">momentum</span><span class="o">.</span><span class="n">mass_flow_rate</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;mass_flow_rate&quot;</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">mass_flow_inlet</span><span class="p">[</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">inlet_bc</span></a>
+    <span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">total_temperature</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;in_temperature&quot;</span>
+
+<span class="c1"># Outlet Boundary Conditions</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">pressure_outlet</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">pressure_outlet</span><span class="p">[</span>
+    <span class="s2">&quot;pressure_outlet&quot;</span>
+<span class="p">]</span><span class="o">.</span><span class="n">momentum</span><span class="o">.</span><span class="n">gauge_pressure</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;pressure_out&quot;</span>
+
+
+<span class="k">if</span> <span class="n">solver</span><span class="o">.</span><span class="n">get_fluent_version</span><span class="p">()</span> <span class="o">&lt;</span> <span class="n">pyfluent</span><span class="o">.</span><span class="n">FluentVersion</span><span class="o">.</span><span class="n">v242</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">pressure_outlet</span><span class="p">[</span>
+        <span class="s2">&quot;pressure_outlet&quot;</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">t0</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;temperature_out&quot;</span>
+
+<span class="k">else</span><span class="p">:</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">boundary_conditions</span><span class="o">.</span><span class="n">pressure_outlet</span><span class="p">[</span>
+        <span class="s2">&quot;pressure_outlet&quot;</span>
+    <span class="p">]</span><span class="o">.</span><span class="n">thermal</span><span class="o">.</span><span class="n">backflow_total_temperature</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="s2">&quot;temperature_out&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>massflow_inlet1          massflow_inlet2          massflow_inlet3
+</pre></div>
+</div>
+</section>
+<section id="define-the-solution-methods-and-solver-settings">
+<h2>Define the Solution Methods and Solver Settings<a class="headerlink" href="#define-the-solution-methods-and-solver-settings" title="Link to this heading">#</a></h2>
+<p>Define the solution methods and solver settings for the problem.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Solution Methods &amp; controls</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">methods</span><span class="o">.</span><span class="n">pseudo_time_method</span><span class="o">.</span><span class="n">formulation</span><span class="o">.</span><span class="n">coupled_solver</span> <span class="o">=</span> <span class="s2">&quot;off&quot;</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">controls</span><span class="o">.</span><span class="n">p_v_controls</span><span class="o">.</span><span class="n">flow_courant_number</span> <span class="o">=</span> <span class="mi">50</span>
+
+<span class="c1"># Solver Settings initialization &amp; set the iteration count</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">initialization</span><span class="o">.</span><span class="n">hybrid_initialize</span><span class="p">()</span>
+<span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">run_calculation</span><span class="o">.</span><span class="n">iter_count</span> <span class="o">=</span> <span class="mi">200</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>         pressure_outlet
+Initialize using the hybrid initialization method.
+
+Checking case topology...
+-This case has both inlets &amp; outlets
+-Pressure information is not available at the boundaries.
+ Case will be initialized with constant pressure
+
+        iter            scalar-0
+
+        1               1.000000e+00
+        2               9.811110e-05
+        3               1.083635e-05
+        4               2.055257e-06
+        5               3.322166e-07
+        6               6.160584e-08
+        7               1.194993e-08
+        8               2.600210e-09
+        9               5.986052e-10
+        10              1.462859e-10
+
+Hybrid initialization is done.
+</pre></div>
+</div>
+</section>
+<section id="run-the-solver-export-the-results-to-csv">
+<h2>Run the Solver &amp; Export the Results to CSV<a class="headerlink" href="#run-the-solver-export-the-results-to-csv" title="Link to this heading">#</a></h2>
+<p>Run the solver to solve the problem and export the results to a CSV file.
+Define a tuple with temperature values</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_values</span></a> <span class="o">=</span> <span class="p">(</span>
+    <span class="p">(</span><span class="s2">&quot;HIGH_TEMP&quot;</span><span class="p">,</span> <span class="mf">1023.15</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;MEDIUM_TEMP&quot;</span><span class="p">,</span> <span class="mf">683.15</span><span class="p">),</span>
+    <span class="p">(</span><span class="s2">&quot;LOW_TEMP&quot;</span><span class="p">,</span> <span class="mf">483.15</span><span class="p">),</span>
+<span class="p">)</span>
+
+<span class="c1"># Retrieve fluid and solid zones</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fluid_zones</span></a> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">fluid</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">solid_zones</span></a> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">cell_zone_conditions</span><span class="o">.</span><span class="n">solid</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">cell_zone_names</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">fluid_zones</span></a> <span class="o">+</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">solid_zones</span></a>
+
+<span class="c1"># Iterate over the temperature values tuple</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_name</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_value</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#tuple" title="builtins.tuple" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temperature_values</span></a><span class="p">:</span>
+    <span class="c1"># Running the simulation for each temperature value with initialization and iteration</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">initialization</span><span class="o">.</span><span class="n">hybrid_initialize</span><span class="p">()</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">setup</span><span class="o">.</span><span class="n">named_expressions</span><span class="p">[</span><span class="s2">&quot;in_temperature&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">definition</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_value</span></a><span class="si">}</span><span class="s2"> [K]&quot;</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">solution</span><span class="o">.</span><span class="n">run_calculation</span><span class="o">.</span><span class="n">iterate</span><span class="p">(</span><span class="n">iter_count</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+    <span class="c1"># Exporting Data for Thermo-Mechanical Simulation</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mapping_file</span></a> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;htc_temp_mapping_</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_name</span></a><span class="si">}</span><span class="s2">.csv&quot;</span>
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">export</span><span class="o">.</span><span class="n">ascii</span><span class="p">(</span>
+        <span class="n">file_name</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">mapping_file</span></a><span class="p">,</span>
+        <span class="n">surface_name_list</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;interface_solid&quot;</span><span class="p">],</span>
+        <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;comma&quot;</span><span class="p">,</span>
+        <span class="n">cell_func_domain</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;temperature&quot;</span><span class="p">,</span> <span class="s2">&quot;heat-transfer-coef-wall&quot;</span><span class="p">],</span>
+        <span class="n">location</span><span class="o">=</span><span class="s2">&quot;node&quot;</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="c1"># Export graphics result for the temperature distribution on interface_solid</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Generating graphics for temperature contour at </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_name</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">flush</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">graphics_window</span> <span class="o">=</span> <span class="n">GraphicsWindow</span><span class="p">()</span>
+        <span class="n">temperature_contour</span> <span class="o">=</span> <span class="n">Contour</span><span class="p">(</span>
+            <span class="n">solver</span><span class="o">=</span><span class="n">solver</span><span class="p">,</span>
+            <span class="n">field</span><span class="o">=</span><span class="n">VariableCatalog</span><span class="o">.</span><span class="n">TEMPERATURE</span><span class="p">,</span>
+            <span class="n">surfaces</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;interface_solid&quot;</span><span class="p">],</span>
+        <span class="p">)</span>
+        <span class="n">graphics_window</span><span class="o">.</span><span class="n">add_graphics</span><span class="p">(</span><span class="n">temperature_contour</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;DOC_BUILD&quot;</span> <span class="ow">in</span> <a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="p">:</span>
+            <span class="n">graphics_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">graphics_window</span><span class="o">.</span><span class="n">save_graphics</span><span class="p">(</span>
+                <span class="n">filename</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">WORKING_DIR</span></a><span class="si">}</span><span class="s2">/temp_interface_contour_</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_name</span></a><span class="si">}</span><span class="s2">.svg&quot;</span>
+            <span class="p">)</span>
+        <span class="n">graphics_window</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+    <span class="n">solver</span><span class="o">.</span><span class="n">settings</span><span class="o">.</span><span class="n">file</span><span class="o">.</span><span class="n">write_case_data</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;exhaust_manifold_results_</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_name</span></a><span class="si">}</span><span class="s2">.cas.h5&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Static Scene</label><div class="sd-tab-content docutils">
+<img src="../../_images/sphx_glr_wf_fm_01_fluent_001.png" srcset="../../_images/sphx_glr_wf_fm_01_fluent_001.png" alt="wf fm 01 fluent" class = "sphx-glr-single-img"/></div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Interactive Scene</label><div class="sd-tab-content docutils">
+
+    <iframe src='../../_static/static_viewer.html?fileURL=../_images/examples/fluent-mechanical/images/sphx_glr_wf_fm_01_fluent_001.vtksz' width='100%%' height='400px' frameborder='0'></iframe>
+</div>
+</div>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-2" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-2">
+Static Scene</label><div class="sd-tab-content docutils">
+<img src="../../_images/sphx_glr_wf_fm_01_fluent_002.png" srcset="../../_images/sphx_glr_wf_fm_01_fluent_002.png" alt="wf fm 01 fluent" class = "sphx-glr-single-img"/></div>
+<input id="sd-tab-item-3" name="sd-tab-set-1" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-3">
+Interactive Scene</label><div class="sd-tab-content docutils">
+
+    <iframe src='../../_static/static_viewer.html?fileURL=../_images/examples/fluent-mechanical/images/sphx_glr_wf_fm_01_fluent_002.vtksz' width='100%%' height='400px' frameborder='0'></iframe>
+</div>
+</div>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-4" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-4">
+Static Scene</label><div class="sd-tab-content docutils">
+<img src="../../_images/sphx_glr_wf_fm_01_fluent_003.png" srcset="../../_images/sphx_glr_wf_fm_01_fluent_003.png" alt="wf fm 01 fluent" class = "sphx-glr-single-img"/></div>
+<input id="sd-tab-item-5" name="sd-tab-set-2" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-5">
+Interactive Scene</label><div class="sd-tab-content docutils">
+
+    <iframe src='../../_static/static_viewer.html?fileURL=../_images/examples/fluent-mechanical/images/sphx_glr_wf_fm_01_fluent_003.vtksz' width='100%%' height='400px' frameborder='0'></iframe>
+</div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Initialize using the hybrid initialization method.
+
+Checking case topology...
+-This case has both inlets &amp; outlets
+-Pressure information is not available at the boundaries.
+ Case will be initialized with constant pressure
+
+        iter            scalar-0
+
+        1               1.000000e+00
+        2               9.811110e-05
+        3               1.083635e-05
+        4               2.055257e-06
+        5               3.322166e-07
+        6               6.160584e-08
+        7               1.194993e-08
+        8               2.600210e-09
+        9               5.986052e-10
+        10              1.462859e-10
+
+Hybrid initialization is done.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+     1  1.0000e+00  4.2213e-03  5.7539e-03  5.9920e-04  8.8922e-05  1.1142e-01  2.4641e-01  0:04:12  199
+     2  1.0000e+00  2.2213e-03  3.0565e-03  3.5372e-04  1.1063e-04  7.7646e-02  1.7234e-01  0:04:03  198
+     3  9.2516e-01  1.1980e-03  1.6265e-03  2.3696e-04  5.2873e-05  5.9411e-02  1.2992e-01  0:03:54  197
+     4  7.6619e-01  6.9747e-04  8.7287e-04  1.6488e-04  3.0197e-05  4.7454e-02  1.1024e-01  0:03:42  196
+     5  6.2206e-01  4.4300e-04  4.7065e-04  1.2330e-04  2.1782e-05  3.8066e-02  9.7786e-02  0:03:32  195
+     6  5.0255e-01  3.3036e-04  3.0108e-04  1.0028e-04  1.6885e-05  3.0559e-02  8.3402e-02  0:03:25  194
+     7  4.0851e-01  2.6835e-04  2.1616e-04  8.8998e-05  1.3458e-05  2.4423e-02  6.6749e-02  0:03:18  193
+     8  3.3801e-01  2.2911e-04  1.7482e-04  8.3424e-05  1.0968e-05  1.9506e-02  5.1508e-02  0:03:13  192
+     9  2.8448e-01  2.0297e-04  1.5190e-04  7.9524e-05  9.0141e-06  1.5624e-02  4.0037e-02  0:03:09  191
+    10  2.4258e-01  1.8050e-04  1.3262e-04  7.6106e-05  7.4691e-06  1.2524e-02  3.1654e-02  0:03:05  190
+    11  2.0783e-01  1.6331e-04  1.1657e-04  7.2684e-05  6.3190e-06  1.0154e-02  2.5532e-02  0:03:02  189
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    12  1.7838e-01  1.4916e-04  1.0268e-04  6.9247e-05  5.4342e-06  8.4475e-03  2.1414e-02  0:02:59  188
+    13  1.5325e-01  1.3729e-04  9.0756e-05  6.5643e-05  4.7130e-06  7.2461e-03  1.8463e-02  0:02:58  187
+    14  1.3179e-01  1.2646e-04  8.0576e-05  6.1661e-05  4.1082e-06  6.3640e-03  1.6204e-02  0:02:56  186
+    15  1.1319e-01  1.1576e-04  7.1586e-05  5.7203e-05  3.5980e-06  5.6706e-03  1.4344e-02  0:02:55  185
+    16  9.7498e-02  1.0523e-04  6.3702e-05  5.2296e-05  3.1798e-06  5.0763e-03  1.2661e-02  0:02:53  184
+    17  8.4684e-02  9.4926e-05  5.6725e-05  4.7035e-05  2.8643e-06  4.5489e-03  1.1143e-02  0:02:52  183
+    18  7.4104e-02  8.4993e-05  5.0447e-05  4.1636e-05  2.6407e-06  4.0868e-03  9.7791e-03  0:03:02  182
+    19  6.5322e-02  7.5797e-05  4.4883e-05  3.6375e-05  2.4883e-06  3.7013e-03  8.5778e-03  0:02:59  181
+    20  5.8142e-02  6.7627e-05  3.9890e-05  3.1562e-05  2.3943e-06  3.4057e-03  7.5376e-03  0:02:56  180
+    21  5.2418e-02  6.0784e-05  3.5637e-05  2.7430e-05  2.3331e-06  3.1944e-03  6.6635e-03  0:02:54  179
+    22  4.7776e-02  5.5200e-05  3.1988e-05  2.4103e-05  2.2890e-06  3.0449e-03  5.9391e-03  0:02:52  178
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    23  4.4086e-02  5.0861e-05  2.8948e-05  2.1630e-05  2.2386e-06  2.9307e-03  5.3240e-03  0:02:50  177
+    24  4.1172e-02  4.7544e-05  2.6540e-05  1.9971e-05  2.1613e-06  2.8195e-03  4.7764e-03  0:02:48  176
+    25  3.8800e-02  4.5155e-05  2.4641e-05  1.9012e-05  2.0602e-06  2.6786e-03  4.2748e-03  0:02:46  175
+    26  3.6758e-02  4.3332e-05  2.3214e-05  1.8601e-05  1.9429e-06  2.5098e-03  3.8353e-03  0:02:45  174
+    27  3.4896e-02  4.1753e-05  2.2138e-05  1.8415e-05  1.8161e-06  2.3212e-03  3.4606e-03  0:02:44  173
+    28  3.2979e-02  4.0171e-05  2.1284e-05  1.8201e-05  1.6809e-06  2.1217e-03  3.1450e-03  0:02:43  172
+    29  3.0999e-02  3.8391e-05  2.0515e-05  1.7879e-05  1.5395e-06  1.9181e-03  2.8725e-03  0:02:41  171
+    30  2.8997e-02  3.6378e-05  1.9737e-05  1.7387e-05  1.3976e-06  1.7132e-03  2.6203e-03  0:02:41  170
+    31  2.7008e-02  3.4162e-05  1.8837e-05  1.6770e-05  1.2624e-06  1.5150e-03  2.3930e-03  0:02:40  169
+    32  2.4948e-02  3.1831e-05  1.7850e-05  1.5998e-05  1.1333e-06  1.3291e-03  2.1838e-03  0:02:38  168
+    33  2.2900e-02  2.9426e-05  1.6768e-05  1.5131e-05  1.0168e-06  1.1589e-03  1.9909e-03  0:02:37  167
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    34  2.0911e-02  2.7036e-05  1.5638e-05  1.4195e-05  9.0953e-07  1.0068e-03  1.8084e-03  0:02:35  166
+    35  1.9018e-02  2.4699e-05  1.4468e-05  1.3223e-05  8.1131e-07  8.7522e-04  1.6407e-03  0:02:34  165
+    36  1.7222e-02  2.2463e-05  1.3315e-05  1.2240e-05  7.2110e-07  7.6417e-04  1.4860e-03  0:02:32  164
+    37  1.5549e-02  2.0331e-05  1.2168e-05  1.1266e-05  6.3920e-07  6.7153e-04  1.3439e-03  0:02:32  163
+    38  1.4004e-02  1.8319e-05  1.1057e-05  1.0331e-05  5.6456e-07  5.9575e-04  1.2152e-03  0:02:30  162
+    39  1.2613e-02  1.6434e-05  9.9997e-06  9.4104e-06  4.9667e-07  5.3473e-04  1.0993e-03  0:02:29  161
+    40  1.1308e-02  1.4691e-05  9.0019e-06  8.5248e-06  4.3517e-07  4.8566e-04  9.9474e-04  0:02:28  160
+    41  1.0136e-02  1.3081e-05  8.0700e-06  7.6793e-06  3.8025e-07  4.4642e-04  9.0003e-04  0:02:27  159
+    42  9.0737e-03  1.1599e-05  7.2090e-06  6.8934e-06  3.3089e-07  4.1557e-04  8.1440e-04  0:02:26  158
+    43  8.0848e-03  1.0252e-05  6.4239e-06  6.1615e-06  2.8683e-07  3.9100e-04  7.3562e-04  0:02:26  157
+    44  7.1893e-03  9.0295e-06  5.7005e-06  5.4741e-06  2.4845e-07  3.7128e-04  6.6373e-04  0:02:25  156
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    45  6.3761e-03  7.9172e-06  5.0362e-06  4.8331e-06  2.1562e-07  3.5455e-04  5.9632e-04  0:02:24  155
+    46  5.6550e-03  6.9299e-06  4.4419e-06  4.2440e-06  1.8805e-07  3.3885e-04  5.3434e-04  0:02:23  154
+    47  5.0196e-03  6.0630e-06  3.9110e-06  3.7069e-06  1.6586e-07  3.2325e-04  4.7892e-04  0:02:22  153
+    48  4.4662e-03  5.3166e-06  3.4435e-06  3.2230e-06  1.4879e-07  3.0763e-04  4.2949e-04  0:02:21  152
+    49  3.9884e-03  4.6838e-06  3.0315e-06  2.7956e-06  1.3604e-07  2.9203e-04  3.8530e-04  0:02:20  151
+    50  3.5765e-03  4.1562e-06  2.6776e-06  2.4256e-06  1.2698e-07  2.7642e-04  3.4803e-04  0:02:18  150
+    51  3.2357e-03  3.7300e-06  2.3743e-06  2.1117e-06  1.2087e-07  2.6118e-04  3.1732e-04  0:02:17  149
+    52  2.9569e-03  3.3991e-06  2.1224e-06  1.8522e-06  1.1645e-07  2.4660e-04  2.9227e-04  0:02:16  148
+    53  2.7310e-03  3.1563e-06  1.9262e-06  1.6471e-06  1.1322e-07  2.3266e-04  2.7158e-04  0:02:15  147
+    54  2.5459e-03  2.9930e-06  1.7794e-06  1.4913e-06  1.1031e-07  2.1926e-04  2.5386e-04  0:02:14  146
+    55  2.4018e-03  2.8677e-06  1.6617e-06  1.3781e-06  1.0780e-07  2.0639e-04  2.3814e-04  0:02:13  145
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    56  2.2893e-03  2.7746e-06  1.5710e-06  1.3003e-06  1.0549e-07  1.9387e-04  2.2400e-04  0:02:12  144
+    57  2.2007e-03  2.6926e-06  1.4963e-06  1.2474e-06  1.0280e-07  1.8178e-04  2.1122e-04  0:02:11  143
+    58  2.1228e-03  2.6103e-06  1.4325e-06  1.2113e-06  9.9315e-08  1.7016e-04  1.9931e-04  0:02:10  142
+    59  2.0446e-03  2.5302e-06  1.3771e-06  1.1807e-06  9.5119e-08  1.5884e-04  1.8818e-04  0:02:09  141
+    60  1.9650e-03  2.4397e-06  1.3213e-06  1.1478e-06  9.0975e-08  1.4788e-04  1.7777e-04  0:02:08  140
+    61  1.8834e-03  2.3400e-06  1.2681e-06  1.1131e-06  8.6683e-08  1.3729e-04  1.6785e-04  0:02:07  139
+    62  1.7960e-03  2.2362e-06  1.2158e-06  1.0741e-06  8.2041e-08  1.2697e-04  1.5819e-04  0:02:06  138
+    63  1.7088e-03  2.1222e-06  1.1591e-06  1.0326e-06  7.7596e-08  1.1718e-04  1.4877e-04  0:02:06  137
+    64  1.6201e-03  2.0162e-06  1.1063e-06  9.9011e-07  7.2864e-08  1.0788e-04  1.3966e-04  0:02:05  136
+    65  1.5293e-03  1.9115e-06  1.0514e-06  9.4743e-07  6.8107e-08  9.8926e-05  1.3068e-04  0:02:04  135
+    66  1.4384e-03  1.8044e-06  9.9415e-07  9.0414e-07  6.3639e-08  9.0545e-05  1.2213e-04  0:02:03  134
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    67  1.3458e-03  1.7045e-06  9.4115e-07  8.6172e-07  5.9005e-08  8.2584e-05  1.1369e-04  0:02:02  133
+    68  1.2550e-03  1.6042e-06  8.8610e-07  8.1887e-07  5.4537e-08  7.5051e-05  1.0540e-04  0:02:01  132
+    69  1.1681e-03  1.5048e-06  8.3058e-07  7.7611e-07  5.0263e-08  6.7957e-05  9.7332e-05  0:02:00  131
+    70  1.0837e-03  1.4068e-06  7.7688e-07  7.3378e-07  4.6201e-08  6.1357e-05  8.9556e-05  0:02:00  130
+    71  1.0010e-03  1.3138e-06  7.2748e-07  6.9138e-07  4.2122e-08  5.5125e-05  8.2046e-05  0:01:59  129
+    72  9.2190e-04  1.2200e-06  6.7562e-07  6.4829e-07  3.8361e-08  4.9351e-05  7.4909e-05  0:01:58  128
+!   72 solution is converged
+
+Writing &quot;htc_temp_mapping_HIGH_TEMP.csv&quot;...
+
+Writing information to ascii file ...
+Done.
+Generating graphics for temperature contour at HIGH_TEMP
+
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_HIGH_TEMP.cas.h5&quot; in NODE0 mode and compression level 1 ...
+Grouping cells for Laplace smoothing ...
+  Done.      231020 cells,     2 zones ...
+     1444129 faces,    11 zones ...
+     1168370 nodes,     1 zone  ...
+  Done.
+
+  Writing boundary layer flags ...
+  Done.
+Done.
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_HIGH_TEMP.dat.h5&quot; in NODE0 mode and compression level 1 ...
+  Writing results.
+Done.
+
+Initialize using the hybrid initialization method.
+
+Checking case topology...
+-This case has both inlets &amp; outlets
+-Pressure information is not available at the boundaries.
+ Case will be initialized with constant pressure
+
+        iter            scalar-0
+
+        1               1.000000e+00
+        2               9.811110e-05
+        3               1.083635e-05
+        4               2.055257e-06
+        5               3.322166e-07
+        6               6.160584e-08
+        7               1.194993e-08
+        8               2.600210e-09
+        9               5.986052e-10
+        10              1.462859e-10
+
+Hybrid initialization is done.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+     1  1.0000e+00  4.2213e-03  5.7539e-03  5.9920e-04  7.6237e-04  1.0540e-01  2.2605e-01  0:03:12  199
+     2  1.0000e+00  3.2863e-03  4.4795e-02  1.6918e-03  7.9054e-04  2.4875e-01  2.9374e-01  0:03:13  198
+     3  7.9929e-01  2.1567e-03  5.8785e-02  1.6005e-03  6.0765e-04  4.6241e-01  3.7264e-01  0:03:14  197
+
+ Reversed flow on 6 faces (4.8% area) of pressure-outlet 46.
+     4  8.1991e-01  2.4646e-03  5.4933e-02  1.7918e-03  4.3288e-04  1.9633e+00  1.0843e+00  0:03:09  196
+
+ Reversed flow on 27 faces (20.4% area) of pressure-outlet 46.
+     5  4.7457e-01  6.3918e-03  5.1361e-02  6.1303e-03  5.0196e-04  8.4114e-01  5.5911e-01  0:03:06  195
+
+ Reversed flow on 50 faces (26.8% area) of pressure-outlet 46.
+     6  2.7651e-01  8.0531e-03  2.8489e-02  9.4479e-03  8.1957e-04  2.3151e-01  2.5535e-01  0:03:03  194
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 1 cells
+
+ Reversed flow on 60 faces (33.0% area) of pressure-outlet 46.
+     7  1.7869e-01  9.2513e-03  3.1533e-02  1.0809e-02  6.7724e-04  1.1810e-01  1.5333e-01  0:03:01  193
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 3 cells
+
+ Reversed flow on 48 faces (29.0% area) of pressure-outlet 46.
+     8  1.0205e-01  6.4619e-03  1.5505e-02  8.0578e-03  3.1494e-04  5.0361e-02  9.9832e-02  0:02:59  192
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 2 cells
+
+ Reversed flow on 32 faces (21.3% area) of pressure-outlet 46.
+     9  6.4405e-02  4.3048e-03  9.4225e-03  5.1804e-03  1.8625e-04  3.4237e-02  6.9570e-02  0:03:02  191
+
+ Reversed flow on 18 faces (11.8% area) of pressure-outlet 46.
+    10  4.3417e-02  2.9426e-03  7.1820e-03  3.3653e-03  1.0504e-04  2.6781e-02  5.2443e-02  0:03:04  190
+
+ Reversed flow on 13 faces (7.8% area) of pressure-outlet 46.
+    11  3.0684e-02  2.1309e-03  5.1812e-03  2.3362e-03  6.5253e-05  2.1824e-02  3.9188e-02  0:03:10  189
+
+ Reversed flow on 7 faces (4.5% area) of pressure-outlet 46.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    12  2.2544e-02  1.6202e-03  3.5309e-03  1.6924e-03  4.7425e-05  1.8106e-02  2.9702e-02  0:03:27  188
+
+ Reversed flow on 2 faces (0.8% area) of pressure-outlet 46.
+    13  1.7035e-02  1.2463e-03  2.4050e-03  1.3132e-03  3.3242e-05  1.5662e-02  2.3249e-02  0:03:45  187
+    14  1.3110e-02  9.6369e-04  1.6268e-03  1.0252e-03  2.4271e-05  1.3964e-02  1.8813e-02  0:03:42  186
+    15  1.0182e-02  7.5511e-04  1.1461e-03  8.0808e-04  1.9873e-05  1.3072e-02  1.5682e-02  0:03:39  185
+    16  8.0395e-03  5.8450e-04  8.6564e-04  6.2756e-04  1.6824e-05  1.2569e-02  1.3414e-02  0:03:32  184
+    17  6.3989e-03  4.6233e-04  6.8998e-04  4.8980e-04  1.5530e-05  1.2387e-02  1.1889e-02  0:03:31  183
+    18  5.1718e-03  3.7124e-04  5.6623e-04  3.8740e-04  1.4081e-05  1.2372e-02  1.1263e-02  0:03:21  182
+    19  4.2167e-03  3.0313e-04  4.6713e-04  3.1107e-04  1.2599e-05  1.2390e-02  1.1476e-02  0:03:13  181
+    20  3.5350e-03  2.5349e-04  3.8886e-04  2.5236e-04  1.1035e-05  1.2476e-02  1.2158e-02  0:03:07  180
+    21  2.9919e-03  2.1495e-04  3.2582e-04  2.0726e-04  9.6401e-06  1.2593e-02  1.3170e-02  0:03:02  179
+    22  2.5436e-03  1.8179e-04  2.6858e-04  1.7006e-04  8.3498e-06  1.2690e-02  1.4330e-02  0:02:58  178
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    23  2.1719e-03  1.5581e-04  2.2228e-04  1.4022e-04  7.3855e-06  1.2800e-02  1.5509e-02  0:02:55  177
+    24  1.8774e-03  1.3522e-04  1.8558e-04  1.1584e-04  6.2471e-06  1.2889e-02  1.6630e-02  0:02:53  176
+    25  1.6330e-03  1.1737e-04  1.5455e-04  9.6185e-05  5.1332e-06  1.2940e-02  1.7624e-02  0:02:50  175
+    26  1.4158e-03  1.0266e-04  1.2881e-04  8.1667e-05  4.4020e-06  1.2977e-02  1.8451e-02  0:02:47  174
+    27  1.2391e-03  9.1151e-05  1.1056e-04  6.9499e-05  4.1037e-06  1.2998e-02  1.9138e-02  0:02:45  173
+    28  1.1023e-03  8.3693e-05  9.8828e-05  6.0850e-05  3.5187e-06  1.3014e-02  1.9687e-02  0:02:43  172
+    29  9.8814e-04  7.8187e-05  9.0791e-05  5.3126e-05  2.9233e-06  1.3001e-02  2.0090e-02  0:02:41  171
+    30  9.0585e-04  7.4972e-05  8.5116e-05  4.7520e-05  2.6526e-06  1.2979e-02  2.0383e-02  0:02:40  170
+    31  8.3385e-04  7.2153e-05  8.2123e-05  4.1373e-05  2.5243e-06  1.2918e-02  2.0579e-02  0:02:38  169
+    32  7.8217e-04  7.0259e-05  8.0666e-05  3.8476e-05  2.4900e-06  1.2829e-02  2.0721e-02  0:02:37  168
+    33  7.4618e-04  6.9267e-05  8.1328e-05  3.5314e-05  2.5375e-06  1.2700e-02  2.0783e-02  0:02:36  167
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    34  7.2079e-04  6.8361e-05  8.2946e-05  3.4173e-05  2.6960e-06  1.2529e-02  2.0650e-02  0:02:35  166
+    35  6.9718e-04  6.7980e-05  8.4994e-05  3.2992e-05  2.8755e-06  1.2295e-02  2.0237e-02  0:02:34  165
+    36  6.7321e-04  6.6361e-05  8.6081e-05  3.2369e-05  2.9494e-06  1.2058e-02  1.9582e-02  0:02:34  164
+    37  6.3789e-04  6.6645e-05  8.5803e-05  3.2082e-05  2.9435e-06  1.1795e-02  1.8723e-02  0:02:34  163
+    38  6.0244e-04  6.5057e-05  8.4765e-05  3.1445e-05  2.8556e-06  1.1612e-02  1.7888e-02  0:02:33  162
+    39  5.6610e-04  6.5354e-05  8.3036e-05  3.1525e-05  2.7957e-06  1.1432e-02  1.7063e-02  0:02:32  161
+    40  5.4351e-04  6.3915e-05  8.0975e-05  3.1231e-05  2.7463e-06  1.1353e-02  1.6403e-02  0:02:31  160
+    41  5.1578e-04  6.4256e-05  7.8936e-05  3.1477e-05  2.7185e-06  1.1280e-02  1.5840e-02  0:02:30  159
+    42  4.9943e-04  6.2858e-05  7.7704e-05  3.1001e-05  2.6860e-06  1.1312e-02  1.5491e-02  0:02:29  158
+    43  4.7545e-04  6.3500e-05  7.6346e-05  3.0962e-05  2.6943e-06  1.1332e-02  1.5218e-02  0:02:28  157
+    44  4.6550e-04  6.2488e-05  7.5435e-05  3.0734e-05  2.7698e-06  1.1437e-02  1.5101e-02  0:02:27  156
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    45  4.4856e-04  6.3286e-05  7.4432e-05  3.1277e-05  2.8232e-06  1.1523e-02  1.5028e-02  0:02:26  155
+    46  4.4264e-04  6.2466e-05  7.3711e-05  3.1624e-05  2.8920e-06  1.1682e-02  1.5093e-02  0:02:25  154
+    47  4.3117e-04  6.3106e-05  7.2765e-05  3.2345e-05  2.9365e-06  1.1823e-02  1.5145e-02  0:02:24  153
+    48  4.2165e-04  6.2218e-05  7.1667e-05  3.2715e-05  2.9530e-06  1.2026e-02  1.5294e-02  0:02:23  152
+    49  4.0817e-04  6.2427e-05  7.0050e-05  3.3306e-05  2.9187e-06  1.2216e-02  1.5477e-02  0:02:22  151
+    50  3.9702e-04  6.1699e-05  6.8266e-05  3.3679e-05  2.9709e-06  1.2464e-02  1.5730e-02  0:02:21  150
+    51  3.8841e-04  6.2137e-05  6.6377e-05  3.4527e-05  3.0274e-06  1.2712e-02  1.5997e-02  0:02:20  149
+    52  3.8421e-04  6.1632e-05  6.4667e-05  3.5241e-05  3.0823e-06  1.3015e-02  1.6381e-02  0:02:19  148
+    53  3.7608e-04  6.1632e-05  6.2829e-05  3.5984e-05  3.1224e-06  1.3329e-02  1.6775e-02  0:02:18  147
+    54  3.7530e-04  6.1662e-05  6.1506e-05  3.6544e-05  3.2063e-06  1.3693e-02  1.7174e-02  0:02:17  146
+    55  3.6836e-04  6.1622e-05  6.0120e-05  3.6987e-05  3.2244e-06  1.4068e-02  1.7633e-02  0:02:16  145
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    56  3.6141e-04  6.1186e-05  5.9050e-05  3.7265e-05  3.2750e-06  1.4483e-02  1.8220e-02  0:02:15  144
+    57  3.5390e-04  6.1210e-05  5.8551e-05  3.7831e-05  3.3489e-06  1.4932e-02  1.8860e-02  0:02:14  143
+    58  3.5079e-04  6.1421e-05  5.8627e-05  3.8429e-05  3.4185e-06  1.5433e-02  1.9364e-02  0:02:14  142
+    59  3.5075e-04  6.0937e-05  5.8503e-05  3.8830e-05  3.4273e-06  1.5952e-02  2.0160e-02  0:02:13  141
+    60  3.4963e-04  6.0554e-05  5.8539e-05  3.9146e-05  3.4827e-06  1.6507e-02  2.1129e-02  0:02:12  140
+    61  3.4863e-04  6.0620e-05  5.9315e-05  3.9715e-05  3.5808e-06  1.7123e-02  2.1721e-02  0:02:11  139
+    62  3.5214e-04  6.0120e-05  6.0553e-05  4.0232e-05  3.6339e-06  1.7775e-02  2.2802e-02  0:02:10  138
+    63  3.5202e-04  5.8983e-05  6.1275e-05  4.0231e-05  3.6212e-06  1.8442e-02  2.3842e-02  0:02:09  137
+    64  3.4695e-04  5.8145e-05  6.2549e-05  4.0788e-05  3.7122e-06  1.9171e-02  2.4650e-02  0:02:08  136
+    65  3.4355e-04  5.6954e-05  6.3274e-05  4.0772e-05  3.7060e-06  1.9913e-02  2.5908e-02  0:02:07  135
+    66  3.3913e-04  5.5539e-05  6.3967e-05  4.0463e-05  3.6911e-06  2.0694e-02  2.7021e-02  0:02:06  134
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    67  3.3364e-04  5.3970e-05  6.4678e-05  4.0417e-05  3.7235e-06  2.1519e-02  2.8062e-02  0:02:05  133
+    68  3.2874e-04  5.1772e-05  6.4245e-05  3.9638e-05  3.6411e-06  2.2304e-02  2.9878e-02  0:02:05  132
+    69  3.2632e-04  4.9605e-05  6.4451e-05  3.9166e-05  3.6185e-06  2.3119e-02  3.1268e-02  0:02:04  131
+    70  3.2311e-04  4.7104e-05  6.3860e-05  3.8355e-05  3.5302e-06  2.3930e-02  3.2907e-02  0:02:03  130
+    71  3.1725e-04  4.4398e-05  6.2254e-05  3.6970e-05  3.3620e-06  2.4676e-02  3.4390e-02  0:02:02  129
+    72  3.1130e-04  4.1322e-05  6.0569e-05  3.5809e-05  3.2676e-06  2.5410e-02  3.6655e-02  0:02:02  128
+    73  2.9695e-04  3.8033e-05  5.7437e-05  3.3361e-05  2.9862e-06  2.5996e-02  3.7237e-02  0:02:01  127
+    74  2.7888e-04  3.5361e-05  5.5016e-05  3.1952e-05  2.8922e-06  2.6909e-02  4.0410e-02  0:02:00  126
+    75  2.6133e-04  3.2754e-05  5.1381e-05  2.9346e-05  2.5387e-06  2.7585e-02  4.1499e-02  0:01:59  125
+    76  2.4558e-04  3.0014e-05  4.7541e-05  2.6795e-05  2.2743e-06  2.8033e-02  4.4152e-02  0:01:58  124
+    77  2.3028e-04  2.7211e-05  4.3410e-05  2.4035e-05  2.0134e-06  2.8219e-02  4.7527e-02  0:01:57  123
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    78  2.1201e-04  2.4242e-05  3.8407e-05  2.0914e-05  1.6555e-06  2.7983e-02  4.8731e-02  0:01:57  122
+    79  1.9110e-04  2.1336e-05  3.3495e-05  1.8175e-05  1.3598e-06  2.7649e-02  4.9730e-02  0:01:57  121
+    80  1.6676e-04  1.8559e-05  2.8734e-05  1.5472e-05  1.0800e-06  2.7012e-02  5.3278e-02  0:01:56  120
+    81  1.4443e-04  1.5969e-05  2.4951e-05  1.3362e-05  9.0395e-07  2.6098e-02  5.3965e-02  0:01:54  119
+    82  1.2258e-04  1.3734e-05  2.1723e-05  1.1611e-05  7.5895e-07  2.4402e-02  5.6085e-02  0:01:53  118
+    83  1.0419e-04  1.1831e-05  1.9145e-05  1.0233e-05  6.6949e-07  2.1805e-02  5.4559e-02  0:01:51  117
+    84  9.0071e-05  1.0135e-05  1.6911e-05  8.9494e-06  5.7024e-07  1.8311e-02  5.0145e-02  0:01:50  116
+    85  7.7760e-05  8.5866e-06  1.4676e-05  7.6806e-06  4.7923e-07  1.4456e-02  4.3310e-02  0:01:49  115
+    86  6.8274e-05  7.3025e-06  1.2692e-05  6.5682e-06  3.9404e-07  1.0741e-02  3.5207e-02  0:01:48  114
+    87  6.0015e-05  6.1661e-06  1.0798e-05  5.5313e-06  3.1646e-07  7.3806e-03  2.6531e-02  0:01:46  113
+    88  5.3626e-05  5.1414e-06  8.8938e-06  4.5174e-06  2.3848e-07  4.5975e-03  1.8743e-02  0:01:45  112
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    89  4.7115e-05  4.0359e-06  7.0137e-06  3.5305e-06  1.6331e-07  2.4422e-03  1.2604e-02  0:01:52  111
+    90  4.0179e-05  3.0548e-06  5.3267e-06  2.6368e-06  1.0047e-07  1.0570e-03  5.9510e-03  0:01:49  110
+    91  3.2552e-05  2.2620e-06  3.8821e-06  1.8961e-06  5.7021e-08  4.0591e-04  2.3988e-03  0:01:47  109
+    92  2.5634e-05  1.6484e-06  2.7342e-06  1.3346e-06  3.1013e-08  1.5684e-04  9.9785e-04  0:01:45  108
+!   92 solution is converged
+
+Writing &quot;htc_temp_mapping_MEDIUM_TEMP.csv&quot;...
+
+Writing information to ascii file ...
+Done.
+Generating graphics for temperature contour at MEDIUM_TEMP
+
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_MEDIUM_TEMP.cas.h5&quot; in NODE0 mode and compression level 1 ...
+Grouping cells for Laplace smoothing ...
+      231020 cells,     2 zones ...
+     1444129 faces,    11 zones ...
+     1168370 nodes,     1 zone  ...
+  Done.
+
+  Writing boundary layer flags ...
+  Done.
+Done.
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_MEDIUM_TEMP.dat.h5&quot; in NODE0 mode and compression level 1 ...
+  Writing results.
+Done.
+
+Initialize using the hybrid initialization method.
+
+Checking case topology...
+-This case has both inlets &amp; outlets
+-Pressure information is not available at the boundaries.
+ Case will be initialized with constant pressure
+
+        iter            scalar-0
+
+        1               1.000000e+00
+        2               9.811110e-05
+        3               1.083635e-05
+        4               2.055257e-06
+        5               3.322166e-07
+        6               6.160583e-08
+        7               1.194992e-08
+        8               2.600209e-09
+        9               5.986052e-10
+        10              1.462858e-10
+
+Hybrid initialization is done.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+     1  1.0000e+00  4.3650e-03  5.9452e-03  6.1816e-04  3.1747e-04  1.0282e-01  2.4316e-01  0:03:21  199
+     2  1.0000e+00  8.2990e-03  2.1828e-01  7.4854e-03  1.5311e-03  5.0719e+00  1.9310e+00  0:03:21  198
+
+ Reversed flow on 3 faces (2.9% area) of pressure-outlet 46.
+     3  2.7467e-01  8.5313e-03  6.2302e-02  8.7789e-03  5.9637e-04  3.0409e-01  2.8442e+00  0:03:21  197
+
+ Reversed flow on 4 faces (1.0% area) of pressure-outlet 46.
+     4  2.3462e-01  4.7006e-03  3.1666e-02  3.8101e-03  1.1743e-03  2.6124e-01  1.1259e+00  0:03:16  196
+
+ Reversed flow on 217 faces (24.9% area) of pressure-outlet 46.
+     5  1.6976e-01  9.6235e-03  5.5968e-02  9.6941e-03  7.1723e-04  1.2413e-01  3.9073e-01  0:03:21  195
+
+ Reversed flow on 190 faces (22.5% area) of pressure-outlet 46.
+     6  1.5396e-01  4.9840e-03  3.6440e-02  4.9773e-03  3.4447e-04  4.3701e-01  2.0579e-01  0:03:16  194
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 1 cells
+
+ Reversed flow on 34 faces (3.4% area) of pressure-outlet 46.
+     7  1.2134e-01  5.1047e-03  3.2302e-02  4.9723e-03  1.9029e-04  1.5578e-01  1.3232e-01  0:03:12  193
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 4 cells
+
+ Reversed flow on 28 faces (2.9% area) of pressure-outlet 46.
+     8  8.4123e-02  3.9591e-03  1.7653e-02  3.8316e-03  1.4703e-04  1.0253e-01  8.7634e-02  0:03:09  192
+
+ turbulent viscosity limited to viscosity ratio of 1.000000e+05 in 1 cells
+
+ Reversed flow on 41 faces (4.1% area) of pressure-outlet 46.
+     9  5.9976e-02  3.5289e-03  1.3344e-02  3.4000e-03  6.7852e-05  7.1120e-02  7.1239e-02  0:03:10  191
+
+ Reversed flow on 42 faces (4.0% area) of pressure-outlet 46.
+    10  4.5410e-02  2.9490e-03  1.0303e-02  2.8781e-03  3.9249e-05  4.4677e-02  5.6715e-02  0:03:06  190
+
+ Reversed flow on 36 faces (3.3% area) of pressure-outlet 46.
+    11  3.5755e-02  2.5315e-03  8.3027e-03  2.5045e-03  2.4312e-05  3.0158e-02  4.1749e-02  0:03:16  189
+
+ Reversed flow on 19 faces (1.6% area) of pressure-outlet 46.
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    12  2.6413e-02  1.9819e-03  5.6445e-03  1.8967e-03  1.5252e-05  2.0833e-02  3.2136e-02  0:03:20  188
+
+ Reversed flow on 9 faces (0.7% area) of pressure-outlet 46.
+    13  1.9050e-02  1.3689e-03  3.7090e-03  1.2781e-03  9.2374e-06  1.6422e-02  2.9473e-02  0:03:18  187
+
+ Reversed flow on 2 faces (0.2% area) of pressure-outlet 46.
+    14  1.3392e-02  1.1270e-03  2.7642e-03  1.0056e-03  6.0265e-06  1.3690e-02  2.4501e-02  0:03:13  186
+    15  9.4437e-03  9.6221e-04  2.2644e-03  8.5039e-04  4.0345e-06  1.1735e-02  2.1012e-02  0:03:13  185
+    16  6.8203e-03  8.2754e-04  1.9198e-03  7.4236e-04  2.7599e-06  1.0363e-02  1.7601e-02  0:03:16  184
+    17  5.0227e-03  7.1088e-04  1.5851e-03  6.3480e-04  2.1808e-06  9.3315e-03  1.5272e-02  0:03:15  183
+    18  3.7592e-03  6.1428e-04  1.3377e-03  5.4138e-04  1.7955e-06  8.5848e-03  1.3323e-02  0:03:23  182
+    19  2.9041e-03  5.1691e-04  1.0994e-03  4.4637e-04  1.5178e-06  7.9822e-03  1.1701e-02  0:03:20  181
+    20  2.2844e-03  4.4382e-04  9.4102e-04  3.6938e-04  1.2440e-06  7.4687e-03  1.0053e-02  0:03:13  180
+    21  1.8342e-03  3.7620e-04  7.8736e-04  2.9861e-04  1.0047e-06  7.0124e-03  8.8133e-03  0:03:07  179
+    22  1.5003e-03  3.1962e-04  6.5660e-04  2.4292e-04  8.5567e-07  6.6082e-03  7.7470e-03  0:03:06  178
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    23  1.2351e-03  2.8434e-04  5.5685e-04  2.0581e-04  7.3944e-07  6.2470e-03  7.0650e-03  0:03:09  177
+    24  1.0843e-03  2.4720e-04  4.6908e-04  1.7170e-04  6.3998e-07  5.9319e-03  6.6440e-03  0:03:19  176
+    25  9.5280e-04  2.2071e-04  3.8143e-04  1.5759e-04  5.5385e-07  5.6355e-03  6.6412e-03  0:03:35  175
+    26  8.7099e-04  1.9858e-04  2.9780e-04  1.4799e-04  5.1464e-07  5.3692e-03  6.8699e-03  0:03:35  174
+    27  7.9153e-04  1.8109e-04  2.2922e-04  1.4058e-04  4.5975e-07  5.1031e-03  7.2385e-03  0:03:35  173
+    28  7.2703e-04  1.7232e-04  1.7688e-04  1.4988e-04  4.3296e-07  4.8617e-03  7.6392e-03  0:03:31  172
+    29  6.6867e-04  1.6369e-04  1.4732e-04  1.5052e-04  4.0249e-07  4.6325e-03  8.0386e-03  0:03:23  171
+    30  6.2054e-04  1.5975e-04  1.3368e-04  1.4900e-04  3.6175e-07  4.4141e-03  8.2178e-03  0:03:17  170
+    31  5.6998e-04  1.5321e-04  1.2360e-04  1.5022e-04  3.2780e-07  4.1817e-03  8.2511e-03  0:03:07  169
+    32  5.3384e-04  1.4775e-04  1.1641e-04  1.4618e-04  2.9851e-07  3.9774e-03  8.2106e-03  0:03:10  168
+    33  4.9973e-04  1.4759e-04  1.1274e-04  1.4881e-04  2.8338e-07  3.7730e-03  8.0906e-03  0:03:02  167
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    34  4.7571e-04  1.4563e-04  1.0717e-04  1.4661e-04  2.5740e-07  3.5925e-03  7.8129e-03  0:02:56  166
+    35  4.5965e-04  1.4582e-04  1.0439e-04  1.5882e-04  2.2656e-07  3.4119e-03  7.4176e-03  0:02:51  165
+    36  4.4763e-04  1.4835e-04  9.8408e-05  1.4862e-04  2.1315e-07  3.2713e-03  7.0190e-03  0:02:46  164
+    37  4.1797e-04  1.4782e-04  9.3551e-05  1.5466e-04  1.9183e-07  3.1324e-03  6.6171e-03  0:02:42  163
+    38  4.1031e-04  1.3980e-04  8.9616e-05  1.4842e-04  1.6816e-07  3.0333e-03  6.2410e-03  0:02:39  162
+    39  4.0653e-04  1.4269e-04  8.8100e-05  1.5860e-04  1.5130e-07  2.9393e-03  5.8765e-03  0:02:37  161
+    40  3.9561e-04  1.4445e-04  8.3382e-05  1.6026e-04  1.3752e-07  2.8713e-03  5.5897e-03  0:02:34  160
+    41  3.8306e-04  1.4064e-04  7.9693e-05  1.5593e-04  1.2458e-07  2.8041e-03  5.2985e-03  0:02:32  159
+    42  3.8369e-04  1.4279e-04  7.7312e-05  1.5712e-04  1.1344e-07  2.7524e-03  5.0573e-03  0:02:30  158
+    43  3.7767e-04  1.5309e-04  7.5989e-05  1.5737e-04  1.0415e-07  2.7059e-03  4.8315e-03  0:02:29  157
+    44  3.6430e-04  1.4253e-04  7.1581e-05  1.5690e-04  9.5217e-08  2.6750e-03  4.6480e-03  0:02:28  156
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    45  3.5324e-04  1.4464e-04  6.9795e-05  1.5451e-04  8.7101e-08  2.6395e-03  4.4577e-03  0:02:26  155
+    46  3.4708e-04  1.4186e-04  6.7263e-05  1.5751e-04  7.9593e-08  2.6237e-03  4.3087e-03  0:02:25  154
+    47  3.3130e-04  1.4116e-04  6.6144e-05  1.5111e-04  7.4843e-08  2.5963e-03  4.1489e-03  0:02:24  153
+    48  3.3129e-04  1.4154e-04  6.5824e-05  1.4963e-04  7.2351e-08  2.5925e-03  4.0430e-03  0:02:23  152
+    49  3.2517e-04  1.4980e-04  6.4807e-05  1.4997e-04  7.1429e-08  2.5780e-03  3.9168e-03  0:02:18  151
+    50  3.2862e-04  1.4806e-04  6.5151e-05  1.5627e-04  7.3425e-08  2.5807e-03  3.8313e-03  0:02:17  150
+    51  3.2137e-04  1.4741e-04  6.5730e-05  1.5125e-04  7.1242e-08  2.5795e-03  3.7301e-03  0:02:13  149
+    52  3.1367e-04  1.4547e-04  6.2773e-05  1.4597e-04  7.4505e-08  2.5852e-03  3.6643e-03  0:02:14  148
+    53  3.0951e-04  1.5098e-04  6.4638e-05  1.5292e-04  7.3722e-08  2.5834e-03  3.5846e-03  0:02:10  147
+    54  3.1647e-04  1.5148e-04  6.5359e-05  1.4854e-04  7.6764e-08  2.5983e-03  3.5355e-03  0:02:10  146
+    55  3.0112e-04  1.5295e-04  6.4304e-05  1.4103e-04  7.6446e-08  2.5992e-03  3.4721e-03  0:02:07  145
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    56  3.0378e-04  1.4791e-04  6.3174e-05  1.4310e-04  8.1159e-08  2.6144e-03  3.4398e-03  0:02:08  144
+    57  3.0826e-04  1.5766e-04  6.4831e-05  1.4585e-04  8.2404e-08  2.6217e-03  3.3990e-03  0:02:05  143
+    58  3.0657e-04  1.5235e-04  6.2439e-05  1.4021e-04  8.6917e-08  2.6413e-03  3.3765e-03  0:02:06  142
+    59  3.0359e-04  1.4907e-04  6.3090e-05  1.4186e-04  8.6804e-08  2.6518e-03  3.3448e-03  0:02:07  141
+    60  3.1671e-04  1.5585e-04  6.4465e-05  1.4612e-04  8.9693e-08  2.6667e-03  3.3436e-03  0:02:04  140
+    61  3.1890e-04  1.5824e-04  6.4514e-05  1.4389e-04  9.5363e-08  2.6858e-03  3.3360e-03  0:02:04  139
+    62  3.1466e-04  1.5750e-04  6.3216e-05  1.4511e-04  9.5651e-08  2.6977e-03  3.3215e-03  0:02:05  138
+    63  3.1507e-04  1.5293e-04  6.1782e-05  1.4553e-04  9.5812e-08  2.7206e-03  3.3222e-03  0:02:05  137
+    64  3.1292e-04  1.5151e-04  6.1400e-05  1.4311e-04  9.8608e-08  2.7326e-03  3.3159e-03  0:02:04  136
+    65  3.1765e-04  1.5428e-04  6.1230e-05  1.4331e-04  1.0069e-07  2.7479e-03  3.3231e-03  0:02:04  135
+    66  3.2191e-04  1.6143e-04  6.1344e-05  1.4148e-04  1.0330e-07  2.7684e-03  3.3393e-03  0:02:00  134
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    67  3.1847e-04  1.5362e-04  6.2808e-05  1.4070e-04  1.0759e-07  2.7857e-03  3.3424e-03  0:02:01  133
+    68  3.2235e-04  1.5695e-04  6.1602e-05  1.4046e-04  1.0811e-07  2.8018e-03  3.3665e-03  0:01:58  132
+    69  3.2206e-04  1.6288e-04  6.2153e-05  1.3603e-04  1.1263e-07  2.8190e-03  3.3736e-03  0:01:59  131
+    70  3.1507e-04  1.5934e-04  6.0427e-05  1.3181e-04  1.1505e-07  2.8416e-03  3.4053e-03  0:01:59  130
+    71  3.1249e-04  1.5362e-04  6.1636e-05  1.3442e-04  1.1666e-07  2.8545e-03  3.4173e-03  0:01:59  129
+    72  3.2336e-04  1.5790e-04  6.1237e-05  1.3336e-04  1.1905e-07  2.8756e-03  3.4478e-03  0:01:56  128
+    73  3.2491e-04  1.6296e-04  6.4027e-05  1.3472e-04  1.2150e-07  2.8894e-03  3.4677e-03  0:01:54  127
+    74  3.2822e-04  1.6218e-04  6.2452e-05  1.3372e-04  1.2560e-07  2.9154e-03  3.4935e-03  0:01:55  126
+    75  3.1459e-04  1.5378e-04  6.0005e-05  1.2702e-04  1.2645e-07  2.9268e-03  3.5049e-03  0:01:55  125
+    76  3.2612e-04  1.6032e-04  6.0175e-05  1.2572e-04  1.2565e-07  2.9505e-03  3.5434e-03  0:01:52  124
+    77  3.2066e-04  1.6698e-04  6.3145e-05  1.2937e-04  1.2718e-07  2.9666e-03  3.5696e-03  0:01:50  123
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    78  3.2060e-04  1.5657e-04  6.0743e-05  1.2474e-04  1.3025e-07  2.9903e-03  3.5963e-03  0:01:52  122
+    79  3.1564e-04  1.5891e-04  6.1473e-05  1.2676e-04  1.2907e-07  3.0059e-03  3.6233e-03  0:01:50  121
+    80  3.2350e-04  1.5984e-04  6.2431e-05  1.2838e-04  1.2986e-07  3.0311e-03  3.6609e-03  0:01:48  120
+    81  3.2249e-04  1.6336e-04  6.5016e-05  1.3364e-04  1.3608e-07  3.0440e-03  3.6881e-03  0:01:49  119
+    82  3.2330e-04  1.6111e-04  6.2190e-05  1.2941e-04  1.3609e-07  3.0716e-03  3.7215e-03  0:01:47  118
+    83  3.1364e-04  1.6149e-04  6.3576e-05  1.3121e-04  1.4011e-07  3.0831e-03  3.7466e-03  0:01:48  117
+    84  3.1789e-04  1.5570e-04  6.1778e-05  1.2778e-04  1.3724e-07  3.1131e-03  3.7841e-03  0:01:45  116
+    85  3.1306e-04  1.5965e-04  6.3401e-05  1.2821e-04  1.3769e-07  3.1234e-03  3.8055e-03  0:01:43  115
+    86  3.1481e-04  1.5785e-04  6.2017e-05  1.2381e-04  1.3807e-07  3.1535e-03  3.8455e-03  0:01:44  114
+    87  3.0417e-04  1.6176e-04  6.2268e-05  1.2595e-04  1.4296e-07  3.1633e-03  3.8783e-03  0:01:44  113
+    88  3.1030e-04  1.5498e-04  6.0936e-05  1.2538e-04  1.4118e-07  3.1961e-03  3.9127e-03  0:01:42  112
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+    89  3.0394e-04  1.6588e-04  6.2244e-05  1.2533e-04  1.4300e-07  3.2094e-03  3.9482e-03  0:01:40  111
+    90  3.0694e-04  1.5267e-04  5.9312e-05  1.2106e-04  1.4225e-07  3.2423e-03  3.9762e-03  0:01:38  110
+    91  3.0232e-04  1.5955e-04  6.2620e-05  1.2262e-04  1.4620e-07  3.2540e-03  4.0058e-03  0:01:36  109
+    92  3.1064e-04  1.5419e-04  6.1732e-05  1.2240e-04  1.4321e-07  3.2852e-03  4.0560e-03  0:01:34  108
+    93  3.0453e-04  1.5616e-04  6.1752e-05  1.2100e-04  1.4235e-07  3.3037e-03  4.0928e-03  0:01:34  107
+    94  3.0831e-04  1.5843e-04  6.0640e-05  1.2227e-04  1.4279e-07  3.3367e-03  4.1391e-03  0:01:32  106
+    95  2.9548e-04  1.5676e-04  6.1126e-05  1.2164e-04  1.4406e-07  3.3494e-03  4.1743e-03  0:01:34  105
+    96  3.0680e-04  1.5889e-04  5.9400e-05  1.2160e-04  1.4486e-07  3.3902e-03  4.2423e-03  0:01:33  104
+    97  3.0012e-04  1.6232e-04  6.2379e-05  1.2148e-04  1.4951e-07  3.4099e-03  4.2884e-03  0:01:31  103
+    98  3.0453e-04  1.5821e-04  6.1384e-05  1.2250e-04  1.5291e-07  3.4488e-03  4.3219e-03  0:01:30  102
+    99  2.9263e-04  1.6038e-04  6.2169e-05  1.2092e-04  1.5691e-07  3.4645e-03  4.3691e-03  0:01:31  101
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   100  3.0392e-04  1.5608e-04  6.0357e-05  1.1728e-04  1.5067e-07  3.5059e-03  4.4313e-03  0:01:29  100
+   101  2.9536e-04  1.6518e-04  6.2619e-05  1.1843e-04  1.5171e-07  3.5236e-03  4.4619e-03  0:01:27   99
+   102  2.9522e-04  1.5328e-04  5.9227e-05  1.1465e-04  1.4875e-07  3.5660e-03  4.5303e-03  0:01:26   98
+   103  2.8177e-04  1.5884e-04  6.2732e-05  1.1651e-04  1.5387e-07  3.5840e-03  4.5325e-03  0:01:27   97
+   104  2.8954e-04  1.5207e-04  5.9808e-05  1.1489e-04  1.4950e-07  3.6378e-03  4.6481e-03  0:01:26   96
+   105  2.7460e-04  1.5578e-04  6.0764e-05  1.1403e-04  1.5598e-07  3.6572e-03  4.6779e-03  0:01:25   95
+   106  2.8095e-04  1.4619e-04  5.8420e-05  1.1113e-04  1.5523e-07  3.7071e-03  4.7674e-03  0:01:23   94
+   107  2.7281e-04  1.5430e-04  6.0838e-05  1.1264e-04  1.5980e-07  3.7332e-03  4.8685e-03  0:01:22   93
+   108  2.7657e-04  1.4415e-04  5.8888e-05  1.0962e-04  1.5602e-07  3.7929e-03  5.0068e-03  0:01:21   92
+   109  2.6149e-04  1.4559e-04  5.9135e-05  1.0522e-04  1.6049e-07  3.8213e-03  5.1042e-03  0:01:19   91
+   110  2.6830e-04  1.3900e-04  5.7297e-05  1.0371e-04  1.5556e-07  3.8869e-03  5.2157e-03  0:01:17   90
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   111  2.5959e-04  1.4652e-04  5.9095e-05  1.0527e-04  1.5647e-07  3.9226e-03  5.3647e-03  0:01:16   89
+   112  2.6023e-04  1.3842e-04  5.7052e-05  1.0421e-04  1.5835e-07  3.9842e-03  5.4295e-03  0:01:17   88
+   113  2.4673e-04  1.3990e-04  5.6937e-05  1.0044e-04  1.5574e-07  4.0313e-03  5.5935e-03  0:01:15   87
+   114  2.4675e-04  1.3213e-04  5.5874e-05  9.7247e-05  1.5414e-07  4.1001e-03  5.6828e-03  0:01:14   86
+   115  2.3251e-04  1.3266e-04  5.5868e-05  9.6488e-05  1.6053e-07  4.1450e-03  5.7652e-03  0:01:15   85
+   116  2.2947e-04  1.2484e-04  5.3752e-05  9.3115e-05  1.6122e-07  4.2227e-03  5.8230e-03  0:01:13   84
+   117  2.2262e-04  1.2389e-04  5.2810e-05  8.8160e-05  1.5959e-07  4.2856e-03  6.0330e-03  0:01:12   83
+   118  2.2246e-04  1.1702e-04  5.1818e-05  8.3623e-05  1.6129e-07  4.3630e-03  6.0633e-03  0:01:13   82
+   119  2.2101e-04  1.2228e-04  5.2863e-05  8.4562e-05  1.6359e-07  4.4307e-03  6.2004e-03  0:01:11   81
+   120  2.2127e-04  1.1662e-04  5.1481e-05  8.2003e-05  1.6177e-07  4.5163e-03  6.3314e-03  0:01:10   80
+   121  2.1044e-04  1.1091e-04  5.0715e-05  7.5065e-05  1.5634e-07  4.5909e-03  6.4370e-03  0:01:09   79
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   122  2.0375e-04  1.0415e-04  4.9428e-05  6.9463e-05  1.5119e-07  4.6768e-03  6.5207e-03  0:01:07   78
+   123  1.9411e-04  1.0089e-04  4.9243e-05  6.8919e-05  1.5375e-07  4.7663e-03  6.8251e-03  0:01:08   77
+   124  1.8649e-04  9.9568e-05  4.8378e-05  6.6620e-05  1.5675e-07  4.8713e-03  6.9918e-03  0:01:08   76
+   125  1.7665e-04  9.4614e-05  4.8363e-05  6.3168e-05  1.5835e-07  4.9749e-03  7.2376e-03  0:01:08   75
+   126  1.7341e-04  8.7997e-05  4.6741e-05  5.7920e-05  1.6032e-07  5.0993e-03  7.4534e-03  0:01:06   74
+   127  1.6717e-04  8.5621e-05  4.6715e-05  5.8142e-05  1.6197e-07  5.2065e-03  7.6242e-03  0:01:07   73
+   128  1.6519e-04  8.0240e-05  4.6093e-05  5.5516e-05  1.6144e-07  5.3412e-03  7.8882e-03  0:01:07   72
+   129  1.5780e-04  7.5766e-05  4.5931e-05  5.2722e-05  1.5867e-07  5.4541e-03  8.2324e-03  0:01:05   71
+   130  1.5674e-04  7.2358e-05  4.6032e-05  4.8646e-05  1.5754e-07  5.6125e-03  8.5017e-03  0:01:04   70
+   131  1.5097e-04  7.1385e-05  4.6155e-05  4.8313e-05  1.5949e-07  5.7450e-03  8.9530e-03  0:01:04   69
+   132  1.5488e-04  7.2133e-05  4.6558e-05  4.7640e-05  1.6425e-07  5.9480e-03  9.5671e-03  0:01:04   68
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   133  1.4800e-04  7.1223e-05  4.6993e-05  4.6170e-05  1.7339e-07  6.1185e-03  1.0213e-02  0:01:03   67
+   134  1.4646e-04  6.7539e-05  4.8146e-05  4.3017e-05  1.8137e-07  6.3430e-03  1.0968e-02  0:01:03   66
+   135  1.4339e-04  6.6887e-05  4.8614e-05  4.1710e-05  1.8279e-07  6.5359e-03  1.1566e-02  0:01:02   65
+   136  1.4844e-04  6.5975e-05  5.0082e-05  4.1633e-05  1.8681e-07  6.7733e-03  1.2344e-02  0:01:01   64
+   137  1.4833e-04  6.4700e-05  5.0853e-05  4.0135e-05  1.9518e-07  6.9679e-03  1.2963e-02  0:01:00   63
+   138  1.4714e-04  6.1463e-05  5.2068e-05  3.9061e-05  1.9824e-07  7.1739e-03  1.3651e-02  0:01:00   62
+   139  1.4398e-04  5.9734e-05  5.2394e-05  3.8126e-05  1.9666e-07  7.3676e-03  1.3570e-02  0:00:59   61
+   140  1.3856e-04  5.7966e-05  5.3477e-05  3.8277e-05  1.9567e-07  7.5889e-03  1.4309e-02  0:00:58   60
+   141  1.2958e-04  5.5220e-05  5.4473e-05  3.7947e-05  2.0031e-07  7.8227e-03  1.4686e-02  0:01:01   59
+   142  1.2604e-04  5.5787e-05  5.5883e-05  3.8551e-05  1.9918e-07  8.0886e-03  1.5441e-02  0:00:59   58
+   143  1.2134e-04  5.5474e-05  5.7332e-05  3.9622e-05  2.0022e-07  8.3685e-03  1.6330e-02  0:00:57   57
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   144  1.1737e-04  5.7322e-05  5.8816e-05  4.1592e-05  2.0471e-07  8.6819e-03  1.7160e-02  0:00:56   56
+   145  1.1379e-04  5.8474e-05  5.9632e-05  4.3327e-05  2.0135e-07  9.0217e-03  1.8256e-02  0:00:55   55
+   146  1.1265e-04  6.1319e-05  6.1425e-05  4.5394e-05  2.0352e-07  9.4011e-03  1.9169e-02  0:00:54   54
+   147  1.1285e-04  6.3517e-05  6.3395e-05  4.7595e-05  2.0995e-07  9.8296e-03  2.0137e-02  0:00:52   53
+   148  1.1309e-04  6.5120e-05  6.4686e-05  4.9335e-05  2.0486e-07  1.0270e-02  2.0938e-02  0:00:51   52
+   149  1.1195e-04  6.6924e-05  6.5817e-05  5.1579e-05  2.0873e-07  1.0729e-02  2.1934e-02  0:00:50   51
+   150  1.0893e-04  7.0151e-05  6.8798e-05  5.3435e-05  2.1059e-07  1.1308e-02  2.3422e-02  0:00:49   50
+   151  1.0640e-04  7.3286e-05  7.1052e-05  5.5113e-05  2.1076e-07  1.1933e-02  2.4157e-02  0:00:48   49
+   152  1.0396e-04  7.5863e-05  7.4273e-05  5.6560e-05  2.1540e-07  1.2619e-02  2.5242e-02  0:00:47   48
+   153  1.0130e-04  7.5135e-05  7.6583e-05  5.7552e-05  2.1353e-07  1.3347e-02  2.7104e-02  0:00:46   47
+   154  9.7594e-05  7.3930e-05  7.8489e-05  5.7728e-05  2.1136e-07  1.4104e-02  2.7987e-02  0:00:45   46
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   155  9.5274e-05  7.4143e-05  8.1431e-05  5.9560e-05  2.1045e-07  1.4975e-02  3.0061e-02  0:00:44   45
+   156  9.2230e-05  7.3687e-05  8.4783e-05  6.1380e-05  2.1016e-07  1.5950e-02  3.0730e-02  0:00:43   44
+   157  8.8838e-05  7.3595e-05  8.7821e-05  6.2095e-05  2.1009e-07  1.7020e-02  3.2874e-02  0:00:42   43
+   158  8.5489e-05  7.2951e-05  9.1344e-05  6.2668e-05  2.1277e-07  1.8186e-02  3.6170e-02  0:00:41   42
+   159  8.2011e-05  7.3676e-05  9.4982e-05  6.4707e-05  2.0971e-07  1.9568e-02  3.6105e-02  0:00:40   41
+   160  8.0426e-05  7.4651e-05  9.7975e-05  6.6399e-05  2.1018e-07  2.1147e-02  4.1212e-02  0:00:39   40
+   161  7.7857e-05  7.4865e-05  1.0126e-04  6.6660e-05  2.1115e-07  2.2923e-02  4.4329e-02  0:00:38   39
+   162  7.5193e-05  7.4745e-05  1.0376e-04  6.8056e-05  2.0944e-07  2.5125e-02  4.7854e-02  0:00:37   38
+   163  7.4238e-05  7.3878e-05  1.0625e-04  6.7962e-05  2.0790e-07  2.7759e-02  5.5129e-02  0:00:36   37
+   164  7.4541e-05  7.3991e-05  1.0982e-04  6.6813e-05  2.0739e-07  3.0843e-02  6.4327e-02  0:00:35   36
+   165  7.4419e-05  7.1717e-05  1.1074e-04  6.7704e-05  2.0062e-07  3.4761e-02  7.0584e-02  0:00:34   35
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   166  7.3446e-05  6.8498e-05  1.0989e-04  6.6515e-05  1.9220e-07  3.9420e-02  8.6089e-02  0:00:33   34
+   167  7.1158e-05  6.3802e-05  1.0617e-04  6.3303e-05  1.7881e-07  4.5069e-02  9.7846e-02  0:00:32   33
+   168  6.7166e-05  5.8674e-05  1.0118e-04  6.0616e-05  1.6692e-07  5.2869e-02  1.1566e-01  0:00:31   32
+   169  6.2410e-05  5.1921e-05  9.2415e-05  5.3881e-05  1.4762e-07  6.1767e-02  1.5961e-01  0:00:30   31
+   170  5.7177e-05  4.5898e-05  8.3535e-05  4.7782e-05  1.3151e-07  7.5063e-02  1.7597e-01  0:00:29   30
+   171  5.1646e-05  3.7384e-05  7.1228e-05  3.8540e-05  1.1080e-07  8.0645e-02  2.2628e-01  0:00:28   29
+   172  4.4849e-05  3.0056e-05  5.7121e-05  3.0210e-05  8.2855e-08  6.8749e-02  2.8596e-01  0:00:27   28
+   173  3.8122e-05  2.3927e-05  4.5180e-05  2.3859e-05  6.7005e-08  4.6375e-02  2.9356e-01  0:00:26   27
+   174  3.2045e-05  1.8799e-05  3.4602e-05  1.8654e-05  4.8713e-08  2.4738e-02  2.2801e-01  0:00:25   26
+   175  2.6398e-05  1.4819e-05  2.6423e-05  1.3617e-05  2.9864e-08  1.0281e-02  1.0703e-01  0:00:25   25
+   176  2.1340e-05  1.1104e-05  1.8959e-05  9.5417e-06  1.7391e-08  3.5468e-03  3.3439e-02  0:00:24   24
+
+  iter  continuity  x-velocity  y-velocity  z-velocity      energy           k     epsilon     time/iter
+   177  1.7105e-05  7.8000e-06  1.3022e-05  6.5396e-06  9.5406e-09  1.1056e-03  9.5268e-03  0:00:23   23
+   178  1.3278e-05  5.5081e-06  9.0696e-06  4.5388e-06  5.0289e-09  3.6057e-04  3.0272e-03  0:00:21   22
+   179  1.0113e-05  3.8856e-06  6.2176e-06  3.2163e-06  2.8111e-09  1.5621e-04  1.3097e-03  0:00:20   21
+   180  7.6108e-06  2.8279e-06  4.3538e-06  2.3264e-06  1.7705e-09  9.1141e-05  7.7458e-04  0:00:19   20
+!  180 solution is converged
+
+Writing &quot;htc_temp_mapping_LOW_TEMP.csv&quot;...
+
+Writing information to ascii file ...
+Done.
+Generating graphics for temperature contour at LOW_TEMP
+
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_LOW_TEMP.cas.h5&quot; in NODE0 mode and compression level 1 ...
+Grouping cells for Laplace smoothing ...
+      231020 cells,     2 zones ...
+     1444129 faces,    11 zones ...
+     1168370 nodes,     1 zone  ...
+  Done.
+
+  Writing boundary layer flags ...
+  Done.
+Done.
+
+Writing to 01e50d123941:&quot;/home/container/workdir/exhaust_manifold_results_LOW_TEMP.dat.h5&quot; in NODE0 mode and compression level 1 ...
+  Writing results.
+Done.
+</pre></div>
+</div>
+</section>
+<section id="exit-the-solver">
+<h2>Exit the Solver<a class="headerlink" href="#exit-the-solver" title="Link to this heading">#</a></h2>
+<p>Close the Fluent solver.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">solver</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (6 minutes 40.041 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-fluent-mechanical-wf-fm-01-fluent-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/d4a5be9b30e5e1ee9629c8bf6708bc5f/wf_fm_01_fluent.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">wf_fm_01_fluent.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/b2f758fb61480890d40c30164127c234/wf_fm_01_fluent.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">wf_fm_01_fluent.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/437401b675e2966a325af3f76e3e2a39/wf_fm_01_fluent.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">wf_fm_01_fluent.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-description">Problem Description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#launch-fluent">Launch Fluent</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#read-the-mesh-file">Read the mesh file</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-physics">Define the Physics</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-material-properties">Define the Material Properties</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-named-expressions">Define the Named Expressions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-boundary-conditions">Define the Boundary Conditions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-the-solution-methods-and-solver-settings">Define the Solution Methods and Solver Settings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#run-the-solver-export-the-results-to-csv">Run the Solver &amp; Export the Results to CSV</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#exit-the-solver">Exit the Solver</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/fluent-mechanical/wf_fm_01_fluent.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

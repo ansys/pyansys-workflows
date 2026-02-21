@@ -1,0 +1,51 @@
+:orphan:
+
+Maxwell 2D and Lumerical
+========================
+
+Surface electrodes adjacent to grating couplers render an integrated ion trap.
+This workflow uses Ansys Maxwell to model surface electrodes and Ansys Lumerical to model grating couplers. Using the finite element method, the Maxwell electrostatic solver evaluates the ion trap height. The workflow then passes the coordinates of the ion trap to an optimization
+algorithm to define the optimal two-dimensional grating coupler design, which focuses the laser
+beam at the ion trap height.
+
+This `article <https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers>`_ describes the workflow in details.
+
+
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Problem description -------------------">
+
+.. only:: html
+
+  .. image:: /examples/maxwell2d-lumerical/images/thumb/sphx_glr_wf_ml_01_ion_trap_modelling_thumb.png
+    :alt:
+
+  :doc:`/examples/maxwell2d-lumerical/wf_ml_01_ion_trap_modelling`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Maxwell 2D - Simplified ion trap modeling</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/maxwell2d-lumerical/wf_ml_01_ion_trap_modelling
+

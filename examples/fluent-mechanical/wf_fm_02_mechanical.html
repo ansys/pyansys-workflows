@@ -1,0 +1,1450 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Thermo-mechanical assessment of representative exhaust manifold model &#8212; PyAnsys Workflows</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/fluent-mechanical/wf_fm_02_mechanical';</script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Geometry and meshing workflow" href="../geometry-mesh/index.html" />
+    <link rel="prev" title="Conjugate Heat Transfer Workflow for Exhaust Manifold" href="wf_fm_01_fluent.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Workflows - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Workflows - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Fluent and mechanical heat transfer workflow for exhaust manifold</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="wf_fm_01_fluent.html">Conjugate Heat Transfer Workflow for Exhaust Manifold</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Thermo-mechanical assessment of representative exhaust manifold model</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh/index.html">Geometry and meshing workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh-fluent/index.html">Geometry, meshing and fluids workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapdl-dpf/index.html">MAPDL and DPF workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../speos-optislang/index.html">Speos, optiSLang workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../maxwell2d-lumerical/index.html">Maxwell 2D and Lumerical</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Workflow examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Fluent and mechanical heat transfer workflow for exhaust manifold</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Thermo-mechanical assessment of representative exhaust manifold model</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-fluent-mechanical-wf-fm-02-mechanical-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="thermo-mechanical-assessment-of-representative-exhaust-manifold-model">
+<span id="ref-fluent-mechanical-02-mechanical"></span><span id="sphx-glr-examples-fluent-mechanical-wf-fm-02-mechanical-py"></span><h1>Thermo-mechanical assessment of representative exhaust manifold model<a class="headerlink" href="#thermo-mechanical-assessment-of-representative-exhaust-manifold-model" title="Link to this heading">#</a></h1>
+<section id="background">
+<h2>Background<a class="headerlink" href="#background" title="Link to this heading">#</a></h2>
+<p>The turbine housing/exhaust manifold is a critical component as it is subjected to extreme
+temperature cycling. This induces fatigue in the housing material and leads to early
+failure. Simulation helps to design housing and other parts for extended service life.</p>
+</section>
+<section id="thermo-mechanical-workflow">
+<h2>Thermo-mechanical workflow<a class="headerlink" href="#thermo-mechanical-workflow" title="Link to this heading">#</a></h2>
+<p>A comprehensive CFD analysis of the exhaust manifold component is executed as a
+steady-state examination, focusing on the specified duty cycle. This process involves
+two recurring duty cycles, during which the temperature and other crucial operating
+parameters, such as mass flow and pressure, maintain a consistent pseudo-steady state.</p>
+<p>Three unique operating conditions are chosen from the duty cycle, and steady-state
+calculations are performed corresponding to the exhaust gas temperature in each case.
+The resulting Heat Transfer Coefficients (HTCs) and temperatures at the solid-fluid
+interface are exported to a CSV file, which serves as the input for subsequent thermal
+calculations in the Mechanical run.</p>
+<p>The Mechanical run encompasses Structural Transient Thermal and Non-linear (NL) Static
+analyses, employing temperature-dependent Bilinear Kinematic hardening material
+properties for a thorough structural evaluation.</p>
+<p>In the Transient Thermal run, imported HTCs and reference temperatures from the
+CFD runs are mapped onto the structural mesh of the exhaust manifold assembly. External
+convection loads and other boundary conditions are applied to calculate the temperature
+distribution across the exhaust manifold assembly.</p>
+<p>Subsequently, a non-linear static analysis is conducted to determine the plastic strain,
+taking into account the temperature distribution calculated in the Transient Thermal
+solve and other relevant structural boundary conditions.</p>
+<p>This approach leads to a more impactful and precise understanding of the exhaust
+manifold’s performance subjected to thermal cycling.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.mechanical.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launch_mechanical</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.mechanical.core.examples</span><span class="w"> </span><span class="kn">import</span> <span class="n">download_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">image</span> <span class="k">as</span> <span class="n">mpimg</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">matplotlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+</pre></div>
+</div>
+</section>
+<section id="parameters-for-the-script">
+<h2>Parameters for the script<a class="headerlink" href="#parameters-for-the-script" title="Link to this heading">#</a></h2>
+<p>The following parameters are used to control the script execution. You can
+modify these parameters to suit your needs.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Set to True to display the graphics</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span><span class="p">,</span> <span class="s2">&quot;outputs&quot;</span><span class="p">)</span>  <span class="c1"># Output directory</span>
+</pre></div>
+</div>
+</section>
+<section id="start-a-pymechanical-app">
+<h2>Start a PyMechanical app<a class="headerlink" href="#start-a-pymechanical-app" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span> <span class="o">=</span> <span class="n">launch_mechanical</span><span class="p">(</span><span class="n">batch</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">cleanup_on_exit</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mechanical</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">display_image</span><span class="p">(</span><span class="n">image_name</span><span class="p">):</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">16</span><span class="p">,</span> <span class="mi">9</span><span class="p">))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">imshow</span><span class="p">(</span><span class="n">mpimg</span><span class="o">.</span><span class="n">imread</span><span class="p">(</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">,</span> <span class="n">image_name</span><span class="p">)))</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">yticks</span><span class="p">([])</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">axis</span><span class="p">(</span><span class="s2">&quot;off&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Ansys Mechanical [Ansys Mechanical Enterprise]
+Product Version:251
+Software build date: 11/27/2024 09:34:44
+</pre></div>
+</div>
+<p>Input files needed for the simulation
+—————- ——————–
+Download the input files needed for the simulation.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">geometry_path</span></a> <span class="o">=</span> <span class="n">download_file</span><span class="p">(</span>
+    <span class="s2">&quot;Exhaust_Manifold_Geometry.pmdb&quot;</span><span class="p">,</span> <span class="s2">&quot;pyansys-workflow&quot;</span><span class="p">,</span> <span class="s2">&quot;exhaust-manifold&quot;</span><span class="p">,</span> <span class="s2">&quot;pymechanical&quot;</span>
+<span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">material_path</span></a> <span class="o">=</span> <span class="n">download_file</span><span class="p">(</span>
+    <span class="s2">&quot;Nonlinear_Material.xml&quot;</span><span class="p">,</span> <span class="s2">&quot;pyansys-workflow&quot;</span><span class="p">,</span> <span class="s2">&quot;exhaust-manifold&quot;</span><span class="p">,</span> <span class="s2">&quot;pymechanical&quot;</span>
+<span class="p">)</span>
+
+<span class="c1"># Files necessary for the thermal simulation from fluent analysis</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_high_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">,</span> <span class="s2">&quot;htc_temp_mapping_HIGH_TEMP.csv&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_med_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">,</span> <span class="s2">&quot;htc_temp_mapping_MEDIUM_TEMP.csv&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_low_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">,</span> <span class="s2">&quot;htc_temp_mapping_LOW_TEMP.csv&quot;</span><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">all_input_files</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;geometry_path&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">geometry_path</span></a><span class="p">,</span>
+    <span class="s2">&quot;material_path&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">material_path</span></a><span class="p">,</span>
+    <span class="s2">&quot;temp_htc_data_high_path&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_high_path</span></a><span class="p">,</span>
+    <span class="s2">&quot;temp_htc_data_med_path&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_med_path</span></a><span class="p">,</span>
+    <span class="s2">&quot;temp_htc_data_low_path&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_htc_data_low_path</span></a><span class="p">,</span>
+<span class="p">}</span>
+
+<span class="c1"># Upload to Mechanical Remote session server and get the file paths</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a> <span class="o">=</span> <span class="n">mechanical</span><span class="o">.</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;project directory = </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="k">for</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_name</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_path</span></a> <span class="ow">in</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">all_input_files</span></a><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+    <span class="c1"># Upload the file to the project directory.</span>
+    <span class="n">mechanical</span><span class="o">.</span><span class="n">upload</span><span class="p">(</span><span class="n">file_name</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_path</span></a><span class="p">,</span> <span class="n">file_location_destination</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">)</span>
+
+    <span class="c1"># Build the path relative to project directory.</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">base_name</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.basename" title="os.path.basename" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">basename</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_path</span></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">combined_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">base_name</span></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">server_file_path</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">combined_path</span></a><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\\</span><span class="s2">&quot;</span><span class="p">,</span> <span class="s2">&quot;</span><span class="se">\\\\</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_name</span></a><span class="si">}</span><span class="s2"> = &#39;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">server_file_path</span></a><span class="si">}</span><span class="s2">&#39;&quot;</span><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">result</span></a> <span class="o">=</span> <span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_name</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;path of </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">input_file_name</span></a><span class="si">}</span><span class="s2"> on server: </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">result</span></a><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>project directory = /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/
+
+Uploading Exhaust_Manifold_Geometry.pmdb to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.:   0%|          | 0.00/1.51M [00:00&lt;?, ?B/s]
+Uploading Exhaust_Manifold_Geometry.pmdb to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.: 100%|██████████| 1.51M/1.51M [00:00&lt;00:00, 334MB/s]
+path of geometry_path on server: /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/Exhaust_Manifold_Geometry.pmdb
+
+Uploading Nonlinear_Material.xml to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.:   0%|          | 0.00/470k [00:00&lt;?, ?B/s]
+Uploading Nonlinear_Material.xml to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.: 100%|██████████| 470k/470k [00:00&lt;00:00, 318MB/s]
+path of material_path on server: /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/Nonlinear_Material.xml
+
+Uploading htc_temp_mapping_HIGH_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.:   0%|          | 0.00/1.61M [00:00&lt;?, ?B/s]
+Uploading htc_temp_mapping_HIGH_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.: 100%|██████████| 1.61M/1.61M [00:00&lt;00:00, 550MB/s]
+path of temp_htc_data_high_path on server: /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/htc_temp_mapping_HIGH_TEMP.csv
+
+Uploading htc_temp_mapping_MEDIUM_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.:   0%|          | 0.00/1.61M [00:00&lt;?, ?B/s]
+Uploading htc_temp_mapping_MEDIUM_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.: 100%|██████████| 1.61M/1.61M [00:00&lt;00:00, 1.04GB/s]
+path of temp_htc_data_med_path on server: /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/htc_temp_mapping_MEDIUM_TEMP.csv
+
+Uploading htc_temp_mapping_LOW_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.:   0%|          | 0.00/1.61M [00:00&lt;?, ?B/s]
+Uploading htc_temp_mapping_LOW_TEMP.csv to dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/.: 100%|██████████| 1.61M/1.61M [00:00&lt;00:00, 500MB/s]
+path of temp_htc_data_low_path on server: /tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/htc_temp_mapping_LOW_TEMP.csv
+</pre></div>
+</div>
+</section>
+<section id="configure-graphics-for-image-export">
+<h2>Configure graphics for image export<a class="headerlink" href="#configure-graphics-for-image-export" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">ExtAPI.Graphics.Camera.SetSpecificViewOrientation(</span>
+<span class="s2">    Ansys.Mechanical.DataModel.Enums.ViewOrientationType.Iso</span>
+<span class="s2">)</span>
+<span class="s2">ExtAPI.Graphics.Camera.SetFit()</span>
+<span class="s2">image_export_format = Ansys.Mechanical.DataModel.Enums.GraphicsImageExportFormat.PNG</span>
+<span class="s2">settings_720p = Ansys.Mechanical.Graphics.GraphicsImageExportSettings()</span>
+<span class="s2">settings_720p.Resolution = (</span>
+<span class="s2">    Ansys.Mechanical.DataModel.Enums.GraphicsResolutionType.EnhancedResolution</span>
+<span class="s2">)</span>
+<span class="s2">settings_720p.Background = Ansys.Mechanical.DataModel.Enums.GraphicsBackgroundType.White</span>
+<span class="s2">settings_720p.Width = 1280</span>
+<span class="s2">settings_720p.Height = 720</span>
+<span class="s2">settings_720p.CurrentGraphicsDisplay = False</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;&#39;
+</pre></div>
+</div>
+</section>
+<section id="import-geometry">
+<h2>Import geometry<a class="headerlink" href="#import-geometry" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">import os</span>
+<span class="s2">geometry_import_group = Model.GeometryImportGroup</span>
+<span class="s2">geometry_import = geometry_import_group.AddGeometryImport()</span>
+<span class="s2">geometry_import_format = (</span>
+<span class="s2">    Ansys.Mechanical.DataModel.Enums.GeometryImportPreference.Format.Automatic</span>
+<span class="s2">)</span>
+<span class="s2">geometry_import_preferences = Ansys.ACT.Mechanical.Utilities.GeometryImportPreferences()</span>
+<span class="s2">geometry_import_preferences.ProcessNamedSelections = True</span>
+<span class="s2">geometry_import_preferences.NamedSelectionKey = &quot;&quot;</span>
+<span class="s2">geometry_import_preferences.ProcessMaterialProperties = True</span>
+<span class="s2">geometry_import_preferences.ProcessCoordinateSystems = True</span>
+<span class="s2">geometry_import.Import(</span>
+<span class="s2">    geometry_path, geometry_import_format, geometry_import_preferences</span>
+<span class="s2">)</span>
+<span class="s2">project_directory = ExtAPI.DataModel.Project.ProjectDirectory</span>
+<span class="s2">ExtAPI.Graphics.Camera.SetFit()</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;geometry.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Download the geometry image and display it</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;geometry.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">)</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;geometry.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_wf_fm_02_mechanical_001.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_001.png" alt="wf fm 02 mechanical" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/geometry.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/geometry.png:   0%|          | 0.00/87.9k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/geometry.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/geometry.png: 100%|██████████| 87.9k/87.9k [00:00&lt;00:00, 283MB/s]
+</pre></div>
+</div>
+</section>
+<section id="import-material-assign-it-to-the-bodies-and-create-named-selections">
+<h2>Import material, assign it to the bodies and create Named Selections<a class="headerlink" href="#import-material-assign-it-to-the-bodies-and-create-named-selections" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">materials = ExtAPI.DataModel.Project.Model.Materials</span>
+<span class="s2">materials.Import(material_path)</span>
+<span class="s2">materials.RefreshMaterials()</span>
+
+<span class="s2">PRT1 = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;Geom-2</span><span class="se">\\</span><span class="s2">Geom-1</span><span class="se">\\</span><span class="s2">solid&quot;][0]</span>
+
+<span class="s2"># Assign it to the bodies</span>
+
+<span class="s2">nmat = &quot;1_HiSi_Model3_Exhaust Manifold updated&quot;</span>
+<span class="s2">PRT1.Material = nmat</span>
+
+
+<span class="s2"># Select MKS units</span>
+<span class="s2">ExtAPI.Application.ActiveUnitSystem = MechanicalUnitSystem.StandardNMM</span>
+
+<span class="s2"># Store all main tree nodes as variables</span>
+<span class="s2">GEOM = Model.Geometry</span>
+<span class="s2">MAT_GRP = Model.Materials</span>
+
+<span class="s2"># Create NS for Named Selection.</span>
+
+<span class="s2">NS_GRP = ExtAPI.DataModel.Project.Model.NamedSelections</span>
+<span class="s2">BRACKET_FIX_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;bracket_fix&quot;][0]</span>
+<span class="s2">INTERFACE_SURFACE_NS = [</span>
+<span class="s2">    x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;interface_surface&quot;</span>
+<span class="s2">][0]</span>
+<span class="s2">EXHAUST_MANIFOLD_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;exhaust_manifold&quot;][</span>
+<span class="s2">    0</span>
+<span class="s2">]</span>
+<span class="s2">TOP_BRACKET_SURFACE_NS = [</span>
+<span class="s2">    x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;top_bracket_surface&quot;</span>
+<span class="s2">][0]</span>
+<span class="s2">SPACERS_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;spacers&quot;][0]</span>
+<span class="s2">EM_OUTER_SURFACE_NS = [x for x in ExtAPI.DataModel.Tree.AllObjects if x.Name == &quot;em_outer_surface&quot;][</span>
+<span class="s2">    0</span>
+<span class="s2">]</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;&#39;
+</pre></div>
+</div>
+</section>
+<section id="set-up-the-mesh-and-generate">
+<h2>Set up the mesh and generate<a class="headerlink" href="#set-up-the-mesh-and-generate" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">MESH = Model.Mesh</span>
+
+<span class="s2">MESH.UseAdaptiveSizing = True</span>
+<span class="s2">MESH.TransitionOption = 1</span>
+
+<span class="s2">Tree.Activate([MESH])</span>
+<span class="s2">MESH.GenerateMesh()</span>
+
+<span class="s2"># Export mesh image</span>
+
+<span class="s2">ExtAPI.Graphics.Camera.SetFit()</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;mesh.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Download the mesh image and display it</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;mesh.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">)</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;mesh.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_wf_fm_02_mechanical_002.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_002.png" alt="wf fm 02 mechanical" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/mesh.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/mesh.png:   0%|          | 0.00/138k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/mesh.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/mesh.png: 100%|██████████| 138k/138k [00:00&lt;00:00, 546MB/s]
+</pre></div>
+</div>
+</section>
+<section id="add-transient-thermal-analysis-and-set-up-the-analysis-settings">
+<h2>Add Transient Thermal Analysis and set up the analysis settings<a class="headerlink" href="#add-transient-thermal-analysis-and-set-up-the-analysis-settings" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Model.AddTransientThermalAnalysis()</span>
+
+<span class="s2"># Store all main tree nodes as variables</span>
+<span class="s2">TRANS_THERM = Model.Analyses[0]</span>
+<span class="s2">TRANS_THERM_SOLN = TRANS_THERM.Solution</span>
+<span class="s2">ANA_SETTINGS = TRANS_THERM.Children[1]</span>
+<span class="s2"># ANA_SETTINGS = TRANS_THERM.AnalysisSettings</span>
+
+<span class="s2"># Setup transient thermal analysis settings</span>
+<span class="s2">ANA_SETTINGS.SolverType = SolverType.Direct</span>
+<span class="s2">ANA_SETTINGS.NonLinearFormulation = NonLinearFormulationType.Full</span>
+
+<span class="s2">ANA_SETTINGS.NumberOfSteps = 1</span>
+<span class="s2">ANA_SETTINGS.SetStepEndTime(1, Quantity(&#39;720[s]&#39;))</span>
+<span class="s2">ANA_SETTINGS.NumberOfSteps = 14</span>
+<span class="s2">analysis_step = (</span>
+<span class="s2">    (1, Quantity(&#39;1e-3[s]&#39;)),</span>
+<span class="s2">    (2, Quantity(&#39;2e-3[s]&#39;)),</span>
+<span class="s2">    (3, Quantity(&#39;20[s]&#39;)),</span>
+<span class="s2">    (4, Quantity(&#39;30[s]&#39;)),</span>
+<span class="s2">    (5, Quantity(&#39;320[s]&#39;)),</span>
+<span class="s2">    (6, Quantity(&#39;330[s]&#39;)),</span>
+<span class="s2">    (7, Quantity(&#39;350[s]&#39;)),</span>
+<span class="s2">    (8, Quantity(&#39;360[s]&#39;)),</span>
+<span class="s2">    (9, Quantity(&#39;380[s]&#39;)),</span>
+<span class="s2">    (10, Quantity(&#39;390[s]&#39;)),</span>
+<span class="s2">    (11, Quantity(&#39;680[s]&#39;)),</span>
+<span class="s2">    (12, Quantity(&#39;690[s]&#39;)),</span>
+<span class="s2">    (13, Quantity(&#39;710[s]&#39;)),</span>
+<span class="s2">    (14, Quantity(&#39;720[s]&#39;))</span>
+<span class="s2">)</span>
+<span class="s2">for i, q in analysis_step:</span>
+<span class="s2">    ANA_SETTINGS.SetStepEndTime(i, q)</span>
+<span class="s2">ANA_SETTINGS.Activate()</span>
+
+<span class="s2">External_Convection_Load_1 = TRANS_THERM.AddConvection()</span>
+<span class="s2">selection = NS_GRP.Children[8]</span>
+<span class="s2">External_Convection_Load_1.Location = selection</span>
+
+<span class="s2">External_Convection_Load_1.FilmCoefficient.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;), Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_1.FilmCoefficient.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;60[W m^-1 m^-1 K^-1]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_1.AmbientTemperature.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;), Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_1.AmbientTemperature.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;), Quantity(&#39;473.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;473.15[K]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_2 = TRANS_THERM.AddConvection()</span>
+<span class="s2">selection = NS_GRP.Children[7]</span>
+<span class="s2">External_Convection_Load_2.Location = selection</span>
+
+<span class="s2">External_Convection_Load_2.FilmCoefficient.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;), Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_2.FilmCoefficient.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;20[W m^-1 m^-1 K^-1]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_2.AmbientTemperature.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;),Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_2.AmbientTemperature.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;), Quantity(&#39;498.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;498.15[K]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_3 = TRANS_THERM.AddConvection()</span>
+<span class="s2">selection = NS_GRP.Children[6]</span>
+<span class="s2">External_Convection_Load_3.Location = selection</span>
+
+<span class="s2">External_Convection_Load_3.FilmCoefficient.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;), Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_3.FilmCoefficient.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;), Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;),</span>
+<span class="s2">    Quantity(&#39;500[W m^-1 m^-1 K^-1]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_3.AmbientTemperature.Inputs[0].DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;0[s]&#39;), Quantity(&#39;1e-3[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;2e-3[s]&#39;), Quantity(&#39;20[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;30[s]&#39;), Quantity(&#39;320[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;330[s]&#39;), Quantity(&#39;350[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;360[s]&#39;), Quantity(&#39;380[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;390[s]&#39;), Quantity(&#39;680[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;690[s]&#39;), Quantity(&#39;710[s]&#39;),</span>
+<span class="s2">    Quantity(&#39;720[s]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">External_Convection_Load_3.AmbientTemperature.Output.DiscreteValues = [</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;), Quantity(&#39;373.15[K]&#39;),</span>
+<span class="s2">    Quantity(&#39;373.15[K]&#39;)</span>
+<span class="s2">]</span>
+
+<span class="s2">group_list = [External_Convection_Load_1, External_Convection_Load_2, External_Convection_Load_3]</span>
+<span class="s2">grouping_folder = Tree.Group(group_list)</span>
+<span class="s2">tree_grouping_folder_70 = DataModel.GetObjectsByName(&quot;New Folder&quot;)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;&#39;
+</pre></div>
+</div>
+</section>
+<section id="use-the-output-from-fluent-to-import-the-temperature-and-htc-data">
+<h2>Use the output from Fluent to import the temperature and HTC data<a class="headerlink" href="#use-the-output-from-fluent-to-import-the-temperature-and-htc-data" title="Link to this heading">#</a></h2>
+<p>Add imported convection</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">result</span></a> <span class="o">=</span> <span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Imported_Load_Group = TRANS_THERM.AddImportedLoadExternalData()</span>
+<span class="s2">imported_load_group_61=Imported_Load_Group</span>
+<span class="s2">imported_convection_62 = Imported_Load_Group.AddImportedConvection()</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">result</span></a> <span class="o">=</span> <span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">external_data_files = Ansys.Mechanical.ExternalData.ExternalDataFileCollection()</span>
+<span class="s2">external_data_files.SaveFilesWithProject = False</span>
+
+<span class="s2">external_data_file_1 = Ansys.Mechanical.ExternalData.ExternalDataFile()</span>
+<span class="s2">external_data_files.Add(external_data_file_1)</span>
+<span class="s2">external_data_file_1.Identifier = &quot;File1&quot;</span>
+<span class="s2">external_data_file_1.Description = &quot;High&quot;</span>
+<span class="s2">external_data_file_1.IsMainFile = True</span>
+<span class="s2">external_data_file_1.FilePath = temp_htc_data_high_path</span>
+<span class="s2">external_data_file_1.ImportSettings = (</span>
+<span class="s2">    Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(</span>
+<span class="s2">        MechanicalEnums.ExternalData.ImportFormat.Delimited</span>
+<span class="s2">    )</span>
+<span class="s2">)</span>
+<span class="s2">import_settings = external_data_file_1.ImportSettings</span>
+<span class="s2">import_settings.SkipRows = 1</span>
+<span class="s2">import_settings.SkipFooter = 0</span>
+<span class="s2">import_settings.Delimiter = &quot;,&quot;</span>
+<span class="s2">import_settings.AverageCornerNodesToMidsideNodes = False</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    0, MechanicalEnums.ExternalData.VariableType.NodeId, &quot;&quot;, &quot;Node ID@A&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    1, MechanicalEnums.ExternalData.VariableType.XCoordinate, &quot;m&quot;, &quot;X Coordinate@B&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    2, MechanicalEnums.ExternalData.VariableType.YCoordinate, &quot;m&quot;, &quot;Y Coordinate@C&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    3, MechanicalEnums.ExternalData.VariableType.ZCoordinate, &quot;m&quot;, &quot;Z Coordinate@D&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    4, MechanicalEnums.ExternalData.VariableType.Temperature, &quot;K&quot;, &quot;Temperature@E&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,</span>
+<span class="s2">    &quot;W m^-2 K^-1&quot;, &quot;Heat Transfer Coefficient@F&quot;</span>
+<span class="s2">)</span>
+
+<span class="s2">external_data_file_2 = Ansys.Mechanical.ExternalData.ExternalDataFile()</span>
+<span class="s2">external_data_files.Add(external_data_file_2)</span>
+<span class="s2">external_data_file_2.Identifier = &quot;File2&quot;</span>
+<span class="s2">external_data_file_2.Description = &quot;Med&quot;</span>
+<span class="s2">external_data_file_2.IsMainFile = False</span>
+<span class="s2">external_data_file_2.FilePath = temp_htc_data_med_path</span>
+<span class="s2">external_data_file_2.ImportSettings = (</span>
+<span class="s2">    Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(</span>
+<span class="s2">        MechanicalEnums.ExternalData.ImportFormat.Delimited</span>
+<span class="s2">    )</span>
+<span class="s2">)</span>
+<span class="s2">import_settings = external_data_file_2.ImportSettings</span>
+<span class="s2">import_settings.SkipRows = 1</span>
+<span class="s2">import_settings.SkipFooter = 0</span>
+<span class="s2">import_settings.Delimiter = &quot;,&quot;</span>
+<span class="s2">import_settings.AverageCornerNodesToMidsideNodes = False</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    0, MechanicalEnums.ExternalData.VariableType.NodeId, &quot;&quot;, &quot;Node ID@A&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    1, MechanicalEnums.ExternalData.VariableType.XCoordinate, &quot;m&quot;, &quot;X Coordinate@B&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    2, MechanicalEnums.ExternalData.VariableType.YCoordinate, &quot;m&quot;, &quot;Y Coordinate@C&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    3, MechanicalEnums.ExternalData.VariableType.ZCoordinate, &quot;m&quot;, &quot;Z Coordinate@D&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    4, MechanicalEnums.ExternalData.VariableType.Temperature, &quot;K&quot;, &quot;Temperature@E&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,</span>
+<span class="s2">    &quot;W m^-2 K^-1&quot;, &quot;Heat Transfer Coefficient@F&quot;</span>
+<span class="s2">)</span>
+
+<span class="s2">external_data_file_3 = Ansys.Mechanical.ExternalData.ExternalDataFile()</span>
+<span class="s2">external_data_files.Add(external_data_file_3)</span>
+<span class="s2">external_data_file_3.Identifier = &quot;File3&quot;</span>
+<span class="s2">external_data_file_3.Description = &quot;Low&quot;</span>
+<span class="s2">external_data_file_3.IsMainFile = False</span>
+<span class="s2">external_data_file_3.FilePath = temp_htc_data_low_path</span>
+<span class="s2">external_data_file_3.ImportSettings = (</span>
+<span class="s2">    Ansys.Mechanical.ExternalData.ImportSettingsFactory.GetSettingsForFormat(</span>
+<span class="s2">        MechanicalEnums.ExternalData.ImportFormat.Delimited</span>
+<span class="s2">    )</span>
+<span class="s2">)</span>
+<span class="s2">import_settings = external_data_file_3.ImportSettings</span>
+<span class="s2">import_settings.SkipRows = 1</span>
+<span class="s2">import_settings.SkipFooter = 0</span>
+<span class="s2">import_settings.Delimiter = &quot;,&quot;</span>
+<span class="s2">import_settings.AverageCornerNodesToMidsideNodes = False</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    0, MechanicalEnums.ExternalData.VariableType.NodeId, &quot;&quot;, &quot;Node ID@A&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    1, MechanicalEnums.ExternalData.VariableType.XCoordinate, &quot;m&quot;, &quot;X Coordinate@B&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    2, MechanicalEnums.ExternalData.VariableType.YCoordinate, &quot;m&quot;, &quot;Y Coordinate@C&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    3, MechanicalEnums.ExternalData.VariableType.ZCoordinate, &quot;m&quot;, &quot;Z Coordinate@D&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    4, MechanicalEnums.ExternalData.VariableType.Temperature, &quot;K&quot;, &quot;Temperature@E&quot;</span>
+<span class="s2">)</span>
+<span class="s2">import_settings.UseColumn(</span>
+<span class="s2">    5, MechanicalEnums.ExternalData.VariableType.HeatTransferCoefficient,</span>
+<span class="s2">    &quot;W m^-2 K^-1&quot;, &quot;Heat Transfer Coefficient@F&quot;</span>
+<span class="s2">)</span>
+
+<span class="s2">imported_load_group_61.ImportExternalDataFiles(external_data_files)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">result</span></a> <span class="o">=</span> <span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">table = imported_load_group_61.Children[0].GetTableByName(&quot;Film Coefficient&quot;)</span>
+<span class="s2">numofsteps = 15</span>
+<span class="s2">Film_Coeff = [</span>
+<span class="s2">    &quot;File1:Heat Transfer Coefficient@F&quot;,</span>
+<span class="s2">    &quot;File2:Heat Transfer Coefficient@F&quot;,</span>
+<span class="s2">    &quot;File3:Heat Transfer Coefficient@F&quot;</span>
+<span class="s2">]</span>
+<span class="s2">Amb_Temp = [</span>
+<span class="s2">    &quot;File1:Temperature@E&quot;,</span>
+<span class="s2">    &quot;File2:Temperature@E&quot;,</span>
+<span class="s2">    &quot;File3:Temperature@E&quot;</span>
+<span class="s2">]</span>
+<span class="s2">Ana_time = [</span>
+<span class="s2">    &quot;0&quot;, &quot;1e-3&quot;, &quot;2e-3&quot;, &quot;20&quot;, &quot;30&quot;, &quot;320&quot;, &quot;330&quot;, &quot;350&quot;, &quot;360&quot;, &quot;380&quot;, &quot;390&quot;,</span>
+<span class="s2">    &quot;680&quot;, &quot;690&quot;, &quot;710&quot;, &quot;720&quot;</span>
+<span class="s2">]</span>
+
+<span class="s2">for i in range(numofsteps - 1):</span>
+<span class="s2">    table.Add(None)</span>
+
+<span class="s2">for i in range(numofsteps):</span>
+<span class="s2">    table[i][0] = Film_Coeff[i % 3]</span>
+<span class="s2">    table[i][1] = Amb_Temp[i % 3]</span>
+<span class="s2">    table[i][2] = Ana_time[i]</span>
+
+<span class="s2">selection = NS_GRP.Children[4]</span>
+<span class="s2">imported_convection_62.Location = selection</span>
+<span class="s2">imported_load_id = imported_convection_62.ObjectId</span>
+<span class="s2">imported_load = DataModel.GetObjectById(imported_load_id)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">imported_load.ImportLoad()</span>
+
+<span class="s2">Tree.Activate([imported_load])</span>
+<span class="s2">ExtAPI.Graphics.Camera.SetFit()</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;imported_temperature.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+    <span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;imported_temperature.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a>
+<span class="p">)</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;imported_temperature.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_wf_fm_02_mechanical_003.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_003.png" alt="wf fm 02 mechanical" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/imported_temperature.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/imported_temperature.png:   0%|          | 0.00/114k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/imported_temperature.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/imported_temperature.png: 100%|██████████| 114k/114k [00:00&lt;00:00, 480MB/s]
+</pre></div>
+</div>
+</section>
+<section id="solve-and-post-process-the-results">
+<h2>Solve and post-process the results<a class="headerlink" href="#solve-and-post-process-the-results" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2"># Insert results objects</span>
+
+<span class="s2">Temp = TRANS_THERM_SOLN.AddTemperature()</span>
+<span class="s2">Temp.DisplayTime = Quantity(&quot;680 [s]&quot;)</span>
+
+<span class="s2"># Run Solution: Transient Thermal Simulation</span>
+
+<span class="s2">TRANS_THERM_SOLN.Solve(True)</span>
+<span class="s2">TRANS_THERM_SS = TRANS_THERM_SOLN.Status</span>
+
+<span class="s2"># Export temperature image</span>
+
+<span class="s2">Tree.Activate([Temp])</span>
+<span class="s2">ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (</span>
+<span class="s2">    Ansys.Mechanical.DataModel.MechanicalEnums.Graphics.ExtraModelDisplay.NoWireframe</span>
+<span class="s2">)</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;temperature.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Download the temperature image and display it</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;temperature.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">)</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;temperature.png&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<img src="../../_images/sphx_glr_wf_fm_02_mechanical_004.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_004.png" alt="wf fm 02 mechanical" class = "sphx-glr-single-img"/><div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/temperature.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/temperature.png:   0%|          | 0.00/105k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/temperature.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/temperature.png: 100%|██████████| 105k/105k [00:00&lt;00:00, 395MB/s]
+</pre></div>
+</div>
+</section>
+<section id="setup-structural-analysis">
+<h2>Setup Structural Analysis<a class="headerlink" href="#setup-structural-analysis" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Model.AddStaticStructuralAnalysis()</span>
+
+<span class="s2"># Define analysis settings</span>
+
+<span class="s2"># Setup static structural analysis settings</span>
+<span class="s2">STAT_STRUC = Model.Analyses[1]</span>
+<span class="s2">STAT_STRUC_SOLN = STAT_STRUC.Solution</span>
+<span class="s2">STAT_STRUC_ANA_SETTING = STAT_STRUC.Children[0]</span>
+
+<span class="s2">STAT_STRUC_ANA_SETTING.NumberOfSteps = 1</span>
+<span class="s2">STAT_STRUC_ANA_SETTING.SetStepEndTime(1, Quantity(&#39;720[s]&#39;))</span>
+<span class="s2">STAT_STRUC_ANA_SETTING.NumberOfSteps = 14</span>
+
+<span class="s2">analysis_step = (</span>
+<span class="s2">    (1, Quantity(&#39;1e-3[s]&#39;)),</span>
+<span class="s2">    (2, Quantity(&#39;2e-3[s]&#39;)),</span>
+<span class="s2">    (3, Quantity(&#39;20[s]&#39;)),</span>
+<span class="s2">    (4, Quantity(&#39;30[s]&#39;)),</span>
+<span class="s2">    (5, Quantity(&#39;320[s]&#39;)),</span>
+<span class="s2">    (6, Quantity(&#39;330[s]&#39;)),</span>
+<span class="s2">    (7, Quantity(&#39;350[s]&#39;)),</span>
+<span class="s2">    (8, Quantity(&#39;360[s]&#39;)),</span>
+<span class="s2">    (9, Quantity(&#39;380[s]&#39;)),</span>
+<span class="s2">    (10, Quantity(&#39;390[s]&#39;)),</span>
+<span class="s2">    (11, Quantity(&#39;680[s]&#39;)),</span>
+<span class="s2">    (12, Quantity(&#39;690[s]&#39;)),</span>
+<span class="s2">    (13, Quantity(&#39;710[s]&#39;)),</span>
+<span class="s2">    (14, Quantity(&#39;720[s]&#39;))</span>
+<span class="s2">)</span>
+<span class="s2">for i, q in analysis_step:</span>
+<span class="s2">    STAT_STRUC_ANA_SETTING.SetStepEndTime(i,q)</span>
+<span class="s2">STAT_STRUC_ANA_SETTING.Activate()</span>
+
+
+<span class="s2"># Add Imported Body Temperature load from Transient Thermal Run</span>
+
+<span class="s2">STAT_STRUC.ImportLoad(Model.Analyses[0])</span>
+<span class="s2">imported_load = DataModel.GetObjectsByName(&quot;Imported Body Temperature&quot;)[0]</span>
+
+<span class="s2">table = imported_load.GetTableByName(&quot;Source Time&quot;)</span>
+<span class="s2">numofsteps = 14</span>
+<span class="s2">nCol = 2</span>
+<span class="s2">Ana_time = [&quot;1e-3&quot;,&quot;2e-3&quot;,&quot;20&quot;,&quot;30&quot;,&quot;320&quot;,&quot;330&quot;,&quot;350&quot;,&quot;360&quot;,&quot;380&quot;,&quot;390&quot;,&quot;680&quot;,&quot;690&quot;,&quot;710&quot;,&quot;720&quot;]</span>
+
+<span class="s2">for i in range(numofsteps-1):</span>
+<span class="s2">    table.Add(None)</span>
+
+<span class="s2">for i in range(numofsteps):</span>
+<span class="s2">    for j in range(nCol):</span>
+<span class="s2">        table[i][j] = Ana_time[i]</span>
+
+<span class="s2">imported_load.ImportLoad()</span>
+
+<span class="s2"># Apply Fixed Support Condition</span>
+
+<span class="s2">Fixed_Support = STAT_STRUC.AddFixedSupport()</span>
+<span class="s2">selection = NS_GRP.Children[3]</span>
+<span class="s2">Fixed_Support.Location = selection</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;&#39;
+</pre></div>
+</div>
+</section>
+<section id="id1">
+<h2>Solve and post-process the results<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">mechanical</span><span class="o">.</span><span class="n">run_python_script</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">SOLN = STAT_STRUC.Solution</span>
+
+<span class="s2">TOT_DEF1 = SOLN.AddTotalDeformation()</span>
+<span class="s2">TOT_DEF1.DisplayTime = Quantity(&quot;680 [s]&quot;)</span>
+
+<span class="s2">EQV_STRS1 = SOLN.AddEquivalentStress()</span>
+<span class="s2">EQV_STRS1.DisplayTime = Quantity(&quot;680 [s]&quot;)</span>
+
+<span class="s2">EQV_PLAS_STRN1 = SOLN.AddEquivalentPlasticStrain()</span>
+<span class="s2">EQV_PLAS_STRN1.DisplayTime = Quantity(&quot;680 [s]&quot;)</span>
+
+<span class="s2">THERM_STRN1 = SOLN.AddThermalStrain()</span>
+<span class="s2">THERM_STRN1.DisplayTime = Quantity(&quot;680 [s]&quot;)</span>
+
+<span class="s2"># Solve Nonlinear Static Simulation</span>
+
+<span class="s2">SOLN.Solve(True)</span>
+<span class="s2">STAT_STRUC_SS = SOLN.Status</span>
+
+<span class="s2"># Export results images</span>
+
+<span class="s2">Tree.Activate([TOT_DEF1])</span>
+<span class="s2">ExtAPI.Graphics.ViewOptions.ResultPreference.ExtraModelDisplay = (</span>
+<span class="s2">    Ansys.Mechanical.DataModel.MechanicalEnums.Graphics.ExtraModelDisplay.NoWireframe</span>
+<span class="s2">)</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;deformation.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+
+<span class="s2">Tree.Activate([EQV_STRS1])</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;stress.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+
+<span class="s2">Tree.Activate([EQV_PLAS_STRN1])</span>
+<span class="s2">ExtAPI.Graphics.ExportImage(</span>
+<span class="s2">    os.path.join(project_directory, &quot;plastic_strain.png&quot;), image_export_format, settings_720p</span>
+<span class="s2">)</span>
+<span class="s2">&quot;&quot;&quot;</span><span class="p">)</span>
+
+<span class="c1"># Download the results images to local directory</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;deformation.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">)</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span><span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;stress.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a><span class="p">)</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">download</span><span class="p">(</span>
+    <span class="n">files</span><span class="o">=</span><a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_directory</span></a><span class="p">,</span> <span class="s2">&quot;plastic_strain.png&quot;</span><span class="p">),</span> <span class="n">target_dir</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.PosixPath" title="pathlib.PosixPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">OUTPUT_DIR</span></a>
+<span class="p">)</span>
+
+<span class="c1"># Deformation</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;deformation.png&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Stress</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;stress.png&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># Plastic strain</span>
+<span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="s2">&quot;plastic_strain.png&quot;</span><span class="p">)</span>
+
+
+<span class="c1"># ###############################################################################</span>
+<span class="c1"># Close the Mechanical</span>
+<span class="c1"># --------------------</span>
+<span class="c1">#</span>
+<span class="n">mechanical</span><span class="o">.</span><span class="n">exit</span><span class="p">()</span>
+</pre></div>
+</div>
+<ul class="sphx-glr-horizontal">
+<li><img src="../../_images/sphx_glr_wf_fm_02_mechanical_005.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_005.png" alt="wf fm 02 mechanical" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_wf_fm_02_mechanical_006.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_006.png" alt="wf fm 02 mechanical" class = "sphx-glr-multi-img"/></li>
+<li><img src="../../_images/sphx_glr_wf_fm_02_mechanical_007.png" srcset="../../_images/sphx_glr_wf_fm_02_mechanical_007.png" alt="wf fm 02 mechanical" class = "sphx-glr-multi-img"/></li>
+</ul>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/deformation.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/deformation.png:   0%|          | 0.00/129k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/deformation.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/deformation.png: 100%|██████████| 129k/129k [00:00&lt;00:00, 529MB/s]
+
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/stress.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/stress.png:   0%|          | 0.00/148k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/stress.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/stress.png: 100%|██████████| 148k/148k [00:00&lt;00:00, 671MB/s]
+
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/plastic_strain.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/plastic_strain.png:   0%|          | 0.00/135k [00:00&lt;?, ?B/s]
+Downloading dns:///127.0.0.1:10000:/tmp/ANSYS.root.1/AnsysMechEF6C/Project_Mech_Files/plastic_strain.png to /home/runner/work/pyansys-workflows/pyansys-workflows/fluent-mechanical/outputs/plastic_strain.png: 100%|██████████| 135k/135k [00:00&lt;00:00, 657MB/s]
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (7 minutes 38.265 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-fluent-mechanical-wf-fm-02-mechanical-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/709c734dbafb2c82c8d6ec16af526699/wf_fm_02_mechanical.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">wf_fm_02_mechanical.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/697ff00594111aba527e7e387e08f46a/wf_fm_02_mechanical.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">wf_fm_02_mechanical.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/66a33082fe37a154efba16c4e914c3f8/wf_fm_02_mechanical.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">wf_fm_02_mechanical.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#background">Background</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#thermo-mechanical-workflow">Thermo-mechanical workflow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#parameters-for-the-script">Parameters for the script</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#start-a-pymechanical-app">Start a PyMechanical app</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#configure-graphics-for-image-export">Configure graphics for image export</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-geometry">Import geometry</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#import-material-assign-it-to-the-bodies-and-create-named-selections">Import material, assign it to the bodies and create Named Selections</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#set-up-the-mesh-and-generate">Set up the mesh and generate</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#add-transient-thermal-analysis-and-set-up-the-analysis-settings">Add Transient Thermal Analysis and set up the analysis settings</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#use-the-output-from-fluent-to-import-the-temperature-and-htc-data">Use the output from Fluent to import the temperature and HTC data</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#solve-and-post-process-the-results">Solve and post-process the results</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#setup-structural-analysis">Setup Structural Analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">Solve and post-process the results</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/fluent-mechanical/wf_fm_02_mechanical.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>

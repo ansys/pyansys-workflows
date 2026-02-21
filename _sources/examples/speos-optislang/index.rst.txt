@@ -1,0 +1,49 @@
+:orphan:
+
+Speos, optiSLang workflow
+=========================
+
+Below is an example workflow that demonstrates how to perform an optical lightguide robustness
+study, set up the robustness workflow, and run an optical simulation using PyAnsys. The lightguide
+is prepared in Speos and exported as a .speos file. The exported file is processed by pySpeos to
+run a parametric study, controlled by PyOptiSLang, in order to evaluate the to understand the
+influence of source power, source position on the lightguide performance, i.e. RMS contrast,
+average luminance as well as the number of failed regulations
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="In this example, we use Speos and optiSLang to analyze the robustness of a prismatic light guide and quantify the failure rate due to production tolerances in an automated way. We will understand which tolerances lead to regulation fails for the automotive Day-Time-Running lights and which tolerances must be improved to increase the optical performance. Additionally, we will evaluate the scattering of the homogeneity (RMS-contrast) and the lit appearance (average luminance) to see what the worst design looks like due to tolerances.">
+
+.. only:: html
+
+  .. image:: /examples/speos-optislang/images/thumb/sphx_glr_wf_so_01_light_guide_robustness_study_thumb.png
+    :alt:
+
+  :doc:`/examples/speos-optislang/wf_so_01_light_guide_robustness_study`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Evaluating robustness of exterior lightguide</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/speos-optislang/wf_so_01_light_guide_robustness_study
+

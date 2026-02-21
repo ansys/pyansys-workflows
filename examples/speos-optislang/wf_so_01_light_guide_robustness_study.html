@@ -1,0 +1,1418 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Evaluating robustness of exterior lightguide &#8212; PyAnsys Workflows</title>
+  
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=8f2a1f02" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery.css?v=d2d258e8" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-binder.css?v=f4aeca0c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-dataframe.css?v=2082cf3c" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sg_gallery-rendered-html.css?v=1277b6f3" />
+    <link rel="stylesheet" type="text/css" href="../../_static/styles/ansys-sphinx-theme.css?v=a23b20f3" />
+    <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.23/css/jquery.dataTables.min.css" />
+    <link rel="stylesheet" type="text/css" href="https://www.nerdfonts.com/assets/css/webfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+
+  <!-- Include desired assets -->
+  <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+  
+
+  
+    <link href="../../_static/css/breadcrumbs.css" rel="stylesheet" />
+  
+    <script src="../../_static/documentation_options.js?v=38b66d78"></script>
+    <script src="../../_static/doctools.js?v=fd6eb6e6"></script>
+    <script src="../../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../../_static/copybutton.js?v=f281be69"></script>
+    <script src="https://cdn.datatables.net/1.10.23/js/jquery.dataTables.min.js"></script>
+    <script src="../../_static/design-tabs.js?v=f930bc37"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'examples/speos-optislang/wf_so_01_light_guide_robustness_study';</script>
+    <link rel="icon" href="../../_static/ansys-favicon.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" />
+    <link rel="next" title="Maxwell 2D and Lumerical" href="../maxwell2d-lumerical/index.html" />
+    <link rel="prev" title="Speos, optiSLang workflow" href="index.html" />
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="0.1.0" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search the docs ..."
+         aria-label="Search the docs ..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+<div class="bd-header__inner bd-page-width">
+  <button class="pst-navbar-icon sidebar-toggle primary-toggle" aria-label="Site navigation">
+    <span class="fa-solid fa-bars"></span>
+  </button>
+  
+  
+  <div class="col-lg-3 navbar-header-items__start">
+    
+      <div class="navbar-item">
+
+  
+
+<a class="navbar-brand logo" href="https://docs.pyansys.com/">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../../_static/pyansys_logo_transparent_black.png" class="logo__image only-light" alt="PyAnsys Workflows - Home"/>
+    <img src="../../_static/pyansys_logo_transparent_white.png" class="logo__image only-dark pst-js-only" alt="PyAnsys Workflows - Home"/>
+  
+  
+</a></div>
+    
+  </div>
+  
+  <div class="col-lg-9 navbar-header-items">
+    
+    <div class="me-auto navbar-header-items__center">
+      
+        <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+      
+    </div>
+    
+    
+    <div class="navbar-header-items__end">
+      
+      
+        <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+      
+        <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+      
+        <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+      
+    </div>
+    
+  </div>
+  
+  
+
+  
+    <button class="pst-navbar-icon sidebar-toggle secondary-toggle" aria-label="On this page">
+      <span class="fa-solid fa-outdent"></span>
+    </button>
+  
+</div>
+
+    </header>
+  
+  
+
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+      <div class="sidebar-header-items__center">
+        
+          
+          
+            <div class="navbar-item">
+
+<nav>
+  <ul class="bd-navbar-elements navbar-nav">
+    
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../index.html" title="PyAnsys Workflows home">Home</a>
+</li>
+
+
+<li class="nav-item ">
+  <a class="nav-link nav-internal" href="../../getting_started/index.html">
+    Getting started
+  </a>
+</li>
+
+
+<li class="nav-item current active">
+  <a class="nav-link nav-internal" href="../../examples.html">
+    Workflow examples
+  </a>
+</li>
+
+  </ul>
+</nav>
+</div>
+          
+        
+      </div>
+    
+    
+    
+      <div class="sidebar-header-items__end">
+        
+          <div class="navbar-item">
+<div class="search-bar pst-js-only" id="search-bar">
+  <form class="bd-search d-flex align-items-center" action="../../search.html" method="get">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <input type="search" class="form-control" name="q" placeholder="Search the docs ..."
+      aria-label="Search the docs ..." autocomplete="off" autocorrect="off"
+      autocapitalize="off" spellcheck="false" />
+    <span class="search-button__kbd-shortcut">
+      <kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd>
+    </span>
+  </form>
+  
+  <div id="static-search-results" class="static-search-results" style="display:none;" tabindex="0"></div>
+  
+</div></div>
+        
+          <div class="navbar-item">
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button></div>
+        
+          <div class="navbar-item"><ul class="navbar-icon-links"
+    aria-label="Icon Links">
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows" title="GitHub" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa-brands fa-square-github fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">GitHub</span></a>
+        </li>
+        <li class="nav-item">
+          
+          
+          
+          
+          
+          
+          
+          
+          <a href="https://github.com/ansys/pyansys-workflows/discussions" title="Support" class="nav-link pst-navbar-icon" rel="noopener" target="_blank" data-bs-toggle="tooltip" data-bs-placement="bottom"><i class="fa fa-comment fa-fw fa-lg" aria-hidden="true"></i>
+            <span class="sr-only">Support</span></a>
+        </li>
+</ul></div>
+        
+      </div>
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+<nav class="bd-docs-nav bd-links"
+     aria-label="Section Navigation">
+  <p class="bd-links__title" role="heading" aria-level="1">Section Navigation</p>
+  <div class="bd-toc-item navbar-nav"><ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../fluent-mechanical/index.html">Fluent and mechanical heat transfer workflow for exhaust manifold</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh/index.html">Geometry and meshing workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../geometry-mesh-fluent/index.html">Geometry, meshing and fluids workflow</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../mapdl-dpf/index.html">MAPDL and DPF workflow</a></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="index.html">Speos, optiSLang workflow</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Evaluating robustness of exterior lightguide</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1"><a class="reference internal" href="../maxwell2d-lumerical/index.html">Maxwell 2D and Lumerical</a></li>
+</ul>
+</div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item">
+<nav aria-label="Breadcrumb">
+  <ul class="bd-breadcrumbs">
+         
+    <li class="breadcrumb-item breadcrumb-home">
+      <a href="https://docs.pyansys.com/" class="nav-link">PyAnsys</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a
+        href="../../index.html"
+        class="nav-link"
+        aria-label="Home"
+      >
+        <i class="fa-solid fa-home"></i>
+      </a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="../../examples.html" class="nav-link">Workflow examples</a>
+    </li>
+     
+    <li class="breadcrumb-item">
+      <a href="index.html" class="nav-link">Speos, optiSLang workflow</a>
+    </li>
+      
+    <li class="breadcrumb-item active" aria-current="page"><span class="ellipsis">Evaluating robustness of exterior lightguide</span></li>
+    
+  </ul>
+</nav>
+</div>
+      
+    </div>
+  
+  
+</div>
+</div>
+              
+              
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="sphx-glr-download-link-note admonition note">
+<p class="admonition-title">Note</p>
+<p><a class="reference internal" href="#sphx-glr-download-examples-speos-optislang-wf-so-01-light-guide-robustness-study-py"><span class="std std-ref">Go to the end</span></a>
+to download the full example code.</p>
+</div>
+<section class="sphx-glr-example-title" id="evaluating-robustness-of-exterior-lightguide">
+<span id="ref-speops-optislang-01-light-guide-robustness-study"></span><span id="sphx-glr-examples-speos-optislang-wf-so-01-light-guide-robustness-study-py"></span><h1>Evaluating robustness of exterior lightguide<a class="headerlink" href="#evaluating-robustness-of-exterior-lightguide" title="Link to this heading">#</a></h1>
+<p>In this example, we use Speos and optiSLang to analyze the robustness of a prismatic light
+guide and quantify the failure rate due to production tolerances in an automated way.
+We will understand which tolerances lead to regulation fails for the automotive
+Day-Time-Running lights and which tolerances must be improved to increase the optical
+performance. Additionally, we will evaluate the scattering of the homogeneity (RMS-contrast)
+and the lit appearance (average luminance) to see what the worst design looks like due to
+tolerances.</p>
+<section id="problem-description">
+<h2>Problem description<a class="headerlink" href="#problem-description" title="Link to this heading">#</a></h2>
+<p>The optical simulation project includes a lightguide with an LED. During the vehicle assemble
+step, the relative position of LED can have an impact on the optical performance of the
+lightguide, i.e. RMS-contrast and average luminance.</p>
+<p>The workflow includes the following steps:
+- Definition of the variation analysis boundaries
+- optiSLang Project creation and workflow setup
+- optiSLang project execution
+- Connect to PySpeos server
+- PySpeos execution
+- Result evaluation</p>
+<p>This workflow will generate output as a robustness summary table is printed out to the console.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="c1"># Perform required imports</span>
+<span class="c1"># ------------------------</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a>
+<span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.optislang.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optislang</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.optislang.core.node_types</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">node_types</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.optislang.core.nodes</span><span class="w"> </span><span class="kn">import</span> <span class="n">DesignFlow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.optislang.core.project_parametric</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">ComparisonType</span><span class="p">,</span>
+    <span class="n">ConstraintCriterion</span><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/enum.html#enum.Enum" title="enum.Enum" class="sphx-glr-backref-module-enum sphx-glr-backref-type-py-class"><span class="n">DistributionType</span></a><span class="p">,</span>
+    <span class="n">ObjectiveCriterion</span><span class="p">,</span>
+    <span class="n">StochasticParameter</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">ansys.speos.core</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">core</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.speos.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">Body</span><span class="p">,</span> <span class="n">Project</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.speos.core.simulation</span><span class="w"> </span><span class="kn">import</span> <span class="n">SimulationDirect</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">ansys.speos.core.source</span><span class="w"> </span><span class="kn">import</span> <span class="n">SourceSurface</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">comtypes.client</span><span class="w"> </span><span class="kn">import</span> <span class="n">CreateObject</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+</pre></div>
+</div>
+</section>
+<section id="definition-of-the-variation-analysis-boundaries">
+<h2>Definition of the variation analysis boundaries<a class="headerlink" href="#definition-of-the-variation-analysis-boundaries" title="Link to this heading">#</a></h2>
+<p>The following parameters are used to control the script execution. You can
+modify these parameters to suit your needs.
+- tolerance parameter and distributions
+- responses (quality measurements / performance indicator)
+- constraints (quality limits for each performance indicator)
+- the number of designs to be calculated for the robustness analysis</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MAXIMUM_NUMBER_SIMULATIONS</span></a><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">100</span> <span class="k">if</span> <span class="p">(</span><a href="https://docs.python.org/3/library/os.html#os.environ" title="os.environ" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-data"><span class="n">os</span><span class="o">.</span><span class="n">environ</span></a><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ON_CI&quot;</span><span class="p">,</span> <span class="s2">&quot;false&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="o">!=</span> <span class="s2">&quot;true&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="mi">5</span>
+<span class="sd">&quot;&quot;&quot;Maximum number of simulations for the robustness analysis.&quot;&quot;&quot;</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">PARAMETERS</span></a><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LED_delta_x&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;NORMAL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_parameters&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>  <span class="c1"># mean value, standard deviation</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LED_delta_y&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;NORMAL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_parameters&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>  <span class="c1"># mean value, standard deviation</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;LED_delta_z&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;NORMAL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_parameters&quot;</span><span class="p">:</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">],</span>  <span class="c1"># mean value, standard deviation</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Flux&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">200.0</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_type&quot;</span><span class="p">:</span> <span class="s2">&quot;TRUNCATEDNORMAL&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;distribution_parameters&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="mi">300</span><span class="p">,</span>
+            <span class="mi">45</span><span class="p">,</span>
+            <span class="mi">200</span><span class="p">,</span>
+            <span class="mi">400</span><span class="p">,</span>
+        <span class="p">],</span>  <span class="c1"># mean value, standard deviation, lower bound, upper bound</span>
+    <span class="p">},</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Input parameters and their statistical distributions.&quot;&quot;&quot;</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESPONSES</span></a><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;RMS_contrast&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">1.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Average&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">120.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="mf">0.0</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Expected responses in the robustness analysis.&quot;&quot;&quot;</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CRITERIA</span></a><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;RMS_contrast&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;constraint&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Average&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;constraint&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">160000</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;constraint&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;constraint&quot;</span><span class="p">,</span> <span class="s2">&quot;limit&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s2">&quot;target&quot;</span><span class="p">:</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">},</span>
+<span class="p">]</span>
+<span class="sd">&quot;&quot;&quot;Evaluation criteria for the robustness analysis.&quot;&quot;&quot;</span>
+
+<a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">VARIATION_ANALYSIS_BOUNDARIES</span></a> <span class="o">=</span> <span class="p">{</span>
+    <span class="s2">&quot;maximum_number_simulations&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">MAXIMUM_NUMBER_SIMULATIONS</span></a><span class="p">,</span>
+    <span class="s2">&quot;parameters&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">PARAMETERS</span></a><span class="p">,</span>
+    <span class="s2">&quot;responses&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">RESPONSES</span></a><span class="p">,</span>
+    <span class="s2">&quot;criteria&quot;</span><span class="p">:</span> <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">CRITERIA</span></a><span class="p">,</span>
+<span class="p">}</span>
+<span class="sd">&quot;&quot;&quot;Variation analysis boundaries for the robustness study.&quot;&quot;&quot;</span>
+
+<a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a> <span class="o">=</span> <span class="kc">False</span>  <span class="c1"># Set to True to display the graphics</span>
+
+
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ANSYS_RELEASE</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;ANSYS_RELEASE_COMPACT&quot;</span><span class="p">,</span> <span class="s2">&quot;252&quot;</span><span class="p">)</span>
+<span class="sd">&quot;&quot;&quot;ANSYS release version.&quot;&quot;&quot;</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>&#39;ANSYS release version.&#39;
+</pre></div>
+</div>
+</section>
+<section id="define-functions">
+<h2>Define functions<a class="headerlink" href="#define-functions" title="Link to this heading">#</a></h2>
+<p>The following functions are defined to perform various tasks in the
+robustness analysis workflow, such as cleaning databases, displacing faces and bodies,
+opening results, changing source positions and powers, running Speos simulations,
+and creating the optiSLang workflow.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">clean_all_dbs</span><span class="p">(</span><span class="n">speos_client</span><span class="p">:</span> <span class="n">core</span><span class="o">.</span><span class="n">kernel</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">SpeosClient</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Clean the database info loaded inside a client.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    speos_client: core.SpeosClient</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="p">(</span>
+        <span class="n">speos_client</span><span class="o">.</span><span class="n">jobs</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">scenes</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">simulation_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">sensor_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">source_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">intensity_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">spectrums</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">vop_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">sop_templates</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">parts</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">bodies</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+        <span class="o">+</span> <span class="n">speos_client</span><span class="o">.</span><span class="n">faces</span><span class="p">()</span><span class="o">.</span><span class="n">list</span><span class="p">()</span>
+    <span class="p">):</span>
+        <span class="n">item</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">open_result</span><span class="p">(</span><span class="n">file</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Open result Speos XMP result file and extract measurement results based</span>
+<span class="sd">    on a measurement template file.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    file: str</span>
+<span class="sd">        Speos result xmp file directory</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        a dictionary with measurement results</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;ON_CI&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="s2">&quot;true&quot;</span><span class="p">:</span>  <span class="c1"># Use XMPViewer only outside CI environment</span>
+        <span class="n">dpf_instance</span> <span class="o">=</span> <span class="n">CreateObject</span><span class="p">(</span><span class="s2">&quot;XMPViewer.Application&quot;</span><span class="p">)</span>
+        <span class="n">dpf_instance</span><span class="o">.</span><span class="n">OpenFile</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+        <a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.exists" title="os.path.exists" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a><span class="p">):</span>
+            <a href="https://docs.python.org/3/library/os.html#os.mkdir" title="os.mkdir" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">mkdir</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;radiance&quot;</span> <span class="ow">in</span> <span class="n">file</span><span class="o">.</span><span class="n">lower</span><span class="p">():</span>
+            <span class="n">dpf_instance</span><span class="o">.</span><span class="n">ImportTemplate</span><span class="p">(</span>
+                <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span>
+                    <a href="https://docs.python.org/3/library/os.path.html#os.path.abspath" title="os.path.abspath" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span></a><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;Lightguide.speos&quot;</span><span class="p">,</span> <span class="s2">&quot;DRL_Upper-only.VE-measure.xml&quot;</span>
+                <span class="p">),</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">export_dir</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a><span class="p">,</span> <span class="s2">&quot;lg_robustness_result.txt&quot;</span><span class="p">)</span>
+            <span class="n">dpf_instance</span><span class="o">.</span><span class="n">MeasuresExportTXT</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)</span>
+            <span class="n">file</span> <span class="o">=</span> <span class="nb">open</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)</span>
+            <span class="n">content</span> <span class="o">=</span> <span class="n">file</span><span class="o">.</span><span class="n">readlines</span><span class="p">()</span>
+            <span class="n">RMS_content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span>
+            <span class="n">Average_content</span> <span class="o">=</span> <span class="n">content</span><span class="p">[</span><span class="mi">11</span><span class="p">]</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;RMS_contrast&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">RMS_content</span><span class="p">[</span><span class="n">RMS_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Value=&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span> <span class="p">:</span> <span class="n">RMS_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;ValueUnit=&quot;</span><span class="p">)]</span>
+                <span class="p">),</span>
+                <span class="s2">&quot;Average&quot;</span><span class="p">:</span> <span class="nb">float</span><span class="p">(</span>
+                    <span class="n">Average_content</span><span class="p">[</span>
+                        <span class="n">Average_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\t</span><span class="s2">Value=&quot;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">7</span> <span class="p">:</span> <span class="n">Average_content</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="sa">r</span><span class="s2">&quot;ValueUnit=&quot;</span><span class="p">)</span>
+                    <span class="p">]</span>
+                <span class="p">),</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">res</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dpf_instance</span><span class="o">.</span><span class="n">ImportTemplate</span><span class="p">(</span>
+                <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span>
+                    <a href="https://docs.python.org/3/library/os.path.html#os.path.abspath" title="os.path.abspath" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span></a><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">),</span> <span class="s2">&quot;Lightguide.speos&quot;</span><span class="p">,</span> <span class="s2">&quot;ECE_R87_DRL_WithoutLines.xml&quot;</span>
+                <span class="p">),</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="mi">1</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>
+            <span class="p">)</span>
+            <span class="n">export_dir</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.path.html#os.path.join" title="os.path.join" class="sphx-glr-backref-module-os-path sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;lg_robustness_result.txt&quot;</span><span class="p">)</span>
+            <span class="n">dpf_instance</span><span class="o">.</span><span class="n">MeasuresExportTXT</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)</span>
+            <span class="n">limited_passed_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">failed_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">passed_count</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">export_dir</span><span class="p">)</span> <span class="k">as</span> <span class="n">result_file</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="n">result_file</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="s2">&quot;RuleStatus&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="s2">&quot;(specification failed)&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">limited_passed_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">elif</span> <span class="s2">&quot;(passed)&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">passed_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">elif</span> <span class="s2">&quot;(failed)&quot;</span> <span class="ow">in</span> <span class="n">line</span><span class="p">:</span>
+                            <span class="n">failed_count</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Rules status is unknown.&quot;</span><span class="p">)</span>
+
+            <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">:</span> <span class="n">limited_passed_count</span><span class="p">,</span>
+                <span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">:</span> <span class="n">failed_count</span><span class="p">,</span>
+            <span class="p">}</span>
+            <span class="k">return</span> <span class="n">res</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># Provide dummy results for CI environment</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;RMS_contrast&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">,</span>
+            <span class="s2">&quot;Average&quot;</span><span class="p">:</span> <span class="mf">250000.0</span><span class="p">,</span>
+            <span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="p">}</span>
+        <span class="k">return</span> <span class="n">res</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">displace_face</span><span class="p">(</span><span class="n">edit_face</span><span class="p">,</span> <span class="n">xyz</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Move a face in a translational direction defined by a provided vector xyz.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    edit_face: ansys.speos.core.face.Face</span>
+<span class="sd">    xyz: tuple</span>
+<span class="sd">        A tuple with 3 elements defining a vector defined by xyz</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">temp_face_vertices</span> <span class="o">=</span> <span class="n">edit_face</span><span class="o">.</span><span class="n">_face</span><span class="o">.</span><span class="n">vertices</span>
+    <span class="n">temp_face_vertices</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="numpy.array" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">(</span><span class="n">temp_face_vertices</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+    <span class="n">new_face_vertices</span> <span class="o">=</span> <span class="p">[</span><a href="https://numpy.org/doc/stable/reference/generated/numpy.ufunc.html#numpy.ufunc" title="numpy.ufunc" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">np</span><span class="o">.</span><span class="n">add</span></a><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="n">xyz</span><span class="p">)</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">temp_face_vertices</span><span class="p">]</span>
+    <span class="n">new_face_vertices</span> <span class="o">=</span> <a href="https://numpy.org/doc/stable/reference/generated/numpy.array.html#numpy.array" title="numpy.array" class="sphx-glr-backref-module-numpy sphx-glr-backref-type-py-function"><span class="n">np</span><span class="o">.</span><span class="n">array</span></a><span class="p">(</span><span class="n">new_face_vertices</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">tolist</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">edit_face</span><span class="o">.</span><span class="n">set_vertices</span><span class="p">(</span><span class="n">new_face_vertices</span><span class="p">)</span>
+    <span class="n">edit_face</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">displace_body</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">body_name</span><span class="p">,</span> <span class="n">xyz</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Move a body in a translational direction defined by a provided vector xyz.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    project: script.Project</span>
+<span class="sd">    body_name: str</span>
+<span class="sd">        geo_path of a body</span>
+<span class="sd">    xyz: tuple</span>
+<span class="sd">        A tuple with 3 elements defining a vector defined by xyz</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">edit_body</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">body_name</span><span class="p">,</span> <span class="n">name_regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">feature_type</span><span class="o">=</span><span class="n">Body</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">faces</span> <span class="o">=</span> <span class="n">edit_body</span><span class="o">.</span><span class="n">_geom_features</span>
+    <span class="k">for</span> <span class="n">face</span> <span class="ow">in</span> <span class="n">faces</span><span class="p">:</span>
+        <span class="n">displace_face</span><span class="p">(</span><span class="n">face</span><span class="p">,</span> <span class="n">xyz</span><span class="o">=</span><span class="n">xyz</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">change_surface_source_position</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">source_position_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    change the position of surface where surface source is linked.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    project: script.Project</span>
+<span class="sd">        project in which source will be modified.</span>
+<span class="sd">    sources: script.Source</span>
+<span class="sd">        sources inside the project.</span>
+<span class="sd">    source_position_dict: dict</span>
+<span class="sd">        A dictionary within which position information is saved.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+        <span class="n">source_name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="n">source_geo_path</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;geo_path&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">source_linked_body</span> <span class="o">=</span> <span class="n">source_geo_path</span><span class="p">[</span><span class="s2">&quot;geo_path&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="n">source_position_dict</span><span class="p">:</span>
+            <span class="n">displace_body</span><span class="p">(</span>
+                <span class="n">project</span><span class="p">,</span>
+                <span class="s2">&quot;/&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">source_linked_body</span><span class="p">]),</span>
+                <span class="n">source_position_dict</span><span class="p">[</span><span class="n">source_name</span><span class="p">],</span>
+            <span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">change_source_power</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">source_power_dict</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Change the power of surface where surface source is linked.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sources: script.Source</span>
+<span class="sd">        sources inside the project.</span>
+<span class="sd">    source_power_dict: dict</span>
+<span class="sd">        A dictionary within which source power information is saved.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">source</span> <span class="ow">in</span> <span class="n">sources</span><span class="p">:</span>
+        <span class="n">source_name</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">source_name</span> <span class="ow">in</span> <span class="n">source_power_dict</span><span class="p">:</span>
+            <span class="n">source</span><span class="o">.</span><span class="n">set_flux_luminous</span><span class="p">(</span><span class="n">value</span><span class="o">=</span><span class="n">source_power_dict</span><span class="p">[</span><span class="n">source_name</span><span class="p">])</span>
+            <span class="n">source</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">speos_simulation</span><span class="p">(</span><span class="n">hid</span><span class="p">,</span> <span class="n">speos</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Run speos simulation with given source parameters to be changed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    hid: str</span>
+<span class="sd">        string that contains the design id</span>
+<span class="sd">    speos: core.Speos</span>
+<span class="sd">    parameters: dict</span>
+<span class="sd">        dictionary includes parameters to be used for each design iteration</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dict</span>
+<span class="sd">        a dictionary with index of design id and value as dictionary including</span>
+<span class="sd">        simulation results: RMS_contrast, Average luminous, Number_of_rules_failed</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">new_parameter_values</span> <span class="o">=</span> <span class="p">{</span><span class="n">p</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">]:</span> <span class="n">p</span><span class="p">[</span><span class="s2">&quot;value&quot;</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">parameters</span><span class="p">}</span>
+
+    <span class="n">clean_all_dbs</span><span class="p">(</span><span class="n">speos</span><span class="o">.</span><span class="n">client</span><span class="p">)</span>
+    <span class="n">script_folder</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">resolve</span><span class="p">()</span><span class="o">.</span><span class="n">parent</span>
+    <span class="n">speos_file</span> <span class="o">=</span> <span class="n">script_folder</span> <span class="o">/</span> <span class="s2">&quot;Lightguide.speos&quot;</span> <span class="o">/</span> <span class="s2">&quot;Lightguide.speos&quot;</span>
+    <span class="n">project</span> <span class="o">=</span> <span class="n">Project</span><span class="p">(</span><span class="n">speos</span><span class="o">=</span><span class="n">speos</span><span class="p">,</span> <span class="n">path</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">speos_file</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">hid</span> <span class="o">==</span> <span class="s2">&quot;0.1&quot;</span><span class="p">:</span>
+        <span class="k">if</span> <a href="https://docs.python.org/3/library/functions.html#bool" title="builtins.bool" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">GRAPHICS_BOOL</span></a><span class="p">:</span>
+            <span class="n">project</span><span class="o">.</span><span class="n">preview</span><span class="p">()</span>
+
+    <span class="c1"># Update of the light source power</span>
+    <span class="n">sources</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;.*&quot;</span><span class="p">,</span> <span class="n">name_regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">feature_type</span><span class="o">=</span><span class="n">SourceSurface</span><span class="p">)</span>
+    <span class="n">new_sources_power</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Surface.1:6015&quot;</span><span class="p">:</span> <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Flux&quot;</span><span class="p">),</span>
+        <span class="s2">&quot;Surface.2:30&quot;</span><span class="p">:</span> <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Flux&quot;</span><span class="p">),</span>
+    <span class="p">}</span>
+
+    <span class="n">change_source_power</span><span class="p">(</span><span class="n">sources</span><span class="p">,</span> <span class="n">new_sources_power</span><span class="p">)</span>
+
+    <span class="c1"># Update of the source position</span>
+    <span class="n">new_source_displacement</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;Surface.1:6015&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_x&quot;</span><span class="p">),</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_y&quot;</span><span class="p">),</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_z&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+        <span class="s2">&quot;Surface.2:30&quot;</span><span class="p">:</span> <span class="p">[</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_x&quot;</span><span class="p">),</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_y&quot;</span><span class="p">),</span>
+            <span class="n">new_parameter_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;LED_delta_z&quot;</span><span class="p">),</span>
+        <span class="p">],</span>
+    <span class="p">}</span>
+    <span class="n">change_surface_source_position</span><span class="p">(</span><span class="n">project</span><span class="p">,</span> <span class="n">sources</span><span class="p">,</span> <span class="n">new_source_displacement</span><span class="p">)</span>
+    <span class="c1"># project.preview()</span>
+
+    <span class="c1"># execution of the Speos simulation</span>
+    <span class="n">sim</span> <span class="o">=</span> <span class="n">project</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;.*&quot;</span><span class="p">,</span> <span class="n">name_regex</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">feature_type</span><span class="o">=</span><span class="n">SimulationDirect</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">sim</span><span class="o">.</span><span class="n">set_stop_condition_rays_number</span><span class="p">(</span><span class="mi">2000000</span><span class="p">)</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">sim</span><span class="o">.</span><span class="n">compute_CPU</span><span class="p">()</span>
+
+    <span class="c1"># Result extraction</span>
+    <span class="n">xmp_files</span> <span class="o">=</span> <span class="p">[</span><span class="n">item</span><span class="o">.</span><span class="n">path</span> <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">res</span> <span class="k">if</span> <span class="s2">&quot;.xmp&quot;</span> <span class="ow">in</span> <span class="n">item</span><span class="o">.</span><span class="n">path</span><span class="p">]</span>
+    <span class="n">response</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">result_design</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">xmp</span> <span class="ow">in</span> <span class="n">xmp_files</span><span class="p">:</span>
+        <span class="n">response</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">open_result</span><span class="p">(</span><span class="n">xmp</span><span class="p">))</span>
+    <span class="n">result_design</span><span class="o">.</span><span class="n">update</span><span class="p">(</span>
+        <span class="n">hid</span><span class="o">=</span><span class="n">hid</span><span class="p">,</span>
+        <span class="n">responses</span><span class="o">=</span><span class="p">[</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;RMS_contrast&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RMS_contrast&quot;</span><span class="p">)},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Average&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Average&quot;</span><span class="p">)},</span>
+            <span class="p">{</span>
+                <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">,</span>
+                <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">),</span>
+            <span class="p">},</span>
+            <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">response</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">)},</span>
+        <span class="p">],</span>
+    <span class="p">)</span>
+    <span class="n">result_print</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="s2">&quot;Design &quot;</span> <span class="o">+</span> <span class="n">result_design</span><span class="p">[</span><span class="s2">&quot;hid&quot;</span><span class="p">])</span> <span class="o">+</span> <span class="s2">&quot;: &quot;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">result_design</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">])):</span>
+        <span class="n">result_print</span> <span class="o">+=</span> <span class="p">(</span>
+            <span class="nb">str</span><span class="p">(</span><span class="n">result_design</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;name&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; = &quot;</span>
+            <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">result_design</span><span class="p">[</span><span class="s2">&quot;responses&quot;</span><span class="p">][</span><span class="n">i</span><span class="p">][</span><span class="s2">&quot;value&quot;</span><span class="p">])</span>
+            <span class="o">+</span> <span class="s2">&quot; | &quot;</span>
+        <span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">result_print</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">result_design</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">get_design_values</span><span class="p">(</span><span class="n">osl</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">dict</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    osl: ansys.optislang.core</span>
+<span class="sd">        Ansys optiSLang instance</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list of dict:</span>
+<span class="sd">        A list of dictionaries containing the all design information for each design.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">project_tree</span> <span class="o">=</span> <span class="n">osl</span><span class="o">.</span><span class="n">osl_server</span><span class="o">.</span><span class="n">get_full_project_tree</span><span class="p">()</span>
+    <span class="n">project_actors</span> <span class="o">=</span> <span class="n">project_tree</span><span class="p">[</span><span class="s2">&quot;projects&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;system&quot;</span><span class="p">]</span>
+    <span class="n">algorithmsystem_uid</span> <span class="o">=</span> <span class="n">project_actors</span><span class="p">[</span><span class="s2">&quot;nodes&quot;</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s2">&quot;uid&quot;</span><span class="p">]</span>
+    <span class="n">actor_info</span> <span class="o">=</span> <span class="n">osl</span><span class="o">.</span><span class="n">osl_server</span><span class="o">.</span><span class="n">get_actor_status_info</span><span class="p">(</span>
+        <span class="n">algorithmsystem_uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">include_design_values</span><span class="o">=</span><span class="kc">True</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">actor_info</span>
+</pre></div>
+</div>
+</section>
+<section id="main-script-execution">
+<h2>Main script execution<a class="headerlink" href="#main-script-execution" title="Link to this heading">#</a></h2>
+<p>From the environment variable, find the optiSLang executable for given version
+and initiate an optiSLang project.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_executable</span><span class="p">(</span><span class="n">version</span><span class="p">)</span> <span class="o">-&gt;</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Returns the optiSLang executable for given version.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    version : int</span>
+<span class="sd">        optiSLang version, e.g. 251</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Path</span>
+<span class="sd">        Executable path.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AWP_ROOT</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">):</span>
+        <span class="n">awp_root</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;AWP_ROOT</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="n">osl_com</span> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><span class="n">awp_root</span><span class="p">)</span> <span class="o">/</span> <span class="s2">&quot;optiSLang&quot;</span> <span class="o">/</span> <span class="s2">&quot;optislang.com&quot;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;optiSLang installation not found. Please install optiSLang v</span><span class="si">{</span><span class="n">version</span><span class="si">}</span><span class="s2">.&quot;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">osl_com</span>
+
+
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">osl_executable</span></a> <span class="o">=</span> <span class="n">get_executable</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ANSYS_RELEASE</span></a><span class="p">)</span>
+<span class="n">my_osl</span> <span class="o">=</span> <span class="n">Optislang</span><span class="p">(</span>
+    <span class="n">executable</span><span class="o">=</span><a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">osl_executable</span></a><span class="p">,</span>
+    <span class="n">ini_timeout</span><span class="o">=</span><span class="mi">60</span><span class="p">,</span>
+    <span class="c1"># loglevel=&quot;DEBUG&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Using optiSLang version </span><span class="si">{</span><span class="n">my_osl</span><span class="o">.</span><span class="n">osl_version_string</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Using optiSLang version 25.2.0 (1718)
+</pre></div>
+</div>
+</section>
+<section id="create-optislang-workflow">
+<h2>Create optiSLang workflow<a class="headerlink" href="#create-optislang-workflow" title="Link to this heading">#</a></h2>
+<p>Create robustness workflow and define criteria definition</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">create_workflow</span><span class="p">(</span><span class="n">osl</span><span class="p">,</span> <span class="n">user_input_json</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function creates the robustness workflow</span>
+<span class="sd">    with a proxy node and register parameters and responses.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    osl: ansys.optislang.core</span>
+<span class="sd">        Ansys optiSLang instance</span>
+<span class="sd">    user_input_json: dict</span>
+<span class="sd">        dictionary with optimization boundaries as json</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ansys.optislang.core.nodes</span>
+<span class="sd">        optiSLang Optimization system and proxy solver node.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create system</span>
+    <span class="n">root_system</span> <span class="o">=</span> <span class="n">osl</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">root_system</span>
+    <span class="n">robustness_system</span> <span class="o">=</span> <span class="n">root_system</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">type_</span><span class="o">=</span><span class="n">node_types</span><span class="o">.</span><span class="n">Robustness</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Robustness&quot;</span><span class="p">)</span>
+
+    <span class="c1"># create node</span>
+    <span class="n">proxy_solver_node</span> <span class="o">=</span> <span class="n">robustness_system</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span>
+        <span class="n">type_</span><span class="o">=</span><span class="n">node_types</span><span class="o">.</span><span class="n">ProxySolver</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;Proxy Solver&quot;</span><span class="p">,</span> <span class="n">design_flow</span><span class="o">=</span><span class="n">DesignFlow</span><span class="o">.</span><span class="n">RECEIVE_SEND</span>
+    <span class="p">)</span>
+    <span class="n">mop_node</span> <span class="o">=</span> <span class="n">root_system</span><span class="o">.</span><span class="n">create_node</span><span class="p">(</span><span class="n">type_</span><span class="o">=</span><span class="n">node_types</span><span class="o">.</span><span class="n">Mop</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;MOP&quot;</span><span class="p">)</span>
+
+    <span class="c1"># connect system with MOP node</span>
+    <span class="n">robustness_system_out</span> <span class="o">=</span> <span class="n">robustness_system</span><span class="o">.</span><span class="n">get_output_slots</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;OMDBPath&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">mop_node_in</span> <span class="o">=</span> <span class="n">mop_node</span><span class="o">.</span><span class="n">get_input_slots</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;IMDBPath&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">robustness_system_out</span><span class="o">.</span><span class="n">connect_to</span><span class="p">(</span><span class="n">mop_node_in</span><span class="p">)</span>
+
+    <span class="c1"># register parameter and responses</span>
+    <span class="n">proxy_solver_node</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">user_input_json</span><span class="p">)</span>
+    <span class="n">proxy_solver_node</span><span class="o">.</span><span class="n">register_locations_as_parameter</span><span class="p">()</span>
+    <span class="n">proxy_solver_node</span><span class="o">.</span><span class="n">register_locations_as_response</span><span class="p">()</span>
+
+    <span class="c1"># adjust parameter ranges</span>
+    <span class="k">for</span> <span class="n">parameter</span> <span class="ow">in</span> <span class="n">user_input_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;parameters&quot;</span><span class="p">):</span>
+        <span class="n">robustness_system</span><span class="o">.</span><span class="n">parameter_manager</span><span class="o">.</span><span class="n">modify_parameter</span><span class="p">(</span>
+            <span class="n">StochasticParameter</span><span class="p">(</span>
+                <span class="n">name</span><span class="o">=</span><span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">),</span>
+                <span class="n">reference_value</span><span class="o">=</span><span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;value&quot;</span><span class="p">),</span>
+                <span class="n">distribution_type</span><span class="o">=</span><span class="nb">getattr</span><span class="p">(</span><a href="https://docs.python.org/3/library/enum.html#enum.Enum" title="enum.Enum" class="sphx-glr-backref-module-enum sphx-glr-backref-type-py-class"><span class="n">DistributionType</span></a><span class="p">,</span> <span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;distribution_type&quot;</span><span class="p">)),</span>
+                <span class="n">distribution_parameters</span><span class="o">=</span><span class="n">parameter</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;distribution_parameters&quot;</span><span class="p">),</span>
+            <span class="p">)</span>
+        <span class="p">)</span>
+
+    <span class="c1"># robustness system settings</span>
+    <span class="n">robustness_settings</span> <span class="o">=</span> <span class="n">robustness_system</span><span class="o">.</span><span class="n">get_property</span><span class="p">(</span><span class="s2">&quot;AlgorithmSettings&quot;</span><span class="p">)</span>
+    <span class="n">robustness_settings</span><span class="p">[</span><span class="s2">&quot;num_discretization&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user_input_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;maximum_number_simulations&quot;</span><span class="p">)</span>
+    <span class="n">robustness_system</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s2">&quot;AlgorithmSettings&quot;</span><span class="p">,</span> <span class="n">robustness_settings</span><span class="p">)</span>
+
+    <span class="c1"># proxy node settings</span>
+    <span class="n">multi_design_launch_num</span> <span class="o">=</span> <span class="mi">30</span>  <span class="c1"># set -1 to solve all designs simultaneously</span>
+    <span class="n">proxy_solver_node</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s2">&quot;MultiDesignLaunchNum&quot;</span><span class="p">,</span> <span class="n">multi_design_launch_num</span><span class="p">)</span>
+    <span class="n">proxy_solver_node</span><span class="o">.</span><span class="n">set_property</span><span class="p">(</span><span class="s2">&quot;ForwardHPCLicenseContextEnvironment&quot;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">robustness_system</span><span class="p">,</span> <span class="n">proxy_solver_node</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">criteria_definition</span><span class="p">(</span><span class="n">system</span><span class="p">,</span> <span class="n">load_json</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This functions defines the robustness criteria in optiSLang based on user input</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    system: ansys.optislang.core.nodes</span>
+<span class="sd">        optiSLang Optimization system</span>
+<span class="sd">    load_json: dict</span>
+<span class="sd">        dictionary with optimization boundaries as json</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">for</span> <span class="n">crit</span> <span class="ow">in</span> <span class="n">load_json</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;criteria&quot;</span><span class="p">):</span>
+        <span class="n">crit_name</span> <span class="o">=</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;objective&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;MIN&quot;</span><span class="p">:</span>
+                <span class="n">comparison_type_obj</span> <span class="o">=</span> <span class="n">ComparisonType</span><span class="o">.</span><span class="n">MIN</span>
+            <span class="k">elif</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;MAX&quot;</span><span class="p">:</span>
+                <span class="n">comparison_type_obj</span> <span class="o">=</span> <span class="n">ComparisonType</span><span class="o">.</span><span class="n">MAX</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;objective type not defined&quot;</span><span class="p">)</span>
+
+            <span class="n">system</span><span class="o">.</span><span class="n">criteria_manager</span><span class="o">.</span><span class="n">add_criterion</span><span class="p">(</span>
+                <span class="n">ObjectiveCriterion</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;obj_</span><span class="si">{</span><span class="n">crit_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">expression</span><span class="o">=</span><span class="n">crit_name</span><span class="p">,</span> <span class="n">criterion</span><span class="o">=</span><span class="n">comparison_type_obj</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;constraint&quot;</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&lt;=&quot;</span><span class="p">:</span>
+                <span class="n">comparison_type_constr</span> <span class="o">=</span> <span class="n">ComparisonType</span><span class="o">.</span><span class="n">LESSEQUAL</span>
+            <span class="k">elif</span> <span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;target&quot;</span><span class="p">)</span> <span class="o">==</span> <span class="s2">&quot;&gt;=&quot;</span><span class="p">:</span>
+                <span class="n">comparison_type_constr</span> <span class="o">=</span> <span class="n">ComparisonType</span><span class="o">.</span><span class="n">GREATEREQUAL</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Constraint type not well defined&quot;</span><span class="p">)</span>
+            <span class="n">system</span><span class="o">.</span><span class="n">criteria_manager</span><span class="o">.</span><span class="n">add_criterion</span><span class="p">(</span>
+                <span class="n">ConstraintCriterion</span><span class="p">(</span>
+                    <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;constr_</span><span class="si">{</span><span class="n">crit_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+                    <span class="n">expression</span><span class="o">=</span><span class="n">crit_name</span><span class="p">,</span>
+                    <span class="n">criterion</span><span class="o">=</span><span class="n">comparison_type_constr</span><span class="p">,</span>
+                    <span class="n">limit_expression</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">crit</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;limit&quot;</span><span class="p">)),</span>
+                <span class="p">)</span>
+            <span class="p">)</span>
+
+
+<span class="n">parametric_system</span><span class="p">,</span> <span class="n">proxy_node</span> <span class="o">=</span> <span class="n">create_workflow</span><span class="p">(</span><span class="n">my_osl</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">VARIATION_ANALYSIS_BOUNDARIES</span></a><span class="p">)</span>
+<span class="n">criteria_definition</span><span class="p">(</span><span class="n">parametric_system</span><span class="p">,</span> <a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">VARIATION_ANALYSIS_BOUNDARIES</span></a><span class="p">)</span>
+
+<span class="c1"># Save project</span>
+<a href="https://docs.python.org/3/library/pathlib.html#pathlib.WindowsPath" title="pathlib.WindowsPath" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">temp_dir</span></a> <span class="o">=</span> <a href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="pathlib.Path" class="sphx-glr-backref-module-pathlib sphx-glr-backref-type-py-class"><span class="n">Path</span></a><span class="p">(</span><a href="https://docs.python.org/3/library/os.html#os.getenv" title="os.getenv" class="sphx-glr-backref-module-os sphx-glr-backref-type-py-function"><span class="n">os</span><span class="o">.</span><span class="n">getenv</span></a><span class="p">(</span><span class="s2">&quot;TEMP&quot;</span><span class="p">))</span>
+<a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">project_name</span></a> <span class="o">=</span> <span class="s2">&quot;_proxy_solver_workflow.opf&quot;</span>
+<span class="c1"># my_osl.application.save_as(temp_dir / project_name)  # uncomment to save the project</span>
+
+<span class="c1"># optiSLang project execution</span>
+<span class="n">my_osl</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">wait_for_finished</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variation Analysis: started.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Variation Analysis: started.
+</pre></div>
+</div>
+</section>
+<section id="execute-robustness-analysis">
+<h2>Execute Robustness analysis<a class="headerlink" href="#execute-robustness-analysis" title="Link to this heading">#</a></h2>
+<p>loop until get_status() and returns “Processing done” for the root system</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">calculate</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function evaluated the optical simulation outputs based on the given designs parameters.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    designs: list</span>
+<span class="sd">        A list of designs to be evaluated. For each design the parameter values are defined</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    list</span>
+<span class="sd">        A list of evaluated designs with the corresponding outputs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create speos instance</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">ansys.speos.core</span><span class="w"> </span><span class="kn">import</span> <span class="n">launcher</span>
+
+    <span class="n">speos</span> <span class="o">=</span> <span class="n">launcher</span><span class="o">.</span><span class="n">launch_local_speos_rpc_server</span><span class="p">(</span><span class="n">version</span><span class="o">=</span><a href="https://docs.python.org/3/library/stdtypes.html#str" title="builtins.str" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">ANSYS_RELEASE</span></a><span class="p">)</span>
+
+    <span class="c1"># run speos simulation</span>
+    <span class="n">result_design_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">design</span> <span class="ow">in</span> <span class="n">designs</span><span class="p">:</span>
+        <span class="n">hid</span> <span class="o">=</span> <span class="n">design</span><span class="p">[</span><span class="s2">&quot;hid&quot;</span><span class="p">]</span>
+        <span class="n">parameters</span> <span class="o">=</span> <span class="n">design</span><span class="p">[</span><span class="s2">&quot;parameters&quot;</span><span class="p">]</span>
+
+        <span class="n">result_design</span> <span class="o">=</span> <span class="n">speos_simulation</span><span class="p">(</span><span class="n">hid</span><span class="p">,</span> <span class="n">speos</span><span class="p">,</span> <span class="n">parameters</span><span class="p">)</span>
+        <span class="n">result_design_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">result_design</span><span class="p">)</span>
+
+    <span class="c1"># close speos instance</span>
+    <span class="n">speos</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">result_design_list</span>
+
+
+<span class="k">while</span> <span class="ow">not</span> <span class="n">my_osl</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">root_system</span><span class="o">.</span><span class="n">get_status</span><span class="p">()</span> <span class="o">==</span> <span class="s2">&quot;Processing done&quot;</span><span class="p">:</span>
+    <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">design_list</span></a> <span class="o">=</span> <span class="n">proxy_node</span><span class="o">.</span><span class="n">get_designs</span><span class="p">()</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">design_list</span></a><span class="p">):</span>
+        <a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">responses_dict</span></a> <span class="o">=</span> <span class="n">calculate</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">design_list</span></a><span class="p">)</span>
+        <span class="n">proxy_node</span><span class="o">.</span><span class="n">set_designs</span><span class="p">(</span><a href="https://docs.python.org/3/library/stdtypes.html#list" title="builtins.list" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">responses_dict</span></a><span class="p">)</span>
+    <a href="https://docs.python.org/3/library/time.html#time.sleep" title="time.sleep" class="sphx-glr-backref-module-time sphx-glr-backref-type-py-function"><span class="n">time</span><span class="o">.</span><span class="n">sleep</span></a><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+
+<span class="c1"># Run MOP node</span>
+<span class="n">my_osl</span><span class="o">.</span><span class="n">application</span><span class="o">.</span><span class="n">project</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="n">wait_for_finished</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Variation Analysis: Done!&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sd-tab-set docutils">
+<input checked="checked" id="sd-tab-item-0" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-0">
+Static Scene</label><div class="sd-tab-content docutils">
+<img src="../../_images/sphx_glr_wf_so_01_light_guide_robustness_study_001.png" srcset="../../_images/sphx_glr_wf_so_01_light_guide_robustness_study_001.png" alt="wf so 01 light guide robustness study" class = "sphx-glr-single-img"/></div>
+<input id="sd-tab-item-1" name="sd-tab-set-0" type="radio">
+<label class="sd-tab-label" for="sd-tab-item-1">
+Interactive Scene</label><div class="sd-tab-content docutils">
+
+    <iframe src='../../_static/static_viewer.html?fileURL=../_images/examples/speos-optislang/images/sphx_glr_wf_so_01_light_guide_robustness_study_001.vtksz' width='100%%' height='400px' frameborder='0'></iframe>
+</div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>Design 0.1: RMS_contrast = 0.15 | Average = 250000.0 | Number_of_rules_limited_passed = 1 | Number_of_rules_failed = 0 |
+Design 0.2: RMS_contrast = 0.15 | Average = 250000.0 | Number_of_rules_limited_passed = 1 | Number_of_rules_failed = 0 |
+Design 0.3: RMS_contrast = 0.15 | Average = 250000.0 | Number_of_rules_limited_passed = 1 | Number_of_rules_failed = 0 |
+Design 0.4: RMS_contrast = 0.15 | Average = 250000.0 | Number_of_rules_limited_passed = 1 | Number_of_rules_failed = 0 |
+Design 0.5: RMS_contrast = 0.15 | Average = 250000.0 | Number_of_rules_limited_passed = 1 | Number_of_rules_failed = 0 |
+Variation Analysis: Done!
+</pre></div>
+</div>
+</section>
+<section id="get-quality-values">
+<h2>Get quality values<a class="headerlink" href="#get-quality-values" title="Link to this heading">#</a></h2>
+<p>Get the robustness result and display in the console.</p>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="k">def</span><span class="w"> </span><span class="nf">get_design_quality_values</span><span class="p">(</span><span class="n">osl</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This function calculates the probability of failure for each response.</span>
+<span class="sd">    osl: ansys.optislang.core</span>
+<span class="sd">        Ansys optiSLang instance</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    real</span>
+<span class="sd">        The probability of failure for the response as well as the number of feasible designs.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">list_design_information</span> <span class="o">=</span> <span class="n">get_design_values</span><span class="p">(</span><span class="n">osl</span><span class="p">)</span>
+
+    <span class="n">rms_contrast_count_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">average_count_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">rules_specification_count_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">rules_count_failed</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">feasible_designs</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="k">for</span> <span class="n">design_status</span> <span class="ow">in</span> <span class="n">list_design_information</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;design_status&quot;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">design_status</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;feasible&quot;</span><span class="p">):</span>
+            <span class="n">feasible_designs</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="n">response_names</span> <span class="o">=</span> <span class="n">list_design_information</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;designs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;response_names&quot;</span><span class="p">)</span>
+    <span class="n">designs</span> <span class="o">=</span> <span class="n">list_design_information</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;designs&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;values&quot;</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">design_values</span> <span class="ow">in</span> <span class="n">designs</span><span class="p">:</span>
+        <span class="n">response_values</span> <span class="o">=</span> <span class="n">design_values</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;response_values&quot;</span><span class="p">)</span>
+        <span class="n">responses</span> <span class="o">=</span> <span class="p">{</span><span class="n">name</span><span class="p">:</span> <span class="n">value</span> <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">response_names</span><span class="p">,</span> <span class="n">response_values</span><span class="p">)}</span>
+
+        <span class="k">if</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;RMS_contrast&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.2</span><span class="p">:</span>
+            <span class="n">rms_contrast_count_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Average&quot;</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mf">160000.0</span><span class="p">:</span>
+            <span class="n">average_count_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Number_of_rules_limited_passed&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">2.0</span><span class="p">:</span>
+            <span class="n">rules_specification_count_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">responses</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Number_of_rules_failed&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.0</span><span class="p">:</span>
+            <span class="n">rules_count_failed</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="n">rms_contrast_count_failed</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">average_count_failed</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">rules_specification_count_failed</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">rules_count_failed</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">designs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+        <span class="n">feasible_designs</span><span class="p">,</span>
+    <span class="p">)</span>
+
+
+<span class="p">(</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rms_contrast_fail_prob</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">average_fail_prob</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">specification_rules_fail_prob</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">national_rules_fail_prob</span></a><span class="p">,</span>
+    <a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">num_feasible_designs</span></a><span class="p">,</span>
+<span class="p">)</span> <span class="o">=</span> <span class="n">get_design_quality_values</span><span class="p">(</span><span class="n">my_osl</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">25</span><span class="si">}</span><span class="s1"> SUMMARY </span><span class="si">{</span><span class="s2">&quot;*&quot;</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="mi">25</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability of failure for RMS contrast: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">rms_contrast_fail_prob</span></a><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Probability of failure for Average: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">average_fail_prob</span></a><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> %&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;Probability of failure for fulfillment national rules: </span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">national_rules_fail_prob</span></a><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> %&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="s2">&quot;Probability of failure for fulfillment specification rules: &quot;</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="nb">round</span><span class="p">(</span><a href="https://docs.python.org/3/library/functions.html#float" title="builtins.float" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">specification_rules_fail_prob</span></a><span class="p">,</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="si">}</span><span class="s2"> %</span><span class="se">\n</span><span class="s2">&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span>
+    <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><a href="https://docs.python.org/3/library/functions.html#int" title="builtins.int" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">num_feasible_designs</span></a><span class="si">}</span><span class="s2"> out of </span><span class="si">{</span><a href="https://docs.python.org/3/library/stdtypes.html#dict" title="builtins.dict" class="sphx-glr-backref-module-builtins sphx-glr-backref-type-py-class sphx-glr-backref-instance"><span class="n">VARIATION_ANALYSIS_BOUNDARIES</span></a><span class="p">[</span><span class="s1">&#39;maximum_number_simulations&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> &quot;</span>
+    <span class="s2">&quot;designs are feasible.&quot;</span>
+<span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;*&quot;</span> <span class="o">*</span> <span class="mi">50</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>************************* SUMMARY *************************
+Probability of failure for RMS contrast: 0.0 %
+Probability of failure for Average: 0.0 %
+Probability of failure for fulfillment national rules: 0.0 %
+Probability of failure for fulfillment specification rules: 0.0 %
+
+5 out of 5 designs are feasible.
+**************************************************
+</pre></div>
+</div>
+</section>
+<section id="close-optislang">
+<h2>Close optiSLang<a class="headerlink" href="#close-optislang" title="Link to this heading">#</a></h2>
+<div class="highlight-Python notranslate"><div class="highlight"><pre><span></span><span class="n">my_osl</span><span class="o">.</span><span class="n">dispose</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OSL Project finished.&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="sphx-glr-script-out highlight-none notranslate"><div class="highlight"><pre><span></span>OSL Project finished.
+</pre></div>
+</div>
+<p class="sphx-glr-timing"><strong>Total running time of the script:</strong> (32 minutes 10.623 seconds)</p>
+<div class="sphx-glr-footer sphx-glr-footer-example docutils container" id="sphx-glr-download-examples-speos-optislang-wf-so-01-light-guide-robustness-study-py">
+<div class="sphx-glr-download sphx-glr-download-jupyter docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/5c603a32b20f050a11b9c475b5670823/wf_so_01_light_guide_robustness_study.ipynb"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Jupyter</span> <span class="pre">notebook:</span> <span class="pre">wf_so_01_light_guide_robustness_study.ipynb</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-python docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/313adeb15860e0c62dda9896428f2f18/wf_so_01_light_guide_robustness_study.py"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">Python</span> <span class="pre">source</span> <span class="pre">code:</span> <span class="pre">wf_so_01_light_guide_robustness_study.py</span></code></a></p>
+</div>
+<div class="sphx-glr-download sphx-glr-download-zip docutils container">
+<p><a class="reference download internal" download="" href="../../_downloads/48920e1fd07b9b50761a6c78852f5df5/wf_so_01_light_guide_robustness_study.zip"><code class="xref download docutils literal notranslate"><span class="pre">Download</span> <span class="pre">zipped:</span> <span class="pre">wf_so_01_light_guide_robustness_study.zip</span></code></a></p>
+</div>
+</div>
+</section>
+</section>
+
+
+                </article>
+              
+              
+              
+              
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+<div
+    id="pst-page-navigation-heading-2"
+    class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> On this page
+  </div>
+  <nav class="bd-toc-nav page-toc" aria-labelledby="pst-page-navigation-heading-2">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#problem-description">Problem description</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definition-of-the-variation-analysis-boundaries">Definition of the variation analysis boundaries</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#define-functions">Define functions</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#main-script-execution">Main script execution</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#create-optislang-workflow">Create optiSLang workflow</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#execute-robustness-analysis">Execute Robustness analysis</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#get-quality-values">Get quality values</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#close-optislang">Close optiSLang</a></li>
+</ul>
+  </nav></div>
+
+  <div class="sidebar-secondary-item">
+  <div role="note" aria-label="source link">
+    <ul class="this-page-menu">
+      <li><a href="../../_sources/examples/speos-optislang/wf_so_01_light_guide_robustness_study.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+          </footer>
+        
+      </main>
+    </div>
+  </div>
+  
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+
+  <!-- Include desired assets -->
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.7/require.min.js"></script>
+
+<script>
+// Passing the search options to the search.js file
+const SEARCH_OPTIONS = JSON.parse('{"keys": ["title", "text", "objectID"], "limit": 10, "threshold": 0.2}');
+const SEARCH_FILE = "../../_static/search.json";
+const ADVANCE_SEARCH_PATH = "../../search.html";
+const EXTRA_SOURCES = JSON.parse('""');
+</script>
+
+
+<script src="../../_static/js/search.js"></script>
+
+  
+  <footer class="bd-footer">
+<div class="bd-footer__inner bd-page-width">
+  
+    <div class="footer-items__start">
+      
+        <div class="footer-item">
+
+  <p class="copyright">
+    
+      © Copyright (c) 2026 ANSYS, Inc. All rights reserved.
+      <br/>
+    
+  </p>
+</div>
+      
+        <div class="footer-item">
+
+  <p class="sphinx-version">
+    Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 9.0.4.
+    <br/>
+  </p>
+</div>
+      
+    </div>
+  
+  
+  
+    <div class="footer-items__end">
+      
+        <div class="footer-item">
+<!--
+  Theme Version Footer
+  Displays the Sphinx theme version and the last updated date.
+  Accessibility and semantic improvements included.
+-->
+<footer class="theme-version" aria-label="Theme version and last update">
+  <span>
+    
+      Built with the
+      <a href="https://sphinxdocs.ansys.com/version/stable/index.html" target="_blank" rel="noopener noreferrer">
+        Ansys Sphinx Theme
+      </a>
+      1.7.0.
+    
+  </span>
+  <br />
+  <span>Last updated on <time id="ast_build_date"></time></span>
+</footer>
+<script>
+  // Set the last updated date in a readable format
+  (function() {
+    var options = { day: "numeric", month: "long", year: "numeric" };
+    var ast_lastModifiedDate = new Date(document.lastModified);
+    var ast_build_date = ast_lastModifiedDate.toLocaleDateString("en-US", options);
+    var dateElem = document.getElementById("ast_build_date");
+    if (dateElem) {
+      dateElem.textContent = ast_build_date;
+    }
+  })();
+</script></div>
+      
+    </div>
+  
+</div>
+
+  </footer>
+  </body>
+</html>
