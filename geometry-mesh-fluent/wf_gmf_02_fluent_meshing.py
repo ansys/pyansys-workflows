@@ -197,6 +197,8 @@ def generate_mesh(
 if os.getenv("PYANSYS_WORKFLOWS_CI") == "true":
     command_list = os.getenv("FLUENT_DOCKER_EXEC_COMMAND").split()
     command_list.append("-meshing")
+    print("Command for Fluent container execution:")
+    print(command_list)
     container_dict = {
         "fluent_image": os.getenv("FLUENT_DOCKER_IMAGE"),
         "command": command_list,
