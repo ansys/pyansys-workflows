@@ -1,5 +1,5 @@
 # Documentation dependencies
-ansys-sphinx-theme==1.7.0
+ansys-sphinx-theme==1.7.1
 myst-parser==5.0.0
 sphinx_design==0.7.0
 sphinx==9.0.4
