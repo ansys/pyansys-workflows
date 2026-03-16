@@ -74,7 +74,7 @@ jobs:
           pip install -r geometry-mesh-fluent/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -161,7 +161,7 @@ jobs:
           pip install -r geometry-mesh-fluent/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
@@ -267,7 +267,7 @@ jobs:
           pip install -r geometry-mesh-fluent/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
