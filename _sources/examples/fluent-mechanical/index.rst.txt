@@ -1,0 +1,64 @@
+:orphan:
+
+Fluent and mechanical heat transfer workflow for exhaust manifold
+=================================================================
+
+This workflow demonstrates the typical solver setup involved in performing a CFD
+simulation for the conjugate heat transfer (CHT) analysis of an exhaust manifold
+using Ansys Fluent and followed by Thermo-Mechanical analysis using Ansys Mechanical.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This workflow demonstrates the typical solver setup involved in performing a CFD simulation for the conjugate heat transfer (CHT) analysis of an exhaust manifold. A conjugate heat transfer analysis is a type of simulation that involves the simultaneous solution of heat transfer in both solid and fluid domains. In this case, the exhaust manifold is a solid domain, and the fluid domain is the gas flowing through the manifold. The heat transfer between the solid and fluid domains is modeled using the heat transfer coefficient (HTC) at the interface between the two domains. This workflow provides a step-by-step guide to set up a CHT analysis for an exhaust manifold using Ansys Fluent PyFluent APIs. The workflow includes usage of APIs to setup the physics, material properties, boundary conditions, solver settings, and exporting the results to a CSV file for further use in a Thermo-Mechanical Analysis.">
+
+.. only:: html
+
+  .. image:: /examples/fluent-mechanical/images/thumb/sphx_glr_wf_fm_01_fluent_thumb.png
+    :alt:
+
+  :doc:`/examples/fluent-mechanical/wf_fm_01_fluent`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Conjugate Heat Transfer Workflow for Exhaust Manifold</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Background ----------">
+
+.. only:: html
+
+  .. image:: /examples/fluent-mechanical/images/thumb/sphx_glr_wf_fm_02_mechanical_thumb.png
+    :alt:
+
+  :doc:`/examples/fluent-mechanical/wf_fm_02_mechanical`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Thermo-mechanical assessment of representative exhaust manifold model</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/fluent-mechanical/wf_fm_01_fluent
+   /examples/fluent-mechanical/wf_fm_02_mechanical
+
