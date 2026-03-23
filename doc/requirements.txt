@@ -9,7 +9,7 @@ sphinxcontrib-websupport==2.0.0
 sphinx-copybutton==0.5.2
 sphinx-gallery==0.20.0
 sphinx-notfound-page==1.1.0
-imageio==2.37.2
+imageio==2.37.3
 imageio-ffmpeg==0.6.0
 jupyter_sphinx==0.5.3
 jupyterlab>=3.2.8
