@@ -5,6 +5,8 @@ Overall guidance on contributing to a PyAnsys library appears in the
 are thoroughly familiar with this guide before attempting to contribute to
 PyAnsys Workflows.
 
+[Contributing]: https://dev.docs.pyansys.com/how-to/contributing.html
+
 <!-- Begin content specific to your library here. -->
 
 We absolutely welcome any code contributions and we hope that this
