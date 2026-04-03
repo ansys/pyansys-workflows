@@ -1,0 +1,83 @@
+:orphan:
+
+Geometry, meshing and fluids workflow
+=====================================
+
+Below is an example of a workflow that demonstrates how to create a geometry, mesh it, and run a
+fluid simulation using PyAnsys. The geometry generated is a NACA airfoil, which is prepared for a fluid
+simulation. The exported CAD file is then consumed by Ansys Fluent to run a compressible flow simulation
+over the airfoil.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Generate a NACA airfoil and the surrounding fluid domain using PyAnsys Geometry.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mesh-fluent/images/thumb/sphx_glr_wf_gmf_01_geometry_thumb.png
+    :alt:
+
+  :doc:`/examples/geometry-mesh-fluent/wf_gmf_01_geometry`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Geometry generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to generate a mesh for a NACA airfoil using Fluent Meshing.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mesh-fluent/images/thumb/sphx_glr_wf_gmf_02_fluent_meshing_thumb.png
+    :alt:
+
+  :doc:`/examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Mesh generation</div>
+    </div>
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="This example demonstrates how to solve the flow around a NACA airfoil using Fluent.">
+
+.. only:: html
+
+  .. image:: /examples/geometry-mesh-fluent/images/thumb/sphx_glr_wf_gmf_03_fluent_solver_thumb.png
+    :alt:
+
+  :doc:`/examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Fluids simulation</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/geometry-mesh-fluent/wf_gmf_01_geometry
+   /examples/geometry-mesh-fluent/wf_gmf_02_fluent_meshing
+   /examples/geometry-mesh-fluent/wf_gmf_03_fluent_solver
+

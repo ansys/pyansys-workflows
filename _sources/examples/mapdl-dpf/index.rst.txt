@@ -1,0 +1,46 @@
+:orphan:
+
+MAPDL and DPF workflow
+======================
+
+This example demonstrates consecutive sub modeling using PyMAPDL and PyDPF. The DPF framework
+interpolates global model displacements and transfers them as boundary conditions to the local
+model, enabling efficient global–local coupling with the MAPDL pool.
+
+
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbnails">
+
+.. thumbnail-parent-div-open
+
+.. raw:: html
+
+    <div class="sphx-glr-thumbcontainer" tooltip="Analysis type:  - Static Analysis">
+
+.. only:: html
+
+  .. image:: /examples/mapdl-dpf/images/thumb/sphx_glr_wf_mapdl-dpf_thumb.png
+    :alt:
+
+  :doc:`/examples/mapdl-dpf/wf_mapdl-dpf`
+
+.. raw:: html
+
+      <div class="sphx-glr-thumbnail-title">Consecutive submodeling with MAPDL pool</div>
+    </div>
+
+
+.. thumbnail-parent-div-close
+
+.. raw:: html
+
+    </div>
+
+
+.. toctree::
+   :hidden:
+
+   /examples/mapdl-dpf/wf_mapdl-dpf
+
