@@ -1,0 +1,31 @@
+{
+  "efl": 2.5,
+  "fno": 3,
+  "pix_x": 800,
+  "pix_y": 800,
+  "size_x": 4.5,
+  "size_y":4.5,
+  "distortion_file":"Wide angle lens 200 degree field - v1.OPTDistortion",
+  "transmittance_file":"CameraTransmittance.spectrum",
+  "spectrum_red_file":"Sensitivity_Red.spectrum",
+  "spectrum_green_file":"Sensitivity_Green.spectrum",
+  "spectrum_blue_file":"Sensitivity_Blue.spectrum",
+  "axis": 
+    {
+      "origin": [
+        0,
+        -299.3282,
+        588.6833
+      ],
+      "x_direction": [
+        -1.0,
+        0.0,
+        0.0
+      ],
+      "y_direction": [
+        0.0,
+        -0.570570241492,
+        -0.821248804934799
+      ]
+    }
+}
