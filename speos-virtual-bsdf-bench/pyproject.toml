@@ -1,0 +1,17 @@
+[project]
+name = "vbbui"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "ansys-speos-core[graphics]>=0.7.1",
+    "ansys-tools-common>=0.4.0",
+    "pyside6>=6.10.2",
+    "pyvista>=0.46.4",
+]
+
+[dependency-groups]
+dev = [
+    "pyinstaller>=6.17.0",
+]
