@@ -24,6 +24,8 @@
 
 Q3D - Simplified ion trap modeling
 ##################################
+Generate a 3D BEM model of a 3-rail electrode Ion Trap to identify the nodal point and then optimize the grating
+coupler design with PyAnsys (PyAEDT and PyLumerical)
 
 Problem description
 -------------------
@@ -32,8 +34,8 @@ Surface electrodes adjacent to grating couplers render an integrated ion trap.
 In this workflow surface electrodes are modeled using ANSYS Q3D and grating couplers using
 ANSYS Lumerical. ANSYS Q3D CG solver, based on the boundary element method, allows to
 evaluate the ion trap height.Then the coordinates of the ion trap are passed to an optimization
-algorithm to define the optimal two dimensional grating coupler design, which will focus the laser
-beam at the ion trap height.
+algorithm to define the optimal two-dimensional grating coupler design, which will focus the laser
+beam at the ion trap heigth.
 
 The workflow is explained in detail in this article:
 https://optics.ansys.com/hc/en-us/articles/20715978394131-Integrated-Ion-Traps-using-Surface-Electrodes-and-Grating-Couplers
@@ -71,7 +73,7 @@ if "__file__" not in locals():
 # ----------------------
 # Define constants.
 
-AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
+AEDT_VERSION = os.getenv("AEDT_VERSION", "2026.1")  # Set your AEDT version here
 NUM_CORES = 4
 NG_MODE = (
     os.getenv("ON_CI", "false").lower() == "true"
