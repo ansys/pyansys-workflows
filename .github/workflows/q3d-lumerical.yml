@@ -74,7 +74,7 @@ jobs:
           python q3d-lumerical/wf_q3l_01_ion_trap_modelling.py
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'q3d-lumerical/wf_q3l_01_ion_trap_modelling.py'
         shell: bash
@@ -91,7 +91,7 @@ jobs:
           find doc/_build -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\q3d-lumerical\\images\\|./images/|g' {} +
 
       - name: (DOCS) Upload docs artifacts
-        # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         uses: actions/upload-artifact@v7
         with:
           name: q3d-lumerical-docs
