@@ -74,7 +74,7 @@ jobs:
           python q3d-lumerical/wf_q3l_01_ion_trap_modelling.py
 
       - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
-        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        # if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         env:
           BUILD_DOCS_SCRIPT: 'q3d-lumerical/wf_q3l_01_ion_trap_modelling.py'
         shell: bash
