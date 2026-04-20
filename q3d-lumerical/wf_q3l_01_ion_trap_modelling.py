@@ -23,7 +23,7 @@
 .. _ref_wf_ml_01_ion_trap_modelling:
 
 Q3D - Simplified ion trap modeling
-#########################################
+##################################
 
 Problem description
 -------------------
@@ -325,6 +325,7 @@ my_plots.add_trace_characteristics(
 )
 
 # Export the points at which Ey=0 to a TXT file
+
 my_plots.edit_general_settings(use_scientific_notation=True)
 my_plots.export_table_to_file(my_plots.plot_name, str(node_path), "Legend")
 
