@@ -25,8 +25,8 @@
 Maxwell 2D - Simplified ion trap modeling
 #########################################
 
-Generate a 2D FEM model of a 3-rail electrode Ion Trap to identify the nodal point and then optimize the grating
-coupler design with PyAnsys (PyAEDT and PyLumerical)
+Generate a 2D FEM model of a 3-rail electrode Ion Trap to identify the nodal point and
+then optimize the grating coupler design with PyAnsys (PyAEDT and PyLumerical).
 
 Problem description
 -------------------
