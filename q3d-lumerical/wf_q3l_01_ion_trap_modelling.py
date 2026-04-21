@@ -24,6 +24,7 @@
 
 Q3D - Simplified ion trap modeling
 ##################################
+
 Generate a 3D BEM model of a 3-rail electrode Ion Trap to identify the nodal point and then optimize the grating
 coupler design with PyAnsys (PyAEDT and PyLumerical)
 
@@ -73,7 +74,7 @@ if "__file__" not in locals():
 # ----------------------
 # Define constants.
 
-AEDT_VERSION = os.getenv("AEDT_VERSION", "2026.1")  # Set your AEDT version here
+AEDT_VERSION = os.getenv("AEDT_VERSION", "2025.2")  # Set your AEDT version here
 NUM_CORES = 4
 NG_MODE = (
     os.getenv("ON_CI", "false").lower() == "true"
