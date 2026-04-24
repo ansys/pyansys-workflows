@@ -1,0 +1,101 @@
+name: Q3D Lumerical Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'q3d-lumerical/**'
+
+env:
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  ANSYS_RELEASE_FOR_DOCS: 25.2
+  ANSYSEM_ROOT252: 'C:\Program Files\ANSYS Inc\v252\AnsysEM'
+  MAIN_PYTHON_VERSION: '3.12'
+  ON_CI: true
+
+jobs:
+
+  is-only-docs-required:
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build || false }}
+
+  q3d-lumerical:
+    name: Q3D Lumerical
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    needs: is-only-docs-required
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[25.2]') || fromJSON('[25.2]') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@ff7abcd0c3c05ccf6adc123a8cd1fd4fb30fb493 # v4.2.2
+        with:
+          sparse-checkout: |
+            q3d-lumerical
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@2e3e4b15a884dc73a63f962bff250a855150a234 # v5.6.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/Scripts/activate
+          pip install -r q3d-lumerical/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Run the workflow script
+        env:
+          AEDT_VERSION: ${{ matrix.ansys-release }}
+        shell: bash
+        run: |
+          source .venv/Scripts/activate
+          python q3d-lumerical/wf_q3l_01_ion_trap_modelling.py
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS}})
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          BUILD_DOCS_SCRIPT: 'q3d-lumerical/wf_q3l_01_ion_trap_modelling.py'
+        shell: bash
+        run: |
+          source .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Adapt the documentation paths
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        shell: bash
+        run: |
+          find doc/_build -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\q3d-lumerical\\images\\|./images/|g' {} +
+
+      - name: (DOCS) Upload docs artifacts
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v7
+        with:
+          name: q3d-lumerical-docs
+          path: |
+            doc/_build/
+            doc/source/examples/q3d-lumerical/
+          overwrite: true
