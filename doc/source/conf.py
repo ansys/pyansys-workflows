@@ -139,21 +139,23 @@ def examples_gallery_dirs_and_filename_pattern():
         )
     else:
         examples_dirs = [
-            "../../fluent-mechanical",
-            # TODO: enable when issues in PyMechanical are resolved
-            # "../../geometry-mechanical-dpf",
             "../../geometry-mesh",
             "../../geometry-mesh-fluent",
+            # TODO: enable when issues in PyMechanical are resolved
+            # "../../geometry-mechanical-dpf",
+            "../../fluent-mechanical",
+            "../../mapdl-dpf",
             "../../speos-optislang",
             "../../maxwell2d-lumerical",
             "../../q3d-lumerical",
         ]
         gallery_dirs = [
-            "examples/fluent-mechanical",
-            # TODO: enable when issues in PyMechanical are resolved
-            # "examples/geometry-mechanical-dpf",
             "examples/geometry-mesh",
             "examples/geometry-mesh-fluent",
+            # TODO: enable when issues in PyMechanical are resolved
+            # "examples/geometry-mechanical-dpf",
+            "examples/fluent-mechanical",
+            "examples/mapdl-dpf",
             "examples/speos-optislang",
             "examples/maxwell2d-lumerical",
             "examples/q3d-lumerical",

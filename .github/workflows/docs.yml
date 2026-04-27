@@ -53,11 +53,17 @@ jobs:
     with:
       doc-build: true
 
+  q3d-lumerical:
+    uses: ./.github/workflows/q3d-lumerical.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   compile-docs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
-    # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, speos-optislang]
-    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang]
+    # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
+    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
     steps:
       - name: Checkout code
         uses: actions/checkout@v6.0.2
