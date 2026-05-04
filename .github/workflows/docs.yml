@@ -117,6 +117,12 @@ jobs:
         with:
           name: maxwell2d-lumerical-docs
           path: doc/
+  
+      - name: Download artifacts for q3d-lumerical
+        uses: actions/download-artifact@v8
+        with:
+          name: q3d-lumerical-docs
+          path: doc/
 
       # Make sure this download is always the last one - since its built on a Linux image,
       # it will have OS-dependent paths and pickled files that will avoid failures.
