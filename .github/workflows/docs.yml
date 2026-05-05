@@ -117,7 +117,7 @@ jobs:
         with:
           name: maxwell2d-lumerical-docs
           path: doc/
-  
+
       - name: Download artifacts for q3d-lumerical
         uses: actions/download-artifact@v8
         with:
