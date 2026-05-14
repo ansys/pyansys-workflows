@@ -1,0 +1,2 @@
+This is the PyVBB UI 0.4.0. Speos Simulation options, preview function , stop generation function has been added. pyspeos version is 0.8.0 Python version is 3.12.13. 
+It is recommanded to use uv sync command to install dependencies.
