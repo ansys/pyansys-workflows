@@ -157,7 +157,7 @@ jobs:
         run: ls -R .
 
       - name: "Deploy documentation to gh-pages"
-        uses: peaceiris/actions-gh-pages@v4
+        uses: peaceiris/actions-gh-pages@v4.1.0
         with:
           publish_dir: ./doc
           commit_message: "DOC: update documentation"
