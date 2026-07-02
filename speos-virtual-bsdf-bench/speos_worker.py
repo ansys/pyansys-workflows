@@ -114,15 +114,7 @@ class sim_worker(QObject):
         self._stop_requested = False
         self.simupara = p  # store simulation parameters    
         try:
-            # 1) read STL
-            self._emit("Loading geometry...")
-            mesh = pv.read(p.geo_path)
-            mesh_center = mesh.center
-            vertices = mesh.points
-            vertex_normals = mesh.point_normals
-            faces = mesh.faces.reshape((-1, 4))[:, 1:]
-
-            # 2) init start SPEOS RPC
+            # 1) init start SPEOS RPC
             self._emit("Starting SPEOS RPC...")
             if self.simupara.hostname == "localhost":
                 try:
@@ -136,56 +128,66 @@ class sim_worker(QObject):
                     self._speos = launcher.launch_remote_speos(version=self.simupara.speos_version) # Fix in the future
                 except:
                     raise RuntimeError("Can not launch remote Speos RPC server")
+            if not p.uselightbox: #Not using lightbox
+                # 1) read STL
+                self._emit("Loading geometry...")
+                mesh = pv.read(p.geo_path)
+                mesh_center = mesh.center
+                vertices = mesh.points
+                vertex_normals = mesh.point_normals
+                faces = mesh.faces.reshape((-1, 4))[:, 1:]
 
-            # 3) build up Speos Project
-            self._emit("Building Speos Project...")
-            self._VBB_Proj = project.Project(speos=self._speos)
-            root_part = self._VBB_Proj.create_root_part().commit()
-            vbb_body = root_part.create_body(name="VBB_BODY").commit()
-            '''
-            vbb_body_face = (
-                vbb_body.create_face(name="Face1")
-                .set_vertices(vertices.flatten())
-                .set_facets(faces.flatten())
-                .set_normals(vertex_normals.flatten())
-            )
-            '''
-            #After pyspeos 0.8.0
-            vbb_body_face = vbb_body.create_face(name="Face1")
-            vbb_body_face.vertices = vertices.flatten().tolist()
-            vbb_body_face.facets = faces.flatten().tolist()
-            vbb_body_face.normals = vertex_normals.flatten().tolist()
-            vbb_body_face.commit()
+                # 3) build up Speos Project
+                self._emit("Building Speos Project...")
+                self._VBB_Proj = project.Project(speos=self._speos)
+                root_part = self._VBB_Proj.create_root_part().commit()
+                vbb_body = root_part.create_body(name="VBB_BODY").commit()
+                '''
+                vbb_body_face = (
+                    vbb_body.create_face(name="Face1")
+                    .set_vertices(vertices.flatten())
+                    .set_facets(faces.flatten())
+                    .set_normals(vertex_normals.flatten())
+                )
+                '''
+                #After pyspeos 0.8.0
+                vbb_body_face = vbb_body.create_face(name="Face1")
+                vbb_body_face.vertices = vertices.flatten().tolist()
+                vbb_body_face.facets = faces.flatten().tolist()
+                vbb_body_face.normals = vertex_normals.flatten().tolist()
+                vbb_body_face.commit()
 
-            # 4) Optical properties
-            self._emit("Setting Optical Properties...")
-            op = self._VBB_Proj.create_optical_property(name="Material_1")
-            if not self.simupara.roughness_only:
-                if self.simupara.opaque:
+                # 4) Optical properties
+                self._emit("Setting Optical Properties...")
+                op = self._VBB_Proj.create_optical_property(name="Material_1")
+                if not self.simupara.roughness_only:
+                    if self.simupara.opaque:
+                        op.set_volume_opaque()
+                    else:
+                        #op.set_volume_library(self.simupara.vop_path)
+                        op.set_volume_library().material_file_uri = self.simupara.vop_path
+
+                    if self.simupara.polished:
+                        op.set_surface_opticalpolished()
+                    else:
+                        #op.set_surface_library(self.simupara.sop_path)
+                        op.set_surface_library().file_uri = self.simupara.sop_path
+
+                    if self.simupara.polished and self.simupara.opaque:
+                        raise RuntimeError("Error: Both surface and volume cannot be set to polished and opaque.")
+                else:
                     op.set_volume_opaque()
-                else:
-                    #op.set_volume_library(self.simupara.vop_path)
-                    op.set_volume_library().material_file_uri = self.simupara.vop_path
+                    #op.set_surface_mirror(reflectance=100)
+                    op.set_surface_mirror().reflectance = 100
 
-                if self.simupara.polished:
-                    op.set_surface_opticalpolished()
-                else:
-                    #op.set_surface_library(self.simupara.sop_path)
-                    op.set_surface_library().file_uri = self.simupara.sop_path
-
-                if self.simupara.polished and self.simupara.opaque:
-                    raise RuntimeError("Error: Both surface and volume cannot be set to polished and opaque.")
-            else:
-                op.set_volume_opaque()
-                #op.set_surface_mirror(reflectance=100)
-                op.set_surface_mirror().reflectance = 100
-
-            #op.set_geometries(geometries=[vbb_body])
-            op.geometries = [vbb_body]  # After pyspeos 0.8.0, set_geometries is deprecated, directly set geometries attribute
-            try:
-                op.commit()
-            except:
-                raise RuntimeError("Error: Unable to commit optical property. Please check the optical property settings.")
+                #op.set_geometries(geometries=[vbb_body])
+                op.geometries = [vbb_body]  # After pyspeos 0.8.0, set_geometries is deprecated, directly set geometries attribute
+                try:
+                    op.commit()
+                except:
+                    raise RuntimeError("Error: Unable to commit optical property. Please check the optical property settings.")
+            else: # Use lightbox as input
+                self._VBB_Proj = project.Project(speos=self._speos,path = p.lightbox_path)
 
             # 5) Simulation Mode and Object
             self._emit("Setting Simulation Mode...")
@@ -203,7 +205,7 @@ class sim_worker(QObject):
             else:
                 self._VBB_Simu.set_mode_all_characteristics().is_bsdf180 = self.simupara.bsdf_180 #if it is BSDF depends on light incident, BSDF 180 is independent of iridescence and anisotropic, it can be set in any case.
 
-                if self.simupara.iridescence: # if it is iridescence, then it must be isotropic
+                if self.simupara.iridescence: # if it is iridescence, then it must be isotropic （color depends on viewing direction）
                     if self.simupara.sampling_mode == "Adaptive sampling":
                         self._VBB_Simu.set_mode_all_characteristics().set_iridescence().set_adaptive().adaptive_uri = self.simupara.sampling_file
                     elif self.simupara.sampling_mode == "Uniform":
@@ -271,8 +273,8 @@ class sim_worker(QObject):
             else:
                 self._VBB_Simu.stop_condition_ray_number = int(self.simupara.ray_value * 1e9)
             self._VBB_Simu.axis_system = [
-                mesh_center[0], mesh_center[1], 0.0, #几何体中心的问题
-#                0.0, 0.0, 0.0,
+                #mesh_center[0], mesh_center[1], 0.0, #几何体中心的问题
+                0.0, 0.0, 0.0,
                 1.0, 0.0, 0.0,
                 0.0, 1.0, 0.0,
                 0.0, 0.0, 1.0,

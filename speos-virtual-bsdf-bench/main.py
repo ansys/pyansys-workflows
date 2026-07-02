@@ -59,7 +59,7 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("Virtual BSDF Builder v0.4.0")
+        self.setWindowTitle("Virtual BSDF Builder v0.5.0")
         self._simulationTab()
         self._geometryTab()
         self._sourceTab()
@@ -136,6 +136,9 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
         Complete scattering Files-BRDF (*.brdf);;Simple BSDF Files(*.bsdf);;BSDF 180 Files(*.bsdf180);;Coated Files(*.coated);;Anisotropic scattering Files(*.anisotropic);;
         Anisotropic BSDF Files(*.anisotropicbsdf);;Unpolished Files(*.unpolished);;All File (*)"""
         self.sopPb.clicked.connect(lambda _: self._open_file_dialog(vopfiletype,toLineEdit = self.sopAddrLe))
+        self.useLightboxRb.toggled.connect(lambda checked: self.geoWidget.setCurrentIndex(1 if checked else 0))
+        self.LightboxAddrPb.clicked.connect(lambda _: self._open_file_dialog(filetype = "SpeosLightbox (*.SPEOSLightBox)",toLineEdit = self.LightboxAddr))
+        self.geoWidget.setCurrentIndex(1 if self.useLightboxRb.isChecked() else 0)
         self.opaqueCb.toggled.connect(lambda checked: self.vopAddrLe.setDisabled(checked))
         self.opaqueCb.toggled.connect(lambda checked: self.vopPb.setDisabled(checked))
         self.polishedCb.toggled.connect(lambda checked: self.sopAddrLe.setDisabled(checked))
@@ -230,12 +233,15 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
             threads_num = int(self.coreNumSb.value()),          # 线程数
             result_path= self.resultFolderLe.text().strip(),
             #home_path= QStandardPaths.writableLocation(QStandardPaths.HomeLocation),
-            hostname= ("localhost" if self.ifLocalhostLe.isChecked()
-                        else "remote"),
+            #hostname= ("localhost" if self.ifLocalhostLe.isChecked()
+            #            else "remote"),
+            hostname = "localhost", #Only support localhost for instant
            # "localhost" or 远端主机名
             grpc_port= int(self.RPCPortLe.text().strip()),
             speos_version= self.speosVersionLe.text().strip(),
             #Geometry
+            uselightbox = self.useLightboxRb.isChecked(),
+            lightbox_path = self.LightboxAddr.text().strip(),
             opaque= self.opaqueCb.isChecked(),
             polished= self.polishedCb.isChecked(),
             geo_path= self.geoAddrLe.text().strip(),
@@ -267,15 +273,19 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
     def _on_build_clicked(self):
         vbb_params = self._collectJob()
         # Simple checks
-        if not vbb_params.geo_path:
-            QMessageBox.warning(self, "Warning", "Geometry path is empty.")
-            return
-        if vbb_params.opaque and vbb_params.polished:
-            QMessageBox.warning(self, "Warning", "Material can not be opaque and polished")
-            return
-        if not vbb_params.result_path or vbb_params.result_path == "Invalid directory selected.":
-            QMessageBox.warning(self, "Warning", "Save to path is empty or invalid.")
-            return
+        if not self.useLightboxRb.isChecked():
+            if not vbb_params.geo_path:
+                QMessageBox.warning(self, "Warning", "Geometry path is empty.")
+                return
+            if vbb_params.opaque and vbb_params.polished:
+                QMessageBox.warning(self, "Warning", "Material can not be opaque and polished")
+                return
+            if not vbb_params.result_path or vbb_params.result_path == "Invalid directory selected.":
+                QMessageBox.warning(self, "Warning", "Save to path is empty or invalid.")
+                return
+        else:
+            if not vbb_params.lightbox_path:
+                QMessageBox.warning(self,"Warning","Lightbox path is empty")
         # Disable the build button to prevent multiple clicks
         self.BuildPb.setEnabled(False)
         #self.statusbar.showMessage("Building the simulation...")

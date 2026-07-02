@@ -47,6 +47,8 @@ class speos_config:
     grpc_port: int
     speos_version: str
     #Geometry
+    uselightbox:bool
+    lightbox_path:Optional[str]
     opaque: bool
     polished: bool 
     geo_path: Optional[str]

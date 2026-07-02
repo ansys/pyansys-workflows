@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'vbbUIv3IFxkzE.ui'
+## Form generated from reading UI file 'vbbUIv4Qvrprs.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.11.0
+## Created by: Qt User Interface Compiler version 6.11.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -91,7 +91,7 @@ class Ui_MainWindow(object):
         self.label_4.setGeometry(QRect(10, 80, 231, 16))
         self.layoutWidget = QWidget(self.rayNumberGb)
         self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(10, 40, 196, 28))
+        self.layoutWidget.setGeometry(QRect(10, 40, 203, 28))
         self.horizontalLayout = QHBoxLayout(self.layoutWidget)
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
@@ -125,7 +125,7 @@ class Ui_MainWindow(object):
         self.formatDesc.setObjectName(u"formatDesc")
         self.layoutWidget2 = QWidget(self.formatDesc)
         self.layoutWidget2.setObjectName(u"layoutWidget2")
-        self.layoutWidget2.setGeometry(QRect(20, 30, 253, 56))
+        self.layoutWidget2.setGeometry(QRect(20, 30, 272, 56))
         self.verticalLayout = QVBoxLayout(self.layoutWidget2)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
@@ -148,7 +148,7 @@ class Ui_MainWindow(object):
         self.colorDefi.setObjectName(u"colorDefi")
         self.layoutWidget3 = QWidget(self.colorDefi)
         self.layoutWidget3.setObjectName(u"layoutWidget3")
-        self.layoutWidget3.setGeometry(QRect(20, 20, 281, 61))
+        self.layoutWidget3.setGeometry(QRect(20, 20, 293, 61))
         self.verticalLayout_2 = QVBoxLayout(self.layoutWidget3)
         self.verticalLayout_2.setObjectName(u"verticalLayout_2")
         self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
@@ -170,7 +170,7 @@ class Ui_MainWindow(object):
         self.sourceSetGb.setObjectName(u"sourceSetGb")
         self.layoutWidget4 = QWidget(self.sourceSetGb)
         self.layoutWidget4.setObjectName(u"layoutWidget4")
-        self.layoutWidget4.setGeometry(QRect(20, 10, 231, 61))
+        self.layoutWidget4.setGeometry(QRect(20, 10, 242, 61))
         self.verticalLayout_5 = QVBoxLayout(self.layoutWidget4)
         self.verticalLayout_5.setObjectName(u"verticalLayout_5")
         self.verticalLayout_5.setSizeConstraint(QLayout.SizeConstraint.SetDefaultConstraint)
@@ -226,6 +226,7 @@ class Ui_MainWindow(object):
 
         self.ifLocalhostLe = QCheckBox(self.layoutWidget5)
         self.ifLocalhostLe.setObjectName(u"ifLocalhostLe")
+        self.ifLocalhostLe.setEnabled(False)
         self.ifLocalhostLe.setChecked(True)
 
         self.gridLayout_2.addWidget(self.ifLocalhostLe, 1, 2, 1, 1)
@@ -275,10 +276,10 @@ class Ui_MainWindow(object):
         self.Geometries.setObjectName(u"Geometries")
         self.groupBox_5 = QGroupBox(self.Geometries)
         self.groupBox_5.setObjectName(u"groupBox_5")
-        self.groupBox_5.setGeometry(QRect(20, 220, 231, 141))
+        self.groupBox_5.setGeometry(QRect(20, 250, 231, 141))
         self.layoutWidget7 = QWidget(self.groupBox_5)
         self.layoutWidget7.setObjectName(u"layoutWidget7")
-        self.layoutWidget7.setGeometry(QRect(20, 20, 199, 124))
+        self.layoutWidget7.setGeometry(QRect(20, 20, 210, 124))
         self.formLayout = QFormLayout(self.layoutWidget7)
         self.formLayout.setObjectName(u"formLayout")
         self.formLayout.setContentsMargins(0, 0, 0, 0)
@@ -334,9 +335,89 @@ class Ui_MainWindow(object):
 
         self.formLayout.setWidget(3, QFormLayout.ItemRole.FieldRole, self.lineEdit_4)
 
-        self.layoutWidget8 = QWidget(self.Geometries)
+        self.geoWidget = QStackedWidget(self.Geometries)
+        self.geoWidget.setObjectName(u"geoWidget")
+        self.geoWidget.setGeometry(QRect(20, 50, 521, 201))
+        self.page0 = QWidget()
+        self.page0.setObjectName(u"page0")
+        self.layoutWidget_4 = QWidget(self.page0)
+        self.layoutWidget_4.setObjectName(u"layoutWidget_4")
+        self.layoutWidget_4.setGeometry(QRect(0, 20, 511, 92))
+        self.gridLayout_3 = QGridLayout(self.layoutWidget_4)
+        self.gridLayout_3.setObjectName(u"gridLayout_3")
+        self.gridLayout_3.setContentsMargins(0, 0, 0, 0)
+        self.label_30 = QLabel(self.layoutWidget_4)
+        self.label_30.setObjectName(u"label_30")
+
+        self.gridLayout_3.addWidget(self.label_30, 0, 0, 1, 1)
+
+        self.geoAddrLe = QLineEdit(self.layoutWidget_4)
+        self.geoAddrLe.setObjectName(u"geoAddrLe")
+
+        self.gridLayout_3.addWidget(self.geoAddrLe, 0, 1, 1, 1)
+
+        self.geoPb = QPushButton(self.layoutWidget_4)
+        self.geoPb.setObjectName(u"geoPb")
+        self.geoPb.setIconSize(QSize(16, 16))
+
+        self.gridLayout_3.addWidget(self.geoPb, 0, 2, 1, 1)
+
+        self.label_31 = QLabel(self.layoutWidget_4)
+        self.label_31.setObjectName(u"label_31")
+
+        self.gridLayout_3.addWidget(self.label_31, 1, 0, 1, 1)
+
+        self.vopAddrLe = QLineEdit(self.layoutWidget_4)
+        self.vopAddrLe.setObjectName(u"vopAddrLe")
+        self.vopAddrLe.setMaxLength(399998)
+
+        self.gridLayout_3.addWidget(self.vopAddrLe, 1, 1, 1, 1)
+
+        self.vopPb = QPushButton(self.layoutWidget_4)
+        self.vopPb.setObjectName(u"vopPb")
+
+        self.gridLayout_3.addWidget(self.vopPb, 1, 2, 1, 1)
+
+        self.label_32 = QLabel(self.layoutWidget_4)
+        self.label_32.setObjectName(u"label_32")
+
+        self.gridLayout_3.addWidget(self.label_32, 2, 0, 1, 1)
+
+        self.sopAddrLe = QLineEdit(self.layoutWidget_4)
+        self.sopAddrLe.setObjectName(u"sopAddrLe")
+        self.sopAddrLe.setMaxLength(399998)
+
+        self.gridLayout_3.addWidget(self.sopAddrLe, 2, 1, 1, 1)
+
+        self.sopPb = QPushButton(self.layoutWidget_4)
+        self.sopPb.setObjectName(u"sopPb")
+
+        self.gridLayout_3.addWidget(self.sopPb, 2, 2, 1, 1)
+
+        self.layoutWidget_5 = QWidget(self.page0)
+        self.layoutWidget_5.setObjectName(u"layoutWidget_5")
+        self.layoutWidget_5.setGeometry(QRect(0, 130, 130, 56))
+        self.verticalLayout_7 = QVBoxLayout(self.layoutWidget_5)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.opaqueCb = QCheckBox(self.layoutWidget_5)
+        self.opaqueCb.setObjectName(u"opaqueCb")
+        self.opaqueCb.setAutoExclusive(False)
+
+        self.verticalLayout_7.addWidget(self.opaqueCb)
+
+        self.polishedCb = QCheckBox(self.layoutWidget_5)
+        self.polishedCb.setObjectName(u"polishedCb")
+        self.polishedCb.setAutoExclusive(False)
+
+        self.verticalLayout_7.addWidget(self.polishedCb)
+
+        self.geoWidget.addWidget(self.page0)
+        self.page1 = QWidget()
+        self.page1.setObjectName(u"page1")
+        self.layoutWidget8 = QWidget(self.page1)
         self.layoutWidget8.setObjectName(u"layoutWidget8")
-        self.layoutWidget8.setGeometry(QRect(22, 52, 511, 92))
+        self.layoutWidget8.setGeometry(QRect(10, 30, 481, 60))
         self.gridLayout = QGridLayout(self.layoutWidget8)
         self.gridLayout.setObjectName(u"gridLayout")
         self.gridLayout.setContentsMargins(0, 0, 0, 0)
@@ -345,67 +426,32 @@ class Ui_MainWindow(object):
 
         self.gridLayout.addWidget(self.label_5, 0, 0, 1, 1)
 
-        self.geoAddrLe = QLineEdit(self.layoutWidget8)
-        self.geoAddrLe.setObjectName(u"geoAddrLe")
+        self.LightboxAddr = QLineEdit(self.layoutWidget8)
+        self.LightboxAddr.setObjectName(u"LightboxAddr")
 
-        self.gridLayout.addWidget(self.geoAddrLe, 0, 1, 1, 1)
+        self.gridLayout.addWidget(self.LightboxAddr, 0, 1, 1, 1)
 
-        self.geoPb = QPushButton(self.layoutWidget8)
-        self.geoPb.setObjectName(u"geoPb")
-        self.geoPb.setIconSize(QSize(16, 16))
+        self.LightboxAddrPb = QPushButton(self.layoutWidget8)
+        self.LightboxAddrPb.setObjectName(u"LightboxAddrPb")
 
-        self.gridLayout.addWidget(self.geoPb, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.LightboxAddrPb, 0, 2, 1, 1)
 
         self.label_6 = QLabel(self.layoutWidget8)
         self.label_6.setObjectName(u"label_6")
+        self.label_6.setEnabled(False)
 
         self.gridLayout.addWidget(self.label_6, 1, 0, 1, 1)
 
-        self.vopAddrLe = QLineEdit(self.layoutWidget8)
-        self.vopAddrLe.setObjectName(u"vopAddrLe")
-        self.vopAddrLe.setMaxLength(399998)
+        self.LightboxPwd = QLineEdit(self.layoutWidget8)
+        self.LightboxPwd.setObjectName(u"LightboxPwd")
+        self.LightboxPwd.setEnabled(False)
 
-        self.gridLayout.addWidget(self.vopAddrLe, 1, 1, 1, 1)
+        self.gridLayout.addWidget(self.LightboxPwd, 1, 1, 1, 1)
 
-        self.vopPb = QPushButton(self.layoutWidget8)
-        self.vopPb.setObjectName(u"vopPb")
-
-        self.gridLayout.addWidget(self.vopPb, 1, 2, 1, 1)
-
-        self.label_14 = QLabel(self.layoutWidget8)
-        self.label_14.setObjectName(u"label_14")
-
-        self.gridLayout.addWidget(self.label_14, 2, 0, 1, 1)
-
-        self.sopAddrLe = QLineEdit(self.layoutWidget8)
-        self.sopAddrLe.setObjectName(u"sopAddrLe")
-        self.sopAddrLe.setMaxLength(399998)
-
-        self.gridLayout.addWidget(self.sopAddrLe, 2, 1, 1, 1)
-
-        self.sopPb = QPushButton(self.layoutWidget8)
-        self.sopPb.setObjectName(u"sopPb")
-
-        self.gridLayout.addWidget(self.sopPb, 2, 2, 1, 1)
-
-        self.layoutWidget9 = QWidget(self.Geometries)
-        self.layoutWidget9.setObjectName(u"layoutWidget9")
-        self.layoutWidget9.setGeometry(QRect(20, 150, 123, 56))
-        self.verticalLayout_4 = QVBoxLayout(self.layoutWidget9)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.opaqueCb = QCheckBox(self.layoutWidget9)
-        self.opaqueCb.setObjectName(u"opaqueCb")
-        self.opaqueCb.setAutoExclusive(False)
-
-        self.verticalLayout_4.addWidget(self.opaqueCb)
-
-        self.polishedCb = QCheckBox(self.layoutWidget9)
-        self.polishedCb.setObjectName(u"polishedCb")
-        self.polishedCb.setAutoExclusive(False)
-
-        self.verticalLayout_4.addWidget(self.polishedCb)
-
+        self.geoWidget.addWidget(self.page1)
+        self.useLightboxRb = QRadioButton(self.Geometries)
+        self.useLightboxRb.setObjectName(u"useLightboxRb")
+        self.useLightboxRb.setGeometry(QRect(20, 30, 131, 24))
         self.stackedSensorWidget.addTab(self.Geometries, "")
         self.Source = QWidget()
         self.Source.setObjectName(u"Source")
@@ -429,7 +475,7 @@ class Ui_MainWindow(object):
         self.sourceThetaBox.setGeometry(QRect(50, 10, 400, 161))
         self.layoutWidget_2 = QWidget(self.sourceThetaBox)
         self.layoutWidget_2.setObjectName(u"layoutWidget_2")
-        self.layoutWidget_2.setGeometry(QRect(10, 30, 199, 124))
+        self.layoutWidget_2.setGeometry(QRect(10, 30, 210, 124))
         self.formLayout_3 = QFormLayout(self.layoutWidget_2)
         self.formLayout_3.setObjectName(u"formLayout_3")
         self.formLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -487,7 +533,7 @@ class Ui_MainWindow(object):
         self.sourcePhiBox.setGeometry(QRect(50, 170, 400, 251))
         self.layoutWidget_3 = QWidget(self.sourcePhiBox)
         self.layoutWidget_3.setObjectName(u"layoutWidget_3")
-        self.layoutWidget_3.setGeometry(QRect(10, 30, 199, 124))
+        self.layoutWidget_3.setGeometry(QRect(10, 30, 210, 124))
         self.formLayout_4 = QFormLayout(self.layoutWidget_3)
         self.formLayout_4.setObjectName(u"formLayout_4")
         self.formLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -558,23 +604,23 @@ class Ui_MainWindow(object):
         self.groupBox_6.setGeometry(QRect(50, 20, 400, 261))
         self.groupBox_6.setFlat(False)
         self.groupBox_6.setCheckable(False)
-        self.layoutWidget10 = QWidget(self.groupBox_6)
-        self.layoutWidget10.setObjectName(u"layoutWidget10")
-        self.layoutWidget10.setGeometry(QRect(11, 41, 381, 28))
-        self.horizontalLayout_4 = QHBoxLayout(self.layoutWidget10)
+        self.layoutWidget9 = QWidget(self.groupBox_6)
+        self.layoutWidget9.setObjectName(u"layoutWidget9")
+        self.layoutWidget9.setGeometry(QRect(11, 41, 381, 28))
+        self.horizontalLayout_4 = QHBoxLayout(self.layoutWidget9)
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
         self.horizontalLayout_4.setContentsMargins(0, 0, 0, 0)
-        self.label_15 = QLabel(self.layoutWidget10)
+        self.label_15 = QLabel(self.layoutWidget9)
         self.label_15.setObjectName(u"label_15")
 
         self.horizontalLayout_4.addWidget(self.label_15)
 
-        self.sourceSampleAddrLe = QLineEdit(self.layoutWidget10)
+        self.sourceSampleAddrLe = QLineEdit(self.layoutWidget9)
         self.sourceSampleAddrLe.setObjectName(u"sourceSampleAddrLe")
 
         self.horizontalLayout_4.addWidget(self.sourceSampleAddrLe)
 
-        self.sourceSamplePb = QPushButton(self.layoutWidget10)
+        self.sourceSamplePb = QPushButton(self.layoutWidget9)
         self.sourceSamplePb.setObjectName(u"sourceSamplePb")
         self.sourceSamplePb.setIconSize(QSize(16, 16))
 
@@ -611,7 +657,7 @@ class Ui_MainWindow(object):
         self.sensorPhiGb.setGeometry(QRect(40, 310, 400, 161))
         self.layoutWidget_7 = QWidget(self.sensorPhiGb)
         self.layoutWidget_7.setObjectName(u"layoutWidget_7")
-        self.layoutWidget_7.setGeometry(QRect(10, 30, 199, 124))
+        self.layoutWidget_7.setGeometry(QRect(10, 30, 210, 124))
         self.formLayout_7 = QFormLayout(self.layoutWidget_7)
         self.formLayout_7.setObjectName(u"formLayout_7")
         self.formLayout_7.setContentsMargins(0, 0, 0, 0)
@@ -669,7 +715,7 @@ class Ui_MainWindow(object):
         self.sensorThetaGb.setGeometry(QRect(40, 140, 400, 161))
         self.layoutWidget_8 = QWidget(self.sensorThetaGb)
         self.layoutWidget_8.setObjectName(u"layoutWidget_8")
-        self.layoutWidget_8.setGeometry(QRect(10, 30, 199, 124))
+        self.layoutWidget_8.setGeometry(QRect(10, 30, 210, 124))
         self.formLayout_8 = QFormLayout(self.layoutWidget_8)
         self.formLayout_8.setObjectName(u"formLayout_8")
         self.formLayout_8.setContentsMargins(0, 0, 0, 0)
@@ -729,18 +775,18 @@ class Ui_MainWindow(object):
         self.Propagation = QGroupBox(self.Options)
         self.Propagation.setObjectName(u"Propagation")
         self.Propagation.setGeometry(QRect(30, 40, 481, 191))
-        self.layoutWidget11 = QWidget(self.Propagation)
-        self.layoutWidget11.setObjectName(u"layoutWidget11")
-        self.layoutWidget11.setGeometry(QRect(40, 40, 353, 122))
-        self.formLayout_2 = QFormLayout(self.layoutWidget11)
+        self.layoutWidget10 = QWidget(self.Propagation)
+        self.layoutWidget10.setObjectName(u"layoutWidget10")
+        self.layoutWidget10.setGeometry(QRect(40, 40, 378, 122))
+        self.formLayout_2 = QFormLayout(self.layoutWidget10)
         self.formLayout_2.setObjectName(u"formLayout_2")
         self.formLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label_13 = QLabel(self.layoutWidget11)
+        self.label_13 = QLabel(self.layoutWidget10)
         self.label_13.setObjectName(u"label_13")
 
         self.formLayout_2.setWidget(0, QFormLayout.ItemRole.LabelRole, self.label_13)
 
-        self.GDTSb = QDoubleSpinBox(self.layoutWidget11)
+        self.GDTSb = QDoubleSpinBox(self.layoutWidget10)
         self.GDTSb.setObjectName(u"GDTSb")
         self.GDTSb.setDecimals(4)
         self.GDTSb.setSingleStep(0.010000000000000)
@@ -748,12 +794,12 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(0, QFormLayout.ItemRole.FieldRole, self.GDTSb)
 
-        self.label_28 = QLabel(self.layoutWidget11)
+        self.label_28 = QLabel(self.layoutWidget10)
         self.label_28.setObjectName(u"label_28")
 
         self.formLayout_2.setWidget(1, QFormLayout.ItemRole.LabelRole, self.label_28)
 
-        self.MSISb = QSpinBox(self.layoutWidget11)
+        self.MSISb = QSpinBox(self.layoutWidget10)
         self.MSISb.setObjectName(u"MSISb")
         self.MSISb.setMaximum(100000)
         self.MSISb.setSingleStep(10)
@@ -762,18 +808,18 @@ class Ui_MainWindow(object):
 
         self.formLayout_2.setWidget(1, QFormLayout.ItemRole.FieldRole, self.MSISb)
 
-        self.WeightCb = QCheckBox(self.layoutWidget11)
+        self.WeightCb = QCheckBox(self.layoutWidget10)
         self.WeightCb.setObjectName(u"WeightCb")
         self.WeightCb.setChecked(True)
 
         self.formLayout_2.setWidget(2, QFormLayout.ItemRole.LabelRole, self.WeightCb)
 
-        self.label_29 = QLabel(self.layoutWidget11)
+        self.label_29 = QLabel(self.layoutWidget10)
         self.label_29.setObjectName(u"label_29")
 
         self.formLayout_2.setWidget(3, QFormLayout.ItemRole.LabelRole, self.label_29)
 
-        self.MEPSb = QDoubleSpinBox(self.layoutWidget11)
+        self.MEPSb = QDoubleSpinBox(self.layoutWidget10)
         self.MEPSb.setObjectName(u"MEPSb")
         self.MEPSb.setDecimals(3)
         self.MEPSb.setSingleStep(0.500000000000000)
@@ -782,28 +828,28 @@ class Ui_MainWindow(object):
         self.formLayout_2.setWidget(3, QFormLayout.ItemRole.FieldRole, self.MEPSb)
 
         self.stackedSensorWidget.addTab(self.Options, "")
-        self.widget = QWidget(self.centralwidget)
-        self.widget.setObjectName(u"widget")
-        self.widget.setGeometry(QRect(20, 670, 561, 28))
-        self.horizontalLayout_3 = QHBoxLayout(self.widget)
+        self.layoutWidget11 = QWidget(self.centralwidget)
+        self.layoutWidget11.setObjectName(u"layoutWidget11")
+        self.layoutWidget11.setGeometry(QRect(20, 670, 561, 28))
+        self.horizontalLayout_3 = QHBoxLayout(self.layoutWidget11)
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.horizontalLayout_3.setContentsMargins(0, 0, 0, 0)
-        self.BuildPb = QPushButton(self.widget)
+        self.BuildPb = QPushButton(self.layoutWidget11)
         self.BuildPb.setObjectName(u"BuildPb")
 
         self.horizontalLayout_3.addWidget(self.BuildPb)
 
-        self.PreviewPb = QPushButton(self.widget)
+        self.PreviewPb = QPushButton(self.layoutWidget11)
         self.PreviewPb.setObjectName(u"PreviewPb")
 
         self.horizontalLayout_3.addWidget(self.PreviewPb)
 
-        self.runVBB = QPushButton(self.widget)
+        self.runVBB = QPushButton(self.layoutWidget11)
         self.runVBB.setObjectName(u"runVBB")
 
         self.horizontalLayout_3.addWidget(self.runVBB)
 
-        self.stopSimu = QPushButton(self.widget)
+        self.stopSimu = QPushButton(self.layoutWidget11)
         self.stopSimu.setObjectName(u"stopSimu")
         sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Maximum)
         sizePolicy1.setHorizontalStretch(0)
@@ -826,6 +872,7 @@ class Ui_MainWindow(object):
 
         self.stackedSensorWidget.setCurrentIndex(0)
         self.rayUnitCb.setCurrentIndex(0)
+        self.geoWidget.setCurrentIndex(1)
         self.stackedSourceWidget.setCurrentIndex(1)
         self.sensorTypeCombo.setCurrentIndex(0)
 
@@ -855,7 +902,7 @@ class Ui_MainWindow(object):
         self.anisotropicCheck.setText(QCoreApplication.translate("MainWindow", u"Anisotropic", None))
         self.bsdfBothSideCheck.setText(QCoreApplication.translate("MainWindow", u"BSDF depends on light incident side", None))
         self.label_16.setText(QCoreApplication.translate("MainWindow", u"Speos Version", None))
-        self.speosVersionLe.setText(QCoreApplication.translate("MainWindow", u"261", None))
+        self.speosVersionLe.setText(QCoreApplication.translate("MainWindow", u"252", None))
         self.label_18.setText(QCoreApplication.translate("MainWindow", u"e.g. Speos 25R2 = 252", None))
         self.label_17.setText(QCoreApplication.translate("MainWindow", u"Speos RPC Port", None))
         self.RPCPortLe.setText(QCoreApplication.translate("MainWindow", u"50098", None))
@@ -869,15 +916,19 @@ class Ui_MainWindow(object):
         self.label_9.setText(QCoreApplication.translate("MainWindow", u"X Size", None))
         self.label_8.setText(QCoreApplication.translate("MainWindow", u"Y Ratio", None))
         self.label_10.setText(QCoreApplication.translate("MainWindow", u"Y Size", None))
-        self.label_5.setText(QCoreApplication.translate("MainWindow", u"Geometry", None))
+        self.label_30.setText(QCoreApplication.translate("MainWindow", u"Geometry", None))
         self.geoPb.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_6.setText(QCoreApplication.translate("MainWindow", u"VOP         ", None))
+        self.label_31.setText(QCoreApplication.translate("MainWindow", u"VOP         ", None))
         self.vopPb.setText(QCoreApplication.translate("MainWindow", u"...", None))
-        self.label_14.setText(QCoreApplication.translate("MainWindow", u"SOP", None))
+        self.label_32.setText(QCoreApplication.translate("MainWindow", u"SOP", None))
         self.sopAddrLe.setText("")
         self.sopPb.setText(QCoreApplication.translate("MainWindow", u"...", None))
         self.opaqueCb.setText(QCoreApplication.translate("MainWindow", u"Opaque material", None))
         self.polishedCb.setText(QCoreApplication.translate("MainWindow", u"Optical Polished", None))
+        self.label_5.setText(QCoreApplication.translate("MainWindow", u"LIGHTBOX", None))
+        self.LightboxAddrPb.setText(QCoreApplication.translate("MainWindow", u"...", None))
+        self.label_6.setText(QCoreApplication.translate("MainWindow", u"PASSWORD", None))
+        self.useLightboxRb.setText(QCoreApplication.translate("MainWindow", u"USE LIGHTBOX", None))
         self.stackedSensorWidget.setTabText(self.stackedSensorWidget.indexOf(self.Geometries), QCoreApplication.translate("MainWindow", u"Geometries", None))
         self.label_11.setText(QCoreApplication.translate("MainWindow", u"Sampling Mode", None))
         self.samplingModeCombo.setItemText(0, QCoreApplication.translate("MainWindow", u"Uniform", None))
