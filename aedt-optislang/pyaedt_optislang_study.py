@@ -629,5 +629,4 @@ if __name__ == "__main__":
 # project files. The following command all temporary files, including the project folder.
 
 if __name__ == "__main__":
-    pass
-    #temp_folder.cleanup()
+    temp_folder.cleanup()
