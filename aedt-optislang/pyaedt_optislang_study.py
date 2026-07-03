@@ -1,16 +1,23 @@
 # /// script
 # requires-python = "==3.12"
 # dependencies = [
-#     "ansys-optislang-core",
-#     "pyaedt[all]"
+#     "ansys-optislang-core>0.7.0",
+#     "pyaedt[all]>1.1.0"
 # ]
 # ///
-# # Parametric design study with optiSLang ProxySolver
+# # Parametric AMOP design study with optiSLang ProxySolver and PyAEDT
 #
-# This example shows how to combine PyAEDT and pyoptiSLang to run a parametric
-# sensitivity study on a dipole antenna in HFSS. optiSLang's ProxySolver node
-# orchestrates the parallel design evaluations and trains a surrogate model (MOP)
-# on the collected results.
+# This example shows how to combine PyAEDT and pyOptiSLang to run a parametric
+# AMOP study on a dipole antenna in HFSS. optiSLang's ProxySolver node
+# is used to process the designs. Parallel design evaluations are managed via 
+# process_map. The AMOP system automatically creates a MOP, which is then used
+# in a subsequent MOP-Solver based optimization system.
+#
+# Ways to run this script:
+# * Open as a Jupytext notebook (requires installation of Jupyter).
+# * Run with `uv run pyaedt_optislang_study.py` (requires installation of uv).
+# * Create a virtual environment and install requirements from requirements file, then run this script.
+# 
 # Software requirements:
 # - Ansys optiSLang version 2026 R1 or later.
 # - Ansys Electronics Desktop version 2026 R1 or later.
@@ -19,7 +26,7 @@
 # - ansys-aedt-core version 1.1.0 or later.
 # - ansys-optislang-core version 0.7.0 or later.
 #
-# Keywords: **AEDT**, **HFSS**, **optiSLang**, **parametric**, **ProxySolver**, **sensitivity**
+# Keywords: **AEDT**, **HFSS**, **optiSLang**, **parametric**, **ProxySolver**, **AMOP**
 
 # ## Perform imports and define constants
 #
@@ -1230,6 +1237,13 @@ def add_stdout_handler(logger):
 # * Create a temporary directory where downloaded data or dumped data can be stored.
 # * Define parameter and response definition
 # * Define total number of designs to execute `num_designs_max`
+#
+# The below steps are wrapped in the main guard (`if __name__ == "__main__":)
+# to ensure the process_map does not recursively spin up the same process again 
+# and again.
+# This is only necessary because we package everything in one file for the 
+# sake of this example. As a best practice, it makes sense to refactor the 
+# part executed by process_map into a separate file/module.
 
 if __name__ == "__main__":
     # Create temporary working dir
