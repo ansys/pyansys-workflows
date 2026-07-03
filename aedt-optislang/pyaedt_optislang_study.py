@@ -96,9 +96,6 @@ SOLVE_MODE = "HFSS"  # Set to "DUMMY" to run without an HFSS license, for testin
 # for a given set of design parameters, exports the return loss to a CSV file,
 # and returns the result as a NumPy array.
 # Each call runs in its own HFSS desktop instance and releases it when done.
-#
-# > **Note:** This function must remain a module-level definition so that
-# > ``multiprocessing.Pool`` can pickle it for parallel dispatch.
 
 
 def solve_hfss(working_dir, l_dipole, wire_rad, port_gap):
@@ -179,11 +176,15 @@ def get_legacy_signal_value_format(abscissa, channel_data):
         dict: Legacy signal format compatible with optiSLang's ProxySolver.
         {
             "kind" : "signal",
-            "matrix" : "[1,100](((0,0),(0.431848,0),(0.762402,0),(0.921527,0),(0.877561,0),(0.643542,0),(0.273608,0),(-0.149478,0),(-0.532816,0),(-0.793738,0),(-0.87761,0),(-0.769229,0),(-0.495453,0),(-0.118642,0),(0.27751,0),(0.606537,0),(0.79805,0),(0.812765,0),(0.65051,0),(0.349596,0),(-0.0221748,0),(-0.382755,0),(-0.653938,0),(-0.77829,0),(-0.731291,0),(-0.526094,0),(-0.210026,0),(0.146294,0),(0.464701,0),(0.676615,0),(0.737784,0),(0.637491,0),(0.400308,0),(0.08015,0),(-0.25195,0),(-0.52358,0),(-0.676717,0),(-0.680093,0),(-0.535541,0),(-0.277023,0),(0.0372977,0),(0.338125,0),(0.560281,0),(0.656811,0),(0.608878,0),(0.429381,0),(0.159598,0),(-0.140263,0),(-0.404491,0),(-0.576245,0),(-0.619765,0),(-0.527786,0),(-0.322627,0),(-0.0508354,0),(0.227354,0),(0.451344,0),(0.573363,0),(0.568627,0),(0.440337,0),(0.218503,0),(-0.0470388,0),(-0.297804,0),(-0.479523,0),(-0.553868,0),(-0.506513,0),(-0.349839,0),(-0.119785,0),(0.132373,0),(0.351429,0),(0.490323,0),(0.520228,0),(0.436508,0),(0.259314,0),(0.0287738,0),(-0.204074,0),(-0.388561,0),(-0.485404,0),(-0.475048,0),(-0.361581,0),(-0.17144,0),(0.0527191,0),(0.261576,0),(0.409981,0),(0.466703,0),(0.420979,0),(0.284506,0),(0.0885118,0),(-0.12337,0),(-0.304798,0),(-0.416847,0),(-0.436342,0),(-0.360631,0),(-0.207805,0),(-0.0124155,0),(0.182327,0),(0.33409,0),(0.410613,0),(0.396547,0),(0.296502,0),(0.133702,0)))",
-            "vector" : "[100]((0,0),(0.10101,0),(0.20202,0),(0.30303,0),(0.40404,0),(0.505051,0),(0.606061,0),(0.707071,0),(0.808081,0),(0.909091,0),(1.0101,0),(1.11111,0),(1.21212,0),(1.31313,0),(1.41414,0),(1.51515,0),(1.61616,0),(1.71717,0),(1.81818,0),(1.91919,0),(2.0202,0),(2.12121,0),(2.22222,0),(2.32323,0),(2.42424,0),(2.52525,0),(2.62626,0),(2.72727,0),(2.82828,0),(2.92929,0),(3.0303,0),(3.13131,0),(3.23232,0),(3.33333,0),(3.43434,0),(3.53535,0),(3.63636,0),(3.73737,0),(3.83838,0),(3.93939,0),(4.0404,0),(4.14141,0),(4.24242,0),(4.34343,0),(4.44444,0),(4.54545,0),(4.64646,0),(4.74747,0),(4.84848,0),(4.94949,0),(5.05051,0),(5.15152,0),(5.25253,0),(5.35354,0),(5.45455,0),(5.55556,0),(5.65657,0),(5.75758,0),(5.85859,0),(5.9596,0),(6.06061,0),(6.16162,0),(6.26263,0),(6.36364,0),(6.46465,0),(6.56566,0),(6.66667,0),(6.76768,0),(6.86869,0),(6.9697,0),(7.07071,0),(7.17172,0),(7.27273,0),(7.37374,0),(7.47475,0),(7.57576,0),(7.67677,0),(7.77778,0),(7.87879,0),(7.9798,0),(8.08081,0),(8.18182,0),(8.28283,0),(8.38384,0),(8.48485,0),(8.58586,0),(8.68687,0),(8.78788,0),(8.88889,0),(8.9899,0),(9.09091,0),(9.19192,0),(9.29293,0),(9.39394,0),(9.49495,0),(9.59596,0),(9.69697,0),(9.79798,0),(9.89899,0),(10,0))"
+            "matrix" : "[1,100](((0,0),(0.431848,0),(0.762402,0),(0.921527,0), ...
+            "vector" : "[100]((0,0),(0.10101,0),(0.20202,0),(0.30303,0), ....
         }
-        where the value pairs in () represent the real and the imaginary part of the signal, respectively. The "matrix" field contains the full 2D array of signal data, while the "vector" field contains only the abscissa values (frequencies) for reference.
-        If loss data is not complex, the imaginary part can be set to 0 as shown above. The "kind" field indicates that this is a signal-type response, which allows optiSLang to interpret and process it correctly in the workflow.
+        where the value pairs in () represent the real and the imaginary part of the signal, respectively. 
+        The "matrix" field contains the full 2D array of signal data, while the "vector" field contains 
+        only the abscissa values (frequencies) for reference.
+        If loss data is not complex, the imaginary part can be set to 0 as shown above. 
+        The "kind" field indicates that this is a signal-type response, which allows optiSLang to interpret and process 
+        it correctly in the workflow.
 
     """
     if abscissa is None or channel_data is None:
@@ -521,7 +522,6 @@ if __name__ == "__main__":
 
     print("AMOP result designs:")
     print_designs(amop_study.get_result_designs())
-
     print("AMOP design study done!")
 
 
@@ -530,14 +530,17 @@ if __name__ == "__main__":
 # as its surrogate model for design evaluation. 
 
 if __name__ == "__main__":
+    # Define the target frequency
     target_frequency = 1.35  # GHz
+    # Define the optimization criteria to minimize the squared difference between the resonance frequency and the target frequency.
     criteria = [
         ObjectiveCriterion("obj_freq_min", expression=f"(freq_min-{target_frequency})^2", criterion=ComparisonType.MIN)
         ]
 
-    amop_system = amop_study.managed_instances[0].instance # Get the system created from the template, which contains the ProxySolver node that executed the design evaluations.
+    # Get the AMOP system object we created in the previous step
+    amop_system = amop_study.managed_instances[0].instance 
 
-    # Number of designs in an OCO system & deactivate additional MOP in OCO
+    # Create a nature inspired optimization algorithm system that uses the trained MOP as its surrogate model for design evaluation.
     optimizer_settings = GeneralAlgorithmSettings(
         {
             "OptimizerSettings": {
@@ -591,26 +594,6 @@ if __name__ == "__main__":
     for design in pareto_designs:
         freq_min = design.responses[design.responses_names.index("freq_min")].value
         amplitude_min = design.responses[design.responses_names.index("amplitude_min")].value
-
-    """
-    for design in result_designs:
-        print(f"Design {design.id}:")
-        for parameter in design.parameters:
-            print(f"  Parameter {parameter.name}: {parameter.value}")
-        for response in design.responses:
-            print(f"  Response {response.name}: {response.value}")
-    
-    for response in all_responses:
-        freq = response["responses"][0]["value"]["abscissa"]
-        return_loss = response["responses"][0]["value"]["channels"][0]
-        plt.plot(freq, return_loss, label=f"Design {response['hid']}")
-
-    plt.xlabel("Frequency [Hz]")
-    plt.ylabel("Return loss [dB]")
-    plt.grid(True)
-    plt.legend()
-    plt.show()
-    """
 
 
 # ## Release optiSLang
