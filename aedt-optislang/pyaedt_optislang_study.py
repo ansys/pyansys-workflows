@@ -434,7 +434,7 @@ if __name__ == "__main__":
             "type": "scalar",
         },
     }
-    num_designs_max = 20
+    num_designs_max = 30
 
     parameters_objects = []
     for parameter_name, parameter_data in parameters_as_dict.items():
