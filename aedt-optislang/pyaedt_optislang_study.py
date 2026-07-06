@@ -489,17 +489,26 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
 
+    # For initializing the project and saving it we create a short batch 
+    # optiSLang session.
     osl = Optislang(
         project_path=str(WORKING_DIR / osl_project_name),
+        batch=True,
         )
     osl.application.save()
     osl.dispose()
+    time.sleep(10)
+    
+    # Now we reopen this new project in either batch or GUI mode, depending
+    # on definition of NG_MODE.
     osl = Optislang(
         project_path=str(WORKING_DIR / osl_project_name),
+        loglevel="INFO",
+        log_process_stdout=True, # log oSL messages to STDOUT
+        log_process_stderr=True, # log oSL error messages to STDERR
         batch=NG_MODE,
         )
 
-    add_stdout_handler(osl.log)
     solver_settings = ProxySolverNodeSettings(
         callback=compute_designs,
         multi_design_launch_num=-1
