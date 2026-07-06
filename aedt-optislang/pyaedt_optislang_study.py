@@ -1,8 +1,8 @@
 # /// script
 # requires-python = "==3.12"
 # dependencies = [
-#     "ansys-optislang-core>0.7.0",
-#     "pyaedt[all]>1.1.0"
+#     "ansys-optislang-core==1.5.0",
+#     "pyaedt[all]==1.1.0"
 # ]
 # ///
 # # Parametric AMOP design study with optiSLang ProxySolver and PyAEDT
