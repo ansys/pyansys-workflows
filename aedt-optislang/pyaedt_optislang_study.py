@@ -106,7 +106,7 @@ from ansys.optislang.parametric.design_study_templates import (
 
 AEDT_VERSION = "2026.1"
 NUM_CORES_PER_PROCESS = 2
-NG_MODE = True # HFSS jobs run non-graphically (headless) to support parallel execution.
+NG_MODE = True # Controls whether AEDT and optiSLang should be executed in batch mode or with GUI.
 MAX_PARALLEL_SOLVE_PROCESSES = 3
 FORCE_SEQUENTIAL_SOLVE = False   # Set to True to force sequential execution even outside of Jupyter, for testing and debugging.
 AEDT_WORKING_DIRNAME = "pyaedt_workingdir"
