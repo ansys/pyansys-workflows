@@ -59,7 +59,7 @@ jobs:
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v6.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -151,7 +151,7 @@ jobs:
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v6.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
@@ -257,7 +257,7 @@ jobs:
             doc
 
       - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
-        uses: actions/setup-python@v6.2.0
+        uses: actions/setup-python@v6.3.0
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
