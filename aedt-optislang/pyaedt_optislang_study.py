@@ -58,14 +58,13 @@
 # +
 import logging
 import math
+import matplotlib.pyplot as plt
+import numpy as np
 import os
 import pathlib
 import sys
 import tempfile
 import time
-
-import matplotlib.pyplot as plt
-import numpy as np
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map as concurrent_map
 
