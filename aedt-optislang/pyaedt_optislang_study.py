@@ -184,6 +184,25 @@ def get_parameter_values(design):
     return parameter_values
 
 
+def get_responses_as_design_variables(result):
+    # We assume any tuple of structure tuple(list, list) to represent a signal
+    # Try to convert it to signal format.
+    r = {}
+    for key, value in result.items():
+        if isinstance(value, tuple) and len(value) == 2 and all([isinstance(v, list) for v in value]):
+            try:
+                r[key] = get_signal_value_format(*value)
+            except Exception as e:
+                print(f"Tried to parse value {value} of field {key} to signal but failed. --> Skipping")
+        else:
+            r[key] = value
+    return [
+        DesignVariable(name, value=value) for name, value in r.items()
+    ]
+
+    
+
+
 def in_notebook():
     try:
         from IPython import get_ipython
@@ -195,13 +214,13 @@ def in_notebook():
 
 def compute_designs(designs):
     print(f"Calculate {len(designs)} designs: {', '.join([design.id for design in designs])}")
-    design_data = []
+    all_designs_inputs = []
     aedt_working_dir = WORKING_DIR / AEDT_WORKING_DIRNAME
     aedt_working_dir.mkdir(parents=True, exist_ok=True)
     for design in designs:
         hid = design.id
         design_temp_folder = tempfile.mkdtemp(dir=str(aedt_working_dir), prefix="pyaedt.")
-        design_data.append((
+        all_designs_inputs.append((
             hid,
             design_temp_folder,
             get_parameter_values(design),
@@ -221,27 +240,23 @@ def compute_designs(designs):
             "Running in notebook environment -> Ignoring MAX_PARALLEL_SOLVE_PROCESSES "
             "and running processes in sequence"
         )
-        results = []
-        for design_args in tqdm(design_data, desc="Solving designs"):
-            result = solve(design_args)
-            results.append(result)
+        all_designs_responses = []
+        for design_args in tqdm(all_designs_inputs, desc="Solving designs"):
+            all_designs_responses.append(worker(design_args))
     else:
-        results = concurrent_map(solve, design_data, max_workers=MAX_PARALLEL_SOLVE_PROCESSES)
+        all_designs_responses = concurrent_map(worker, all_designs_inputs, max_workers=MAX_PARALLEL_SOLVE_PROCESSES)
 
-
-    result_design_list = []
-    for design, result in zip(design_data, results):
-        result_design_list.append(
+    solved_designs = []
+    for design, response in zip(all_designs_inputs, all_designs_responses):
+        solved_designs.append(
             Design(
                 design_id=design[0],
-                responses=[
-                    DesignVariable(name, value=value) for name, value in result.items()
-                    ]
+                responses=get_responses_as_design_variables(response),
             )
         )
 
-    print(f"Return {len(result_design_list)} designs")
-    return result_design_list
+    print(f"Return {len(solved_designs)} designs")
+    return solved_designs
 
 
 # ## Define helper functions
