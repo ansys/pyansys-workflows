@@ -495,9 +495,10 @@ if __name__ == "__main__":
             }
         }
     )
+    optimization_node_type = node_types.NOA2
     optimization_template = OptimizationOnMOPTemplate(
         optimizer_name="Optimization",
-        optimizer_type=node_types.NOA2,
+        optimizer_type=optimization_node_type,
         parameters=parameters_objects,
         criteria=criteria,
         responses=optimization_responses_objects,
@@ -506,7 +507,18 @@ if __name__ == "__main__":
     )
 
     optimization_study = design_study_manager.create_design_study(optimization_template)
+    
+    # Find the optimization system
+    for managed_instance in optimization_study.managed_instances:
+        instance = managed_instance.instance
+        if instance.type == optimization_node_type:
+            optimization_system = instance
+    # Deactivate Auto save and set .omdb file update to "at end" to decrease run-time 
+    optimization_system.set_property("AutoSaveMode", "no_auto_save")
+    optimization_system.set_property("UpdateResultFile", "at_end")
+    # Execute the optimization
     optimization_study.execute()
+    # Save the project
     design_study_manager.save()
 
     print("Optimization result designs:")
