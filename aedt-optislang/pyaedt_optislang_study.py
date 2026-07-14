@@ -69,7 +69,6 @@ import numpy as np
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map as concurrent_map
 
-from ansys.aedt.core import Hfss
 from ansys.optislang.core import Optislang
 import ansys.optislang.core.node_types as node_types
 from ansys.optislang.core.nodes import DesignFlow
@@ -92,6 +91,8 @@ from ansys.optislang.parametric.design_study_templates import (
     ProxySolverNodeSettings,
 )
 
+import dipole_antenna
+
 
 # -
 
@@ -104,82 +105,14 @@ from ansys.optislang.parametric.design_study_templates import (
 # as long as `NUM_CORES_PER_JOB * MAX_PARALLEL_SOLVE_PROCESSES` does not exceed the
 # number of available cores.
 
-AEDT_VERSION = "2026.1"
-NUM_CORES_PER_PROCESS = 2
-NG_MODE = True # Controls whether AEDT and optiSLang should be executed in batch mode or with GUI.
+NG_MODE = True # Controls whether optiSLang should be executed in batch mode or with GUI.
 MAX_PARALLEL_SOLVE_PROCESSES = 3
 FORCE_SEQUENTIAL_SOLVE = False   # Set to True to force sequential execution even outside of Jupyter, for testing and debugging.
 AEDT_WORKING_DIRNAME = "pyaedt_workingdir"
 SOLVE_MODE = "HFSS"  # Set to "DUMMY" to run without an HFSS license, for testing purposes.
+SOLVE_TIMEOUT = 300
 
 
-# ## Define HFSS solver function
-#
-# The ``solve_hfss()`` function creates and solves a dipole antenna model in HFSS
-# for a given set of design parameters, exports the return loss to a CSV file,
-# and returns the result as a NumPy array.
-# Each call runs in its own HFSS desktop instance and releases it when done.
-
-
-def solve_hfss(working_dir, l_dipole, wire_rad, port_gap):
-    project_name = os.path.join(working_dir, "dipole.aedt")
-    hfss = Hfss(
-        version=AEDT_VERSION,
-        non_graphical=NG_MODE,
-        project=project_name,
-        new_desktop=True,
-        solution_type="Modal",
-    )
-
-    hfss["l_dipole"] = f"{l_dipole}cm"
-    hfss["wire_rad"] = f"{wire_rad}mm"
-    hfss["port_gap"] = f"{port_gap}mm"
-
-    component_name = "Dipole_Antenna_DM"
-    freq_range = ["1GHz", "2GHz"]
-    center_freq = "1.5GHz"
-    freq_step = "0.5GHz"
-
-    component_fn = hfss.components3d[component_name]
-    comp_params = hfss.get_component_variables(component_name)
-    comp_params["dipole_length"] = "l_dipole"
-    comp_params["wire_rad"] = "wire_rad"
-    comp_params["port_gap"] = "port_gap"
-    hfss.modeler.insert_3d_component(component_fn, geometry_parameters=comp_params)
-
-    hfss.create_open_region(frequency=center_freq)
-
-    setup_name = "MySetup"
-    setup = hfss.create_setup(
-        name=setup_name,
-        MultipleAdaptiveFreqsSetup=freq_range,
-        MaximumPasses=2,
-    )
-    setup.add_sweep(
-        name="DiscreteSweep",
-        sweep_type="Discrete",
-        RangeStart=freq_range[0],
-        RangeEnd=freq_range[1],
-        RangeStep=freq_step,
-        SaveFields=True,
-    )
-    interp_sweep = setup.add_sweep(
-        name="InterpolatingSweep",
-        sweep_type="Interpolating",
-        RangeStart=freq_range[0],
-        RangeEnd=freq_range[1],
-        SaveFields=False,
-    )
-
-    hfss.analyze_setup(setup_name, use_auto_settings=True, cores=NUM_CORES_PER_PROCESS)
-    hfss.create_scattering(plot="Return Loss", sweep=interp_sweep.name)
-    hfss.post.export_report_to_file(working_dir, "Return Loss", ".csv")
-
-    hfss.save_project()
-    hfss.release_desktop(close_projects=True, close_desktop=True)
-
-    data = np.loadtxt(os.path.join(working_dir, "Return Loss.csv"), delimiter=",", skiprows=1)
-    return data
 
 # ## Define solver wrappers
 #
@@ -238,43 +171,6 @@ def get_signal_value_format(abscissa, *args):
     return result
 
 
-def call_solver(args):
-    hid, working_dir, l_dipole, wire_rad, port_gap = args
-    print(f"Solving design {hid} ...")
-    result_data = solve_hfss(working_dir, l_dipole, wire_rad, port_gap)
-    freq = result_data[:, -2].tolist()
-    loss = result_data[:, -1].tolist()
-    return_loss = get_signal_value_format(freq, loss)
-    freq_min = float(freq[np.argmin(loss)])
-    print(f"Solving design {hid} ... done.")
-    # return {"freq_min": freq_min}
-    return {"return_loss": return_loss, "freq_min": freq_min, "amplitude_min": min(loss)}
-
-
-def call_solver_dummy(args):
-    hid, working_dir, l_dipole, wire_rad, port_gap = args
-    print(f"Solving design {hid} ...")
-    freq = np.linspace(0, 3, 301).tolist()
-
-    def notch_return_loss(f, f0, Q):
-        num = (f**2 - f0**2)**2
-        den = num + (f * f0 / Q)**2
-        s11 = math.sqrt(num / den)
-        return 20 * math.log10(s11)
-
-    try:
-        loss = [notch_return_loss(f, l_dipole/10+port_gap/5+wire_rad/5, (port_gap+wire_rad)/4) for f in freq]
-    except Exception as e:
-        print(f"Error in call_solver_dummy: {e}")
-        return {"return_loss": None, "freq_min": None, "amplitude_min": None}
-
-    return_loss = get_signal_value_format(freq, loss)
-    freq_min = float(freq[np.argmin(loss)])
-    print(f"Solving design {hid} ... done.")
-    # return {"freq_min": freq_min}
-    return {"return_loss": return_loss, "freq_min": freq_min, "amplitude_min": min(loss)}
-
-
 # ## Define parallel compute function
 #
 # ``compute_designs()`` receives a list of design points from the ProxySolver,
@@ -312,9 +208,9 @@ def compute_designs(designs):
         ))
 
     if SOLVE_MODE == "HFSS":
-        solve = call_solver
+        worker = dipole_antenna.hfss_worker
     elif SOLVE_MODE == "DUMMY":
-        solve = call_solver_dummy
+        worker = dipole_antenna.dummy_worker
     else:
         raise KeyError(f"Unknown SOLVE_MODE: {SOLVE_MODE}")
 
@@ -351,6 +247,7 @@ def compute_designs(designs):
 
 def sort_designs_by_id(designs):
     return sorted(designs, key=lambda obj: int(obj.id.split(".")[1]))  # Sort by design number
+
 
 def print_designs(designs):
     sorted_result_designs = sort_designs_by_id(designs)
