@@ -177,8 +177,11 @@ def get_signal_value_format(abscissa, *args):
 # and returns the collected responses.
 
 
-def get_parameter_value(design, parameter_name):
-    return design.parameters[design.parameters_names.index(parameter_name)].value
+def get_parameter_values(design):
+    parameter_values = {}
+    for parameter in design.parameters:
+        parameter_values[parameter.name] = parameter.value
+    return parameter_values
 
 
 def in_notebook():
@@ -201,9 +204,8 @@ def compute_designs(designs):
         design_data.append((
             hid,
             design_temp_folder,
-            get_parameter_value(design, "l_dipole"),
-            get_parameter_value(design, "wire_rad"),
-            get_parameter_value(design, "port_gap"),
+            get_parameter_values(design),
+            SOLVE_TIMEOUT,
         ))
 
     if SOLVE_MODE == "HFSS":
