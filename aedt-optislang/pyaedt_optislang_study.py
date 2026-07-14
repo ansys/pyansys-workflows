@@ -522,20 +522,42 @@ if __name__ == "__main__":
     design_study_manager.save()
 
     print("Optimization result designs:")
-    optimization_result_designs = optimization_study.get_result_designs()[1:] # Skip the first design, as it is a duplicate 
-    print_designs(optimization_result_designs)
+    optimization_result_designs = optimization_study.get_result_designs()[1:] # Skip the first design, this is the validation design it is a duplicate 
+
+    # Get the validated design result
+    validated_design = optimization_study.get_result_designs()[0] # The first design is the validated design
+    # Alternatively, the validated design can be obtained from the validation system, which is the last system in the optimization study.
+    #validation_system = optimization_study.get_last_parametric_system()
+    #validation_result_designs = validation_system.design_manager.get_designs()
+
     print(f"Optimization design study done! Status: {optimization_study.get_status()}")
+
+    print("MOP-based optimization designs:")
+    print_designs(optimization_result_designs)
+
+    # Get best design results
+    sorted_result_designs = sort_designs_by_id(optimization_result_designs)
+    pareto_designs = get_pareto_designs(sorted_result_designs)
+    best_design = pareto_designs[0]
+    freq_min = best_design.responses[best_design.responses_names.index("freq_min")].value
+    amplitude_min = best_design.responses[best_design.responses_names.index("amplitude_min")].value
+    # Get validated design results
+    validated_design = pareto_designs[0]
+    freq_min_validated = validated_design.responses[validated_design.responses_names.index("freq_min")].value
+    amplitude_min_validated = validated_design.responses[validated_design.responses_names.index("amplitude_min")].value
+    print(f"Best design(s): {best_design.id}")
+    print(f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz, Return loss: {amplitude_min:.2f}dB")
+    print(f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz, Return loss: {amplitude_min_validated:.2f}dB")
+
 
 # ## Display results
 
 if __name__ == "__main__":
-    sorted_result_designs = sort_designs_by_id(optimization_result_designs)
     # Plot the resonance frequency over all designs
     freq_min_values = [design.responses[design.responses_names.index("freq_min")].value for design in sorted_result_designs]
     design_ids = [int(design.id.split(".")[1]) for design in sorted_result_designs]
     plt.plot(design_ids, freq_min_values, marker=".")
     # Highlight the best designs in red
-    pareto_designs = get_pareto_designs(sorted_result_designs)
     plt.scatter(
         [int(p.id.split(".")[1]) for p in pareto_designs], 
         [p.responses[p.responses_names.index("freq_min")].value for p in pareto_designs],
@@ -546,11 +568,6 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.show()
 
-    print("Best designs:")
-    print_designs(pareto_designs)
-    for design in pareto_designs:
-        freq_min = design.responses[design.responses_names.index("freq_min")].value
-        amplitude_min = design.responses[design.responses_names.index("amplitude_min")].value
 
 
 # ## Release optiSLang
@@ -566,7 +583,7 @@ if __name__ == "__main__":
 # ## Clean up
 # All project files are saved in the folder ``temp_folder.name``.
 # If you've run this example as a Jupyter notebook, you can retrieve those
-# project files. The following command all temporary files, including the project folder.
+# project files. The following command will delete all temporary files, including the project folder.
 
 if __name__ == "__main__":
     temp_folder.cleanup()
