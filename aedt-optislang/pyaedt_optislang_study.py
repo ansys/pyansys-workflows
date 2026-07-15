@@ -576,7 +576,7 @@ if __name__ == "__main__":
 
 if __name__ == "__main__":
     design_study_manager.optislang.dispose()
-    time.sleep(3)  # Allow optiSLang to shut down before cleaning the temporary project folder.
+    time.sleep(5)  # Allow optiSLang to shut down before cleaning the temporary project folder.
 
 # -
 
@@ -586,4 +586,10 @@ if __name__ == "__main__":
 # project files. The following command will delete all temporary files, including the project folder.
 
 if __name__ == "__main__":
-    temp_folder.cleanup()
+    try:
+        temp_folder.cleanup()
+    except Exception as e:
+        print(
+            f"Tried to clean up temporary working directory path: {WORKING_DIR}"
+            f"Could not complete cleanup: {e}\n"
+            )
