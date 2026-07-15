@@ -3,21 +3,28 @@ import math
 from multiprocessing import Process, Queue
 import numpy as np
 from pathlib import Path
-import time
 
-AEDT_VERSION = "2026.1"
-NUM_CORES_PER_PROCESS = 2
-NG_MODE = True
+AEDT_VERSION = "2026.1" # AEDT version to use
+NUM_CORES_PER_PROCESS = 2 # number of cores to use for each HFSS process
+NG_MODE = True # True: Run AEDT in non-graphical mode, False: Run AEDT with GUI.
 
-# ## Define HFSS solver function
-#
-# The ``solve_hfss()`` function creates and solves a dipole antenna model in HFSS
-# for a given set of design parameters, exports the return loss to a CSV file,
-# and returns the result as a NumPy array.
-# Each call runs in its own HFSS desktop instance and releases it when done.
-
+# Define HFSS solve functions
 
 def hfss_solve(working_dir, parameter_values):
+    """
+    This function creates a new HFSS project, sets up the dipole antenna design with the given parameters,
+    runs the simulation, and exports the return loss data to a CSV file.
+    
+    Parameters:
+    working_dir (str): The directory where the HFSS project and output files will be saved.
+    parameter_values (dict): A dictionary containing the values for the dipole antenna parameters:
+        - l_dipole (float): Length of the dipole antenna in cm.
+        - wire_rad (float): Radius of the wire in mm.
+        - port_gap (float): Gap of the port in mm.
+    
+    Returns:
+    dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+    """
     project_filepath = Path(working_dir) / "dipole.aedt"
     hfss = Hfss(
         version=AEDT_VERSION,
@@ -82,16 +89,37 @@ def hfss_solve(working_dir, parameter_values):
 
 
 def hfss_task(working_dir, parameter_values, q):
-    """This function is the target of the multiprocessing Process. 
-       It wraps around the hfss_solve function and puts the result in a Queue."""
+    """
+    This function is the target of the multiprocessing Process. 
+    It wraps around the hfss_solve function and puts the result in a Queue.
+    
+    Parameters:
+        working_dir (str): The directory where the HFSS project and output files will be saved.
+        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        q (Queue): A multiprocessing Queue to put the result into.
+    
+    Returns:
+        None: (The result is put into the Queue.)
+    """
     result_data = hfss_solve(working_dir, parameter_values)
     q.put(result_data)
 
 
 def hfss_worker(args):
-    """We define a worker function that will be called by each process. 
-       It takes a tuple of arguments, unpacks them, and calls the hfss_task function.
-       It also handles the timeout and termination of the process if it exceeds the specified time limit."""
+    """
+    We define a worker function that will be called by each process. 
+    It takes a tuple of arguments, unpacks them, and calls the hfss_task function.
+    It also handles the timeout and termination of the process if it exceeds the specified time limit.
+    
+    Parameters:
+    args (tuple): A tuple containing the following elements:
+        - hid (str): The unique identifier for the design being solved.
+        - working_dir (str): The directory where the HFSS project and output files will be saved.
+        - parameters (dict): A dictionary containing the values for the dipole antenna parameters.
+        - timeout (int): The maximum time in seconds to allow the process to run before terminating it.
+    Returns:
+        dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+    """
     hid, working_dir, parameters, timeout = args
     print(f"Solving design {hid} ...")
     q = Queue()
@@ -110,7 +138,20 @@ def hfss_worker(args):
     return result_data
 
 
+# Define DUMMY solve functions
+
 def dummy_solve(working_dir, parameter_values):
+    """
+    This function simulates the behavior of the hfss_solve function without actually running HFSS.
+    It generates a synthetic return loss curve based on the input parameters.
+    
+    Parameters:
+        working_dir (str): The directory where the HFSS project and output files would be saved (not used in this dummy function).
+        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        
+    Returns:
+        dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+    """
     l_dipole, wire_rad, port_gap = parameter_values["l_dipole"], parameter_values["wire_rad"], parameter_values["port_gap"]
     freq = np.linspace(0, 3, 301).tolist()
 
@@ -121,17 +162,28 @@ def dummy_solve(working_dir, parameter_values):
         return 20 * math.log10(s11)
 
     try:
-        time.sleep(20)
         loss = [notch_return_loss(f, l_dipole/10+port_gap/5+wire_rad/5, (port_gap+wire_rad)/4) for f in freq]
     except Exception as e:
         print(f"Error in call_solver_dummy: {e}")
         return {"return_loss": None, "freq_min": None, "amplitude_min": None}
 
-    nreq_min = float(freq[np.argmin(loss)])
+    freq_min = float(freq[np.argmin(loss)])
     return {"return_loss": (freq, loss), "freq_min": freq_min, "amplitude_min": min(loss)}
 
 
 def dummy_task(working_dir, parameter_values, q):
+    """
+    This function is the target of the multiprocessing Process for the dummy solver.
+    It wraps around the dummy_solve function and puts the result in a Queue.
+
+    Parameters:
+        working_dir (str): The directory where the HFSS project and output files would be saved (not used in this dummy function).
+        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        q (Queue): A multiprocessing Queue to put the result into.
+
+    Returns:
+        None: (The result is put into the Queue.)
+    """
     result_data = dummy_solve(working_dir, parameter_values)
     q.put(result_data)
 
@@ -139,7 +191,17 @@ def dummy_task(working_dir, parameter_values, q):
 def dummy_worker(args):
     """We define a worker function that will be called by each process. 
        It takes a tuple of arguments, unpacks them, and calls the hfss_task function.
-       It also handles the timeout and termination of the process if it exceeds the specified time limit."""
+       It also handles the timeout and termination of the process if it exceeds the specified time limit.
+       
+       Parameters:
+           args (tuple): A tuple containing the following elements:
+            - hid (str): The unique identifier for the design being solved.
+            - working_dir (str): The directory where the HFSS project and output files will be saved.
+            - parameters (dict): A dictionary containing the values for the dipole antenna parameters.
+            - timeout (int): The maximum time in seconds to allow the process to run before terminating it.
+        Returns:
+            dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+    """
     hid, working_dir, parameters, timeout = args
     print(f"Solving design {hid} ...")
     q = Queue()
