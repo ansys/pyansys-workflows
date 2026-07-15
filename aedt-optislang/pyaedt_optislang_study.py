@@ -27,33 +27,37 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-# +
 # # Parametric AMOP design study with optiSLang ProxySolver and PyAEDT
-#
 # This example shows how to combine PyAEDT and pyOptiSLang to run a parametric
 # AMOP study on a dipole antenna in HFSS. optiSLang's ProxySolver node
 # is used to process the designs. Parallel design evaluations are managed via 
 # process_map. The AMOP system automatically creates a MOP, which is then used
 # in a subsequent MOP-Solver based optimization system.
 #
-# Ways to run this script:
-# * Open as a Jupytext notebook (requires installation of Jupyter).
+# ## Ways to run this script:
+# * Open as a Jupytext notebook (requires installation of jupyter & jupytext).
 # * Run with `uv run pyaedt_optislang_study.py` (requires installation of uv).
-# * Create a virtual environment and install requirements from requirements file, then run this script.
-# 
-# Software requirements:
+# * Create a virtual environment and install requirements from requirements file,
+#   then run this script.
+#
+# ## Software requirements:
 # - Ansys optiSLang version 2026 R1 or later.
 # - Ansys Electronics Desktop version 2026 R1 or later.
 #
-# Python package requirements:
-# - ansys-aedt-core version 1.1.0 or later.
-# - ansys-optislang-core version 0.7.0 or later.
+# ## Python package requirements:
+# - pyaedt[all] version 1.1.0 or later.
+# - ansys-optislang-core version 1.5.0 or later.
+# - Optional: jupyter & jupytext (to run within Jupyter lab as jupytext notebook)
 #
-# Keywords: **AEDT**, **HFSS**, **optiSLang**, **parametric**, **ProxySolver**, **AMOP**
+# ## Keywords:
+# * AEDT
+# * HFSS
+# * optiSLang
+# * Parametric design study
+# * ProxySolver
+# * AMOP
 
-# ## Perform imports and define constants
-#
-# Import the required packages.
+# # Import the required packages.
 
 # +
 import logging
@@ -98,27 +102,29 @@ import dipole_antenna
 # ## Define constants.
 #
 # **Take note:** Jupyters execution model does not work well with multiprocessing.
-# When executing from within Jupyter, please set `MAX_PARALLEL_SOLVE_PROCESSES = 1`, 
-# otherwise the process will fail.
-# When executed outside of Jupyter, `MAX_PARALLEL_SOLVE_PROCESSES` can be increased,
-# as long as `NUM_CORES_PER_JOB * MAX_PARALLEL_SOLVE_PROCESSES` does not exceed the
-# number of available cores.
-
-NG_MODE = True # Controls whether optiSLang should be executed in batch mode or with GUI.
-MAX_PARALLEL_SOLVE_PROCESSES = 3
-FORCE_SEQUENTIAL_SOLVE = False   # Set to True to force sequential execution even outside of Jupyter, for testing and debugging.
-AEDT_WORKING_DIRNAME = "pyaedt_workingdir"
-SOLVE_MODE = "HFSS"  # Set to "DUMMY" to run without an HFSS license, for testing purposes.
-SOLVE_TIMEOUT = 300
-
-
-
-# ## Define solver wrappers
+# Therefore, a fallback is implemented further below to force sequential execution 
+# when executed as jupytext notebook.
 #
-# ``call_solver()`` wraps ``solve_hfss()`` into the argument tuple format expected
-# by ``multiprocessing.Pool.imap()``.
-# ``call_solver_dummy()`` returns synthetic data and can be used to verify the
-# workflow without an HFSS license (set ``SOLVE_MODE = "DUMMY"``).
+# When executed outside of Jupyter, `MAX_PARALLEL_SOLVE_PROCESSES` can be increased.
+# In that case please make sure the `NUM_CORES_PER_JOB * MAX_PARALLEL_SOLVE_PROCESSES`
+# does not exceed the number of available cores.
+# `NUM_CORES_PER_JOB` is defined in file `dipole_antenna.py`.
+#
+
+NG_MODE = True # True: Exceute optiSLang in batch mode. False: Execute optiSLang with GUI.
+MAX_PARALLEL_SOLVE_PROCESSES = 3 # Maximum number of parallel solve processes.
+FORCE_SEQUENTIAL_SOLVE = False   # Set to True to force sequential execution (for testing and debugging).
+AEDT_WORKING_DIRNAME = "pyaedt_workingdir" # Name of working directory to store the AEDT projects.
+SOLVE_MODE = "DUMMY"  # "HFSS": Solve HFSS antenna model. "DUMMY": Run an analytical dummy model (for testing purposes).
+SOLVE_TIMEOUT = 300 # Timeout for the solve process in [s]. If the solve process exceeds this time, it will be aborted.
+
+
+# ## Define conversion facilities
+#
+# Define functions for conversion:
+# * `get_legacy_signal_value_format` and `get_signal_value_format` are used to convert signal data to the convention used by pyOptislang.
+# * `get_parameter_values` returns parameter values of a design as dictionary.
+# * `get_responses_as_design_variables` converts a dictionary of responses to a list of DesignVariables.
 
 def get_legacy_signal_value_format(abscissa, channel_data):
     """
@@ -170,13 +176,6 @@ def get_signal_value_format(abscissa, *args):
     return result
 
 
-# ## Define parallel compute function
-#
-# ``compute_designs()`` receives a list of design points from the ProxySolver,
-# dispatches them to the solver in parallel using ``multiprocessing.Pool``,
-# and returns the collected responses.
-
-
 def get_parameter_values(design):
     parameter_values = {}
     for parameter in design.parameters:
@@ -200,8 +199,15 @@ def get_responses_as_design_variables(result):
         DesignVariable(name, value=value) for name, value in r.items()
     ]
 
-    
 
+# ## Define helper functions
+#
+# Define helper functions:
+# * `in_notebook` is used to determine if the script is executed as a jupytext notebook.
+# * `sort_designs_by_id` returns a sorted list of designs. 
+# * `print_designs` prints a list of designs.
+# * `get_pareto_designs` returns the pareto (optimal) designs of a list of designs.
+#
 
 def in_notebook():
     try:
@@ -210,6 +216,38 @@ def in_notebook():
         
     except Exception:
         return False
+
+
+def sort_designs_by_id(designs):
+    return sorted(designs, key=lambda obj: int(obj.id.split(".")[1]))  # Sort by design number
+
+
+def print_designs(designs):
+    sorted_result_designs = sort_designs_by_id(designs)
+    for design in sorted_result_designs:
+        p = [f"{p.name}={p.value:-1.2f}" for p in design.parameters]
+        r = []
+        for response in design.responses:
+            if isinstance(response.value, dict) and "type" in response.value and response.value["type"] == "signal":
+                r.append(f"{response.name}=signal[{response.value['num_entries']}:{response.value['num_channels']}]")
+            elif response.value is None:
+                r.append(f"{response.name}=None")
+            else:
+                r.append(f"{response.name}={response.value:-1.2f}")
+
+        if design.pareto_design is True:
+            pareto_str = " *"
+        else:
+            pareto_str = ""
+        print(f"{design.id:4}: {', '.join(p)} | {', '.join(r)}{pareto_str}")
+
+def get_pareto_designs(designs):
+    return [design for design in designs if design.pareto_design is True]
+
+# ## Define parallel compute function
+#
+# ``compute_designs()`` receives a list of design points from the ProxySolver,
+# dispatches them to the worker in parallel and returns the collected responses.
 
 
 def compute_designs(designs):
@@ -259,51 +297,9 @@ def compute_designs(designs):
     return solved_designs
 
 
-# ## Define helper functions
-
-def sort_designs_by_id(designs):
-    return sorted(designs, key=lambda obj: int(obj.id.split(".")[1]))  # Sort by design number
-
-
-def print_designs(designs):
-    sorted_result_designs = sort_designs_by_id(designs)
-    for design in sorted_result_designs:
-        p = [f"{p.name}={p.value:-1.2f}" for p in design.parameters]
-        r = []
-        for response in design.responses:
-            if isinstance(response.value, dict) and "type" in response.value and response.value["type"] == "signal":
-                r.append(f"{response.name}=signal[{response.value['num_entries']}:{response.value['num_channels']}]")
-            elif response.value is None:
-                r.append(f"{response.name}=None")
-            else:
-                r.append(f"{response.name}={response.value:-1.2f}")
-
-        if design.pareto_design is True:
-            pareto_str = " *"
-        else:
-            pareto_str = ""
-        print(f"{design.id:4}: {', '.join(p)} | {', '.join(r)}{pareto_str}")
-
-def get_pareto_designs(designs):
-    return [design for design in designs if design.pareto_design is True]
-
-
-def add_stdout_handler(logger):
-    # Create a StreamHandler for stdout
-    stdout_handler = logging.StreamHandler(sys.stdout)
-
-    # Optional: set level and formatter
-    stdout_handler.setLevel(logging.INFO)
-    formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
-    stdout_handler.setFormatter(formatter)
-
-    # Add it to the logger
-    logger.addHandler(stdout_handler)
-
-
 # ## Prepare run
 #
-# * Create a temporary directory where downloaded data or dumped data can be stored.
+# * Create a temporary directory where data can be stored.
 # * Define parameter and response definition
 # * Define total number of designs to execute `num_designs_max`
 #
@@ -313,6 +309,8 @@ def add_stdout_handler(logger):
 # This is only necessary because we package everything in one file for the 
 # sake of this example. As a best practice, it makes sense to refactor the 
 # part executed by process_map into a separate file/module.
+#
+# #TODO GKANDLER REMOVE MAIN GUARD
 
 if __name__ == "__main__":
     # Create temporary working dir
@@ -324,13 +322,22 @@ if __name__ == "__main__":
     # on the fly by optiSLang when the ``Optislang`` instance is initialized.
     osl_project_name = "pyoptislang_example_proxy_solver.opf"
 
-    # The dipole antenna geometry is parameterized by three variables.
-    # ``num_designs_max`` controls how many design points the sensitivity study evaluates.
+    # The dipole antenna geometry is parameterized by three variables:
+    # * l_dipole
+    # * wire_rad
+    # * port_gap
     parameters_as_dict = {
         "l_dipole": {"reference_value": 10.2, "lower_bound": 9.0, "upper_bound": 12.0},
         "wire_rad": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
         "port_gap": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
     }
+    
+    # There are three responses expected.
+    # Signal responses:
+    # * return_loss
+    # Scalar responses:
+    # * freq_min
+    # * amplitude_min
     responses_as_dict = {
         "return_loss": {
             "reference_value": get_legacy_signal_value_format(
@@ -347,8 +354,11 @@ if __name__ == "__main__":
             "type": "scalar",
         },
     }
+    # Maximum number of (HFSS or DUMMY) designs to compute in the AMOP system.
+    # If Target CoP is met earlier, AMOP may run less than the defined number of designs.
     num_designs_max = 30
 
+    # AMOP parameter definition
     parameters_objects = []
     for parameter_name, parameter_data in parameters_as_dict.items():
         parameters_objects.append(
@@ -358,11 +368,12 @@ if __name__ == "__main__":
                 range=(parameter_data["lower_bound"], parameter_data["upper_bound"]),
             )
         )
-    amop_responses_objects = []
-    # For the AMOP node, we include all responses including the full return loss signal, so we
+
+    
+    # For the AMOP system, we include all responses including the full return loss signal, so we
     # can check if the return_loss signal is valid.
-    for response_name in ["return_loss", "freq_min", "amplitude_min"]:
-        response_data = responses_as_dict[response_name]
+    amop_responses_objects = []
+    for response_name, response_data in responses_as_dict.items():
         amop_responses_objects.append(
             Response(
                 name=response_name,
@@ -371,8 +382,8 @@ if __name__ == "__main__":
                 )
         )
 
-    optimization_responses_objects = []
     # For optimization, we are only interested in the scalar responses, not the full return loss signal.
+    optimization_responses_objects = []
     for response_name in ["freq_min", "amplitude_min"]:
         response_data = responses_as_dict[response_name]
         optimization_responses_objects.append(
@@ -385,19 +396,14 @@ if __name__ == "__main__":
 
 # ## Initialize the optiSLang session
 # Create optiSLang project named `osl_project_name` and create
-#   * Sensitivity system with ProxySolver node
-#   * MOP node
-# Load the parameter/response schema.
-# ## Run the parametric study
-# Start the optiSLang workflow without blocking. Poll the ProxySolver for pending
-# design batches, dispatch them to HFSS via ``compute_designs()``, and return the
-# responses until all design points have been evaluated.
-# ## Convenience: Create the same workflow from a template
-# As an alternative to the above cell, the entire workflow can be created from a 
-# template in a single step, using the `GeneralAlgorithmTemplate` and 
-# `ParametricDesignStudyManager` classes. The template internally creates the 
-# same nodes and connections as above, and also configures the ProxySolver to 
-# use `compute_designs()` as its callback function for design evaluation.
+#   * AMOP system with
+#     * ProxySolver node
+# and load the parameter/response schema.
+#
+# We are using the `GeneralAlgorithmTemplate` and `ParametricDesignStudyManager` 
+# convenience classes to create the AMOP workflow.
+# The template automatically creates the required system and nodes and configures
+# the ProxySolver to use `compute_designs()` as its callback function for design evaluation.
 
 
 if __name__ == "__main__":
@@ -426,12 +432,7 @@ if __name__ == "__main__":
         callback=compute_designs,
         multi_design_launch_num=-1
     )
-    """
-    # Number of designs in a Sensitivity sytem
-    algorithm_settings = GeneralAlgorithmSettings(
-        {"AlgorithmSettings": {"num_discretization": num_designs_max}}
-    )
-    """
+
     # Number of designs in an AMOP system
     algorithm_settings = GeneralAlgorithmSettings(
         {
@@ -446,6 +447,12 @@ if __name__ == "__main__":
             }
         }
     )
+    """
+    # In case of a regular Sensitivity system, the number of designs is controlled as follows
+    algorithm_settings = GeneralAlgorithmSettings(
+        {"AlgorithmSettings": {"num_discretization": num_designs_max}}
+    )
+    """
 
     amop_template = GeneralAlgorithmTemplate(
         parameters=parameters_objects,
@@ -461,6 +468,16 @@ if __name__ == "__main__":
         optislang_instance=osl,
         )
     amop_study = design_study_manager.create_design_study(template=amop_template)
+    design_study_manager.save()
+
+
+
+# ## Run the parametric study
+# Start the optiSLang workflow without blocking. Poll the ProxySolver for pending
+# design batches, dispatch them to HFSS via ``compute_designs()``, and return the
+# responses until all design points have been evaluated.
+
+if __name__ == "__main__":
     amop_study.execute()
     design_study_manager.save()
     time.sleep(5)
@@ -469,14 +486,24 @@ if __name__ == "__main__":
     print_designs(amop_study.get_result_designs())
     print("AMOP design study done!")
 
-
 # ## Create MOP-based optimization system
-# As anext step, an optimization system is be created that uses the trained MOP
+# As a next step, an optimization system is created that uses the trained MOP
 # as its surrogate model for design evaluation. 
+#
+# We define the target frequency and maximum number of generations to be
+# evaluated in the optimization system.
+#
+# We are using the `OptimizationOnMOPTemplate` and `ParametricDesignStudyManager` 
+# convenience classes to automatically create the optimization as well as the validation systems.
 
+# +
 if __name__ == "__main__":
     # Define the target frequency
     target_frequency = 1.35  # GHz
+
+    # Define number of generations to be used for the genetic algorithm
+    max_num_generations = 10
+    
     # Define the optimization criteria to minimize the squared difference between the resonance frequency and the target frequency.
     criteria = [
         ObjectiveCriterion("obj_freq_min", expression=f"(freq_min-{target_frequency})^2", criterion=ComparisonType.MIN)
@@ -490,7 +517,7 @@ if __name__ == "__main__":
         {
             "OptimizerSettings": {
                 "settings": {
-                    "MaxGenerations": 10,
+                    "MaxGenerations": max_num_generations,
                 }
             }
         }
@@ -520,9 +547,18 @@ if __name__ == "__main__":
     optimization_study.execute()
     # Save the project
     design_study_manager.save()
+    print(f"Optimization design study done! Status: {optimization_study.get_status()}")
 
-    print("Optimization result designs:")
-    optimization_result_designs = optimization_study.get_result_designs()[1:] # Skip the first design, this is the validation design it is a duplicate 
+
+# -
+
+
+# ## Display results
+
+if __name__ == "__main__":
+    print("MOP-based optimization designs:")
+    optimization_result_designs = optimization_study.get_result_designs()[1:] # Skip the first design, this is the validation design
+    print_designs(optimization_result_designs)
 
     # Get the validated design result
     validated_design = optimization_study.get_result_designs()[0] # The first design is the validated design
@@ -530,14 +566,8 @@ if __name__ == "__main__":
     #validation_system = optimization_study.get_last_parametric_system()
     #validation_result_designs = validation_system.design_manager.get_designs()
 
-    print(f"Optimization design study done! Status: {optimization_study.get_status()}")
-
-    print("MOP-based optimization designs:")
-    print_designs(optimization_result_designs)
-
     # Get best design results
-    sorted_result_designs = sort_designs_by_id(optimization_result_designs)
-    pareto_designs = get_pareto_designs(sorted_result_designs)
+    pareto_designs = get_pareto_designs(optimization_result_designs)
     best_design = pareto_designs[0]
     freq_min = best_design.responses[best_design.responses_names.index("freq_min")].value
     amplitude_min = best_design.responses[best_design.responses_names.index("amplitude_min")].value
@@ -548,12 +578,9 @@ if __name__ == "__main__":
     print(f"Best design(s): {best_design.id}")
     print(f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz, Return loss: {amplitude_min:.2f}dB")
     print(f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz, Return loss: {amplitude_min_validated:.2f}dB")
-
-
-# ## Display results
-
-if __name__ == "__main__":
+    
     # Plot the resonance frequency over all designs
+    sorted_result_designs = sort_designs_by_id(optimization_result_designs)
     freq_min_values = [design.responses[design.responses_names.index("freq_min")].value for design in sorted_result_designs]
     design_ids = [int(design.id.split(".")[1]) for design in sorted_result_designs]
     plt.plot(design_ids, freq_min_values, marker=".")
@@ -568,7 +595,8 @@ if __name__ == "__main__":
     plt.grid(True)
     plt.show()
 
-
+dir(validated_design)
+print(validated_design.responses)
 
 # ## Release optiSLang
 
