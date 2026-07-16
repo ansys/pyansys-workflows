@@ -66,7 +66,6 @@ import time
 
 from ansys.optislang.core import Optislang
 import ansys.optislang.core.node_types as node_types
-from ansys.optislang.core.nodes import DesignFlow
 from ansys.optislang.core.project_parametric import (
     ComparisonType,
     Design,
@@ -85,7 +84,6 @@ from ansys.optislang.parametric.design_study_templates import (
 )
 import dipole_antenna
 import matplotlib.pyplot as plt
-import numpy as np
 from tqdm import tqdm
 from tqdm.contrib.concurrent import process_map as concurrent_map
 
