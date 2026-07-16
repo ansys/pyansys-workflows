@@ -36,8 +36,8 @@ NG_MODE = True  # True: Run AEDT in non-graphical mode, False: Run AEDT with GUI
 
 def hfss_solve(working_dir, parameter_values):
     """
-    This function creates a new HFSS project, sets up the dipole antenna design with the given parameters,
-    runs the simulation, and exports the return loss data to a CSV file.
+    This function creates a new HFSS project, sets up the dipole antenna design with the given
+    parameters, runs the simulation, and exports the return loss data to a CSV file.
 
     Parameters:
     working_dir (str): The directory where the HFSS project and output files will be saved.
@@ -47,7 +47,8 @@ def hfss_solve(working_dir, parameter_values):
         - port_gap (float): Gap of the port in mm.
 
     Returns:
-    dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+    dict: A dictionary containing the return loss data, the frequency at which the return
+        loss is minimum, and the minimum amplitude of the return loss.
     """
     project_filepath = Path(working_dir) / "dipole.aedt"
     hfss = Hfss(
@@ -119,7 +120,8 @@ def hfss_task(working_dir, parameter_values, q):
 
     Parameters:
         working_dir (str): The directory where the HFSS project and output files will be saved.
-        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        parameter_values (dict): A dictionary containing the values for the dipole antenna
+            parameters.
         q (Queue): A multiprocessing Queue to put the result into.
 
     Returns:
@@ -133,16 +135,19 @@ def hfss_worker(args):
     """
     We define a worker function that will be called by each process.
     It takes a tuple of arguments, unpacks them, and calls the hfss_task function.
-    It also handles the timeout and termination of the process if it exceeds the specified time limit.
+    It also handles the timeout and termination of the process if it exceeds the specified
+    time limit.
 
     Parameters:
     args (tuple): A tuple containing the following elements:
         - hid (str): The unique identifier for the design being solved.
         - working_dir (str): The directory where the HFSS project and output files will be saved.
         - parameters (dict): A dictionary containing the values for the dipole antenna parameters.
-        - timeout (int): The maximum time in seconds to allow the process to run before terminating it.
+        - timeout (int): The maximum time in seconds to allow the process to run before
+          terminating it.
     Returns:
-        dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+        dict: A dictionary containing the return loss data, the frequency at which the return
+            loss is minimum, and the minimum amplitude of the return loss.
     """
     hid, working_dir, parameters, timeout = args
     print(f"Solving design {hid} ...")
@@ -171,11 +176,14 @@ def dummy_solve(working_dir, parameter_values):
     It generates a synthetic return loss curve based on the input parameters.
 
     Parameters:
-        working_dir (str): The directory where the HFSS project and output files would be saved (not used in this dummy function).
-        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        working_dir (str): The directory where the HFSS project and output files would be
+            saved (not used in this dummy function).
+        parameter_values (dict): A dictionary containing the values for the dipole antenna
+            parameters.
 
     Returns:
-        dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+        dict: A dictionary containing the return loss data, the frequency at which the return
+            loss is minimum, and the minimum amplitude of the return loss.
     """
     l_dipole, wire_rad, port_gap = (
         parameter_values["l_dipole"],
@@ -211,8 +219,10 @@ def dummy_task(working_dir, parameter_values, q):
     It wraps around the dummy_solve function and puts the result in a Queue.
 
     Parameters:
-        working_dir (str): The directory where the HFSS project and output files would be saved (not used in this dummy function).
-        parameter_values (dict): A dictionary containing the values for the dipole antenna parameters.
+        working_dir (str): The directory where the HFSS project and output files would be
+            saved (not used in this dummy function).
+        parameter_values (dict): A dictionary containing the values for the dipole antenna
+            parameters.
         q (Queue): A multiprocessing Queue to put the result into.
 
     Returns:
@@ -225,16 +235,19 @@ def dummy_task(working_dir, parameter_values, q):
 def dummy_worker(args):
     """We define a worker function that will be called by each process.
     It takes a tuple of arguments, unpacks them, and calls the hfss_task function.
-    It also handles the timeout and termination of the process if it exceeds the specified time limit.
+    It also handles the timeout and termination of the process if it exceeds the specified
+    time limit.
 
     Parameters:
         args (tuple): A tuple containing the following elements:
          - hid (str): The unique identifier for the design being solved.
          - working_dir (str): The directory where the HFSS project and output files will be saved.
          - parameters (dict): A dictionary containing the values for the dipole antenna parameters.
-         - timeout (int): The maximum time in seconds to allow the process to run before terminating it.
+         - timeout (int): The maximum time in seconds to allow the process to run before
+           terminating it.
      Returns:
-         dict: A dictionary containing the return loss data, the frequency at which the return loss is minimum, and the minimum amplitude of the return loss.
+         dict: A dictionary containing the return loss data, the frequency at which the return
+             loss is minimum, and the minimum amplitude of the return loss.
     """
     hid, working_dir, parameters, timeout = args
     print(f"Solving design {hid} ...")

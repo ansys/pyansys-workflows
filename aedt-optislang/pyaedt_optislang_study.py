@@ -110,21 +110,26 @@ FORCE_SEQUENTIAL_SOLVE = (
     False  # Set to True to force sequential execution (for testing and debugging).
 )
 AEDT_WORKING_DIRNAME = "pyaedt_workingdir"  # Name of working directory to store the AEDT projects.
-SOLVE_MODE = "DUMMY"  # "HFSS": Solve HFSS antenna model. "DUMMY": Run an analytical dummy model (for testing purposes).
-SOLVE_TIMEOUT = 300  # Timeout for the solve process in [s]. If the solve process exceeds this time, it will be aborted.
+SOLVE_MODE = "DUMMY"  # "HFSS": Solve HFSS antenna model. "DUMMY": Run an analytical dummy model
+# (for testing purposes).
+SOLVE_TIMEOUT = 300  # Timeout for the solve process in [s]. If the solve process exceeds this
+# time, it will be aborted.
 
 
 # ## Define conversion facilities
 #
 # Define functions for conversion:
-# * `get_legacy_signal_value_format` and `get_signal_value_format` are used to convert signal data to the convention used by pyOptislang.
+# * `get_legacy_signal_value_format` and `get_signal_value_format` are used to convert signal
+#   data to the convention used by pyOptislang.
 # * `get_parameter_values` returns parameter values of a design as dictionary.
-# * `get_responses_as_design_variables` converts a dictionary of responses to a list of DesignVariables.
+# * `get_responses_as_design_variables` converts a dictionary of responses to a list of
+#   DesignVariables.
 
 
 def get_legacy_signal_value_format(abscissa, channel_data):
     """
-    Convert to the following legacy signal format, which is supported by optiSLang's current ProxySolver implementation:
+    Convert to the following legacy signal format, which is supported by optiSLang's current
+    ProxySolver implementation:
 
     Parameters:
         - freq: list of frequencies (abscissa)
@@ -136,12 +141,11 @@ def get_legacy_signal_value_format(abscissa, channel_data):
             "matrix" : "[1,100](((0,0),(0.431848,0),(0.762402,0),(0.921527,0), ...
             "vector" : "[100]((0,0),(0.10101,0),(0.20202,0),(0.30303,0), ....
         }
-        where the value pairs in () represent the real and the imaginary part of the signal, respectively.
-        The "matrix" field contains the full 2D array of signal data, while the "vector" field contains
-        only the abscissa values (frequencies) for reference.
-        If loss data is not complex, the imaginary part can be set to 0 as shown above.
-        The "kind" field indicates that this is a signal-type response, which allows optiSLang to interpret and process
-        it correctly in the workflow.
+        where the value pairs in () represent the real and the imaginary part of the signal,
+        respectively. The "matrix" field contains the full 2D array of signal data, while the
+        "vector" field contains only the abscissa values (frequencies) for reference.
+        The "kind" field indicates that this is a signal-type response, which allows optiSLang to
+        interpret and process it correctly in the workflow.
 
     """
     if abscissa is None or channel_data is None:
@@ -149,7 +153,9 @@ def get_legacy_signal_value_format(abscissa, channel_data):
 
     result = {
         "kind": "signal",
-        "matrix": f"[1,{len(abscissa)}](({','.join([f'({l.real},{l.imag})' for l in channel_data])}))",
+        "matrix": (
+            f"[1,{len(abscissa)}](({','.join([f'({l.real},{l.imag})' for l in channel_data])}))"
+        ),
         "vector": f"[{len(abscissa)}]({','.join([f'({f.real},{f.imag})' for f in abscissa])})",
     }
 
@@ -193,7 +199,8 @@ def get_responses_as_design_variables(result):
                 r[key] = get_signal_value_format(*value)
             except Exception as e:
                 print(
-                    f"Tried to parse value {value} of field {key} to signal but failed. --> Skipping"
+                    f"Tried to parse value {value} of field {key} to signal"
+                    " but failed. --> Skipping"
                 )
         else:
             r[key] = value
@@ -236,7 +243,8 @@ def print_designs(designs):
                 and response.value["type"] == "signal"
             ):
                 r.append(
-                    f"{response.name}=signal[{response.value['num_entries']}:{response.value['num_channels']}]"
+                    f"{response.name}=signal"
+                    f"[{response.value['num_entries']}:{response.value['num_channels']}]"
                 )
             elif response.value is None:
                 r.append(f"{response.name}=None")
@@ -504,7 +512,8 @@ target_frequency = 1.35  # GHz
 # Define number of generations to be used for the genetic algorithm
 max_num_generations = 10
 
-# Define the optimization criteria to minimize the squared difference between the resonance frequency and the target frequency.
+# Define the optimization criteria to minimize the squared difference between the resonance
+# frequency and the target frequency.
 criteria = [
     ObjectiveCriterion(
         "obj_freq_min", expression=f"(freq_min-{target_frequency})^2", criterion=ComparisonType.MIN
@@ -514,7 +523,8 @@ criteria = [
 # Get the AMOP system object we created in the previous step
 amop_system = amop_study.managed_instances[0].instance
 
-# Create a nature inspired optimization algorithm system that uses the trained MOP as its surrogate model for design evaluation.
+# Create a nature inspired optimization algorithm system that uses the trained MOP as its
+# surrogate model for design evaluation.
 optimizer_settings = GeneralAlgorithmSettings(
     {
         "OptimizerSettings": {
@@ -566,7 +576,8 @@ print_designs(optimization_result_designs)
 validated_design = optimization_study.get_result_designs()[
     0
 ]  # The first design is the validated design
-# Alternatively, the validated design can be obtained from the validation system, which is the last system in the optimization study.
+# Alternatively, the validated design can be obtained from the validation system, which is the
+# last system in the optimization study.
 # validation_system = optimization_study.get_last_parametric_system()
 # validation_result_designs = validation_system.design_manager.get_designs()
 
@@ -585,10 +596,12 @@ amplitude_min_validated = validated_design.responses[
 ].value
 print(f"Best design(s): {best_design.id}")
 print(
-    f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz, Return loss: {amplitude_min:.2f}dB"
+    f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz,"
+    f" Return loss: {amplitude_min:.2f}dB"
 )
 print(
-    f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz, Return loss: {amplitude_min_validated:.2f}dB"
+    f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz,"
+    f" Return loss: {amplitude_min_validated:.2f}dB"
 )
 
 # Plot the resonance frequency over all designs
@@ -622,7 +635,8 @@ time.sleep(5)  # Allow optiSLang to shut down before cleaning the temporary proj
 # ## Clean up
 # All project files are saved in the folder ``temp_folder.name``.
 # If you've run this example as a Jupyter notebook, you can retrieve those
-# project files. The following command will delete all temporary files, including the project folder.
+# project files. The following command will delete all temporary files, including the project
+# folder.
 
 try:
     temp_folder.cleanup()
