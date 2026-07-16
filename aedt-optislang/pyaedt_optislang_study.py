@@ -60,11 +60,7 @@
 # # Import the required packages.
 
 # +
-import logging
-import math
-import os
 import pathlib
-import sys
 import tempfile
 import time
 
@@ -81,7 +77,6 @@ from ansys.optislang.core.project_parametric import (
     ResponseValueType,
 )
 
-# Convenience imports for building the optiSLang workflow graph.
 from ansys.optislang.parametric.design_study import ParametricDesignStudyManager
 from ansys.optislang.parametric.design_study_templates import (
     GeneralAlgorithmSettings,
