@@ -321,15 +321,6 @@ def compute_designs(designs):
 # * Create a temporary directory where data can be stored.
 # * Define parameter and response definition
 # * Define total number of designs to execute `num_designs_max`
-#
-# The below steps are wrapped in the main guard (`if __name__ == "__main__":)
-# to ensure the process_map does not recursively spin up the same process again
-# and again.
-# This is only necessary because we package everything in one file for the
-# sake of this example. As a best practice, it makes sense to refactor the
-# part executed by process_map into a separate file/module.
-#
-# #TODO GKANDLER REMOVE MAIN GUARD
 
 # +
 # Create temporary working dir
