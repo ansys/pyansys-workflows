@@ -76,7 +76,6 @@ from ansys.optislang.core.project_parametric import (
     Response,
     ResponseValueType,
 )
-
 from ansys.optislang.parametric.design_study import ParametricDesignStudyManager
 from ansys.optislang.parametric.design_study_templates import (
     GeneralAlgorithmSettings,
