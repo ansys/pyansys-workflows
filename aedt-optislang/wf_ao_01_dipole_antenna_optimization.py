@@ -937,9 +937,6 @@ optimization_result_designs = optimization_study.get_result_designs()[
 ]  # Skip the first design; it is the validation design.
 print_designs(optimization_result_designs)
 
-# Get the validated design result
-validated_design = optimization_study.get_result_designs()[0]
-
 # Get best design results
 pareto_designs = get_pareto_designs(optimization_result_designs)
 best_design = pareto_designs[0]
@@ -1003,6 +1000,6 @@ try:
     temp_folder.cleanup()
 except Exception as e:
     print(
-        f"Tried to clean up temporary working directory path: {WORKING_DIR}"
+        f"Tried to clean up temporary working directory path: {WORKING_DIR}\n"
         f"Could not complete cleanup: {e}\n"
     )
