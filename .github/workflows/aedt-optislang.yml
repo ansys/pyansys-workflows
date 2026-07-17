@@ -22,6 +22,9 @@ on:
     paths:
       - 'aedt-optislang/**'
 
+permissions:
+  contents: read
+
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 26.1
@@ -32,12 +35,16 @@ env:
 jobs:
 
   is-only-docs-required:
+    permissions:
+      contents: read
     uses: ./.github/workflows/check-docs-required.yml
     with:
       doc-build: ${{ inputs.doc-build || false }}
 
   aedt-optislang:
     name: AEDT optiSLang
+    permissions:
+      contents: read
     runs-on: [self-hosted, Windows, pyansys-workflows]
     needs: is-only-docs-required
     strategy:

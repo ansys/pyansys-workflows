@@ -5,12 +5,17 @@ on:
   schedule:
     - cron: "0 1 * * *"
 
+permissions:
+  contents: read
+
 env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'workflows.docs.pyansys.com'
 
 jobs:
   aedt-optislang:
+    permissions:
+      contents: read
     uses: ./.github/workflows/aedt-optislang.yml
     secrets: inherit
     with:
