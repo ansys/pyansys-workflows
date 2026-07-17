@@ -54,7 +54,7 @@ The workflow includes the following steps:
 # ------------------------
 
 import math
-from multiprocessing import Process, Queue
+from multiprocessing import Process, Queue, freeze_support
 import os
 import pathlib
 from pathlib import Path
@@ -129,6 +129,9 @@ SOLVE_MODE = "DUMMY"
 
 SOLVE_TIMEOUT = 300
 """Timeout for the solve process in seconds. The process is aborted if this is exceeded."""
+
+WORKING_DIR = None
+"""Temporary working directory used by the design evaluation callback."""
 
 ###############################################################################
 # Define HFSS solve functions
@@ -657,6 +660,9 @@ def compute_designs(designs):
     list
         List of ``Design`` objects with populated response values.
     """
+    if WORKING_DIR is None:
+        raise RuntimeError("WORKING_DIR is not initialized. Run this workflow through main().")
+
     print(f"Calculate {len(designs)} designs: {', '.join([design.id for design in designs])}")
     all_designs_inputs = []
     aedt_working_dir = WORKING_DIR / AEDT_WORKING_DIRNAME
@@ -713,293 +719,305 @@ def compute_designs(designs):
 # Create a temporary working directory, define the parameter and response
 # schema, and set the maximum number of designs.
 
-# Create temporary working dir
-temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
-WORKING_DIR = pathlib.Path(temp_folder.name)
-print(f"WORKING DIR: {WORKING_DIR}")
 
-# The optiSLang project file is created on the fly when the ``Optislang``
-# instance is initialized.
-osl_project_name = "pyoptislang_example_proxy_solver.opf"
+def main():
+    """Run the AEDT and optiSLang optimization workflow."""
+    global WORKING_DIR
 
-# The dipole antenna geometry is parameterized by three variables:
-# ``l_dipole``, ``wire_rad``, and ``port_gap``.
-parameters_as_dict = {
-    "l_dipole": {"reference_value": 10.2, "lower_bound": 9.0, "upper_bound": 12.0},
-    "wire_rad": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
-    "port_gap": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
-}
+    # Create temporary working dir
+    temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
+    WORKING_DIR = pathlib.Path(temp_folder.name)
+    print(f"WORKING DIR: {WORKING_DIR}")
 
-# There are three expected responses:
-#
-# Signal responses: ``return_loss``
-#
-# Scalar responses: ``freq_min``, ``amplitude_min``
-responses_as_dict = {
-    "return_loss": {
-        "reference_value": get_legacy_signal_value_format([0, 1, 2], [0, -20, -10]),
-        "type": "signal",
-    },
-    "freq_min": {
-        "reference_value": 1.0,
-        "type": "scalar",
-    },
-    "amplitude_min": {
-        "reference_value": -10.0,
-        "type": "scalar",
-    },
-}
-# Maximum number of (HFSS or DUMMY) designs to compute in the AMOP system.
-# If the target CoP is met earlier, AMOP may evaluate fewer designs.
-num_designs_max = 30
+    # The optiSLang project file is created on the fly when the ``Optislang``
+    # instance is initialized.
+    osl_project_name = "pyoptislang_example_proxy_solver.opf"
 
-# AMOP parameter definition
-parameters_objects = []
-for parameter_name, parameter_data in parameters_as_dict.items():
-    parameters_objects.append(
-        OptimizationParameter(
-            name=parameter_name,
-            reference_value=parameter_data["reference_value"],
-            range=(parameter_data["lower_bound"], parameter_data["upper_bound"]),
-        )
-    )
-
-# For the AMOP system, include all responses (including the full return loss
-# signal) to verify that the signal response is valid.
-amop_responses_objects = []
-for response_name, response_data in responses_as_dict.items():
-    amop_responses_objects.append(
-        Response(
-            name=response_name,
-            reference_value=response_data["reference_value"],
-            reference_value_type=ResponseValueType.from_str(response_data["type"]),
-        )
-    )
-
-# For optimization, only the scalar responses are relevant.
-optimization_responses_objects = []
-for response_name in ["freq_min", "amplitude_min"]:
-    response_data = responses_as_dict[response_name]
-    optimization_responses_objects.append(
-        Response(
-            name=response_name,
-            reference_value=response_data["reference_value"],
-            reference_value_type=ResponseValueType.from_str(response_data["type"]),
-        )
-    )
-
-###############################################################################
-# Initialize the optiSLang session
-# --------------------------------
-# Create the optiSLang project and set up an AMOP system with a ProxySolver
-# node. Load the parameter and response schema.
-#
-# The ``GeneralAlgorithmTemplate`` and ``ParametricDesignStudyManager``
-# convenience classes create the AMOP workflow and configure the ProxySolver
-# to use ``compute_designs`` as its callback for design evaluation.
-
-# For initializing the project and saving it we create a short batch
-# optiSLang session.
-osl = Optislang(
-    project_path=str(WORKING_DIR / osl_project_name),
-    batch=True,
-)
-osl.application.save()
-osl.dispose()
-time.sleep(10)
-
-# Reopen the project in batch or GUI mode, depending on ``NG_MODE``.
-osl = Optislang(
-    project_path=str(WORKING_DIR / osl_project_name),
-    loglevel="INFO",
-    log_process_stdout=True,
-    log_process_stderr=True,
-    batch=NG_MODE,
-)
-
-solver_settings = ProxySolverNodeSettings(callback=compute_designs, multi_design_launch_num=-1)
-
-# Number of designs in an AMOP system
-algorithm_settings = GeneralAlgorithmSettings(
-    {
-        "AMopSettings": {
-            "min_cop": 0.9999,
-            "num_designs_max": num_designs_max,
-        }
+    # The dipole antenna geometry is parameterized by three variables:
+    # ``l_dipole``, ``wire_rad``, and ``port_gap``.
+    parameters_as_dict = {
+        "l_dipole": {"reference_value": 10.2, "lower_bound": 9.0, "upper_bound": 12.0},
+        "wire_rad": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
+        "port_gap": {"reference_value": 1.0, "lower_bound": 0.8, "upper_bound": 1.2},
     }
-)
 
-amop_template = GeneralAlgorithmTemplate(
-    parameters=parameters_objects,
-    responses=amop_responses_objects,
-    criteria=[],
-    algorithm_type=node_types.AMOP,
-    algorithm_settings=algorithm_settings,
-    solver_type=node_types.ProxySolver,
-    solver_settings=solver_settings,
-)
+    # There are three expected responses:
+    #
+    # Signal responses: ``return_loss``
+    #
+    # Scalar responses: ``freq_min``, ``amplitude_min``
+    responses_as_dict = {
+        "return_loss": {
+            "reference_value": get_legacy_signal_value_format([0, 1, 2], [0, -20, -10]),
+            "type": "signal",
+        },
+        "freq_min": {
+            "reference_value": 1.0,
+            "type": "scalar",
+        },
+        "amplitude_min": {
+            "reference_value": -10.0,
+            "type": "scalar",
+        },
+    }
+    # Maximum number of (HFSS or DUMMY) designs to compute in the AMOP system.
+    # If the target CoP is met earlier, AMOP may evaluate fewer designs.
+    num_designs_max = 30
 
-design_study_manager = ParametricDesignStudyManager(
-    optislang_instance=osl,
-)
-amop_study = design_study_manager.create_design_study(template=amop_template)
-design_study_manager.save()
+    # AMOP parameter definition
+    parameters_objects = []
+    for parameter_name, parameter_data in parameters_as_dict.items():
+        parameters_objects.append(
+            OptimizationParameter(
+                name=parameter_name,
+                reference_value=parameter_data["reference_value"],
+                range=(parameter_data["lower_bound"], parameter_data["upper_bound"]),
+            )
+        )
 
-###############################################################################
-# Run the parametric study
-# ------------------------
-# Start the optiSLang workflow. The ProxySolver polls for pending design
-# batches and dispatches them to HFSS (or the dummy solver) via
-# ``compute_designs`` until all design points have been evaluated.
+    # For the AMOP system, include all responses (including the full return loss
+    # signal) to verify that the signal response is valid.
+    amop_responses_objects = []
+    for response_name, response_data in responses_as_dict.items():
+        amop_responses_objects.append(
+            Response(
+                name=response_name,
+                reference_value=response_data["reference_value"],
+                reference_value_type=ResponseValueType.from_str(response_data["type"]),
+            )
+        )
 
-amop_study.execute()
-design_study_manager.save()
-time.sleep(5)
+    # For optimization, only the scalar responses are relevant.
+    optimization_responses_objects = []
+    for response_name in ["freq_min", "amplitude_min"]:
+        response_data = responses_as_dict[response_name]
+        optimization_responses_objects.append(
+            Response(
+                name=response_name,
+                reference_value=response_data["reference_value"],
+                reference_value_type=ResponseValueType.from_str(response_data["type"]),
+            )
+        )
 
-print("AMOP result designs:")
-print_designs(amop_study.get_result_designs())
-print("AMOP design study done!")
+    ###############################################################################
+    # Initialize the optiSLang session
+    # --------------------------------
+    # Create the optiSLang project and set up an AMOP system with a ProxySolver
+    # node. Load the parameter and response schema.
+    #
+    # The ``GeneralAlgorithmTemplate`` and ``ParametricDesignStudyManager``
+    # convenience classes create the AMOP workflow and configure the ProxySolver
+    # to use ``compute_designs`` as its callback for design evaluation.
 
-###############################################################################
-# Create MOP-based optimization system
-# -------------------------------------
-# Create an optimization system that uses the trained MOP as its surrogate
-# model. Define the target frequency and the maximum number of generations.
-#
-# The ``OptimizationOnMOPTemplate`` and ``ParametricDesignStudyManager``
-# classes automatically create the optimization and validation systems.
-
-# Define the target frequency
-target_frequency = 1.35  # GHz
-
-# Define number of generations for the genetic algorithm
-max_num_generations = 10
-
-# Define the optimization criteria to minimize the squared difference between
-# the resonance frequency and the target frequency.
-criteria = [
-    ObjectiveCriterion(
-        "obj_freq_min", expression=f"(freq_min-{target_frequency})^2", criterion=ComparisonType.MIN
+    # For initializing the project and saving it we create a short batch
+    # optiSLang session.
+    osl = Optislang(
+        project_path=str(WORKING_DIR / osl_project_name),
+        batch=True,
     )
-]
+    osl.application.save()
+    osl.dispose()
+    time.sleep(10)
 
-# Get the AMOP system object created in the previous step.
-amop_system = amop_study.managed_instances[0].instance
+    # Reopen the project in batch or GUI mode, depending on ``NG_MODE``.
+    osl = Optislang(
+        project_path=str(WORKING_DIR / osl_project_name),
+        loglevel="INFO",
+        log_process_stdout=True,
+        log_process_stderr=True,
+        batch=NG_MODE,
+    )
 
-# Create a nature-inspired optimization algorithm system using the trained MOP
-# as its surrogate model.
-optimizer_settings = GeneralAlgorithmSettings(
-    {
-        "OptimizerSettings": {
-            "settings": {
-                "MaxGenerations": max_num_generations,
+    solver_settings = ProxySolverNodeSettings(callback=compute_designs, multi_design_launch_num=-1)
+
+    # Number of designs in an AMOP system
+    algorithm_settings = GeneralAlgorithmSettings(
+        {
+            "AMopSettings": {
+                "min_cop": 0.9999,
+                "num_designs_max": num_designs_max,
             }
         }
-    }
-)
-optimization_node_type = node_types.NOA2
-optimization_template = OptimizationOnMOPTemplate(
-    optimizer_name="Optimization",
-    optimizer_type=optimization_node_type,
-    parameters=parameters_objects,
-    criteria=criteria,
-    responses=optimization_responses_objects,
-    mop_predecessor=amop_system,
-    callback=compute_designs,
-)
-
-optimization_study = design_study_manager.create_design_study(optimization_template)
-
-# Find the optimization system
-for managed_instance in optimization_study.managed_instances:
-    instance = managed_instance.instance
-    if instance.type == optimization_node_type:
-        optimization_system = instance
-# Deactivate auto-save and set ``.omdb`` file update to "at end" to reduce run time.
-optimization_system.set_property("AutoSaveMode", "no_auto_save")
-optimization_system.set_property("UpdateResultFile", "at_end")
-# Execute the optimization
-optimization_study.execute()
-# Save the project
-design_study_manager.save()
-print(f"Optimization design study done! Status: {optimization_study.get_status()}")
-
-###############################################################################
-# Display results
-# ---------------
-# Print the MOP-based optimization results and the validated design values.
-# Plot the resonance frequency convergence over all optimization designs,
-# highlighting the Pareto-optimal designs.
-
-print("MOP-based optimization designs:")
-optimization_result_designs = optimization_study.get_result_designs()[
-    1:
-]  # Skip the first design; it is the validation design.
-print_designs(optimization_result_designs)
-
-# Get best design results
-pareto_designs = get_pareto_designs(optimization_result_designs)
-best_design = pareto_designs[0]
-freq_min = best_design.responses[best_design.responses_names.index("freq_min")].value
-amplitude_min = best_design.responses[best_design.responses_names.index("amplitude_min")].value
-# Get validated design results
-validated_design = pareto_designs[0]
-freq_min_validated = validated_design.responses[
-    validated_design.responses_names.index("freq_min")
-].value
-amplitude_min_validated = validated_design.responses[
-    validated_design.responses_names.index("amplitude_min")
-].value
-print(f"Best design(s): {best_design.id}")
-print(
-    f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz,"
-    f" Return loss: {amplitude_min:.2f}dB"
-)
-print(
-    f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz,"
-    f" Return loss: {amplitude_min_validated:.2f}dB"
-)
-
-# Plot the resonance frequency over all designs
-sorted_result_designs = sort_designs_by_id(optimization_result_designs)
-freq_min_values = [
-    design.responses[design.responses_names.index("freq_min")].value
-    for design in sorted_result_designs
-]
-design_ids = [int(design.id.split(".")[1]) for design in sorted_result_designs]
-plt.plot(design_ids, freq_min_values, marker=".")
-# Highlight the best designs in red
-plt.scatter(
-    [int(p.id.split(".")[1]) for p in pareto_designs],
-    [p.responses[p.responses_names.index("freq_min")].value for p in pareto_designs],
-    c="None",
-    edgecolor="red",
-    zorder=5,
-    label="Pareto designs",
-)
-plt.xlabel("Design ID")
-plt.ylabel(f"Resonance frequency [GHz] (Target: {target_frequency}GHz)")
-plt.grid(True)
-plt.show()
-
-###############################################################################
-# Release optiSLang
-# -----------------
-# Dispose the optiSLang instance.
-
-design_study_manager.optislang.dispose()
-time.sleep(5)  # Allow optiSLang to shut down before cleaning the temporary project folder.
-
-###############################################################################
-# Clean up
-# --------
-# All project files are saved in the temporary folder. The following command
-# deletes all temporary files, including the project folder.
-
-try:
-    temp_folder.cleanup()
-except Exception as e:
-    print(
-        f"Tried to clean up temporary working directory path: {WORKING_DIR}\n"
-        f"Could not complete cleanup: {e}\n"
     )
+
+    amop_template = GeneralAlgorithmTemplate(
+        parameters=parameters_objects,
+        responses=amop_responses_objects,
+        criteria=[],
+        algorithm_type=node_types.AMOP,
+        algorithm_settings=algorithm_settings,
+        solver_type=node_types.ProxySolver,
+        solver_settings=solver_settings,
+    )
+
+    design_study_manager = ParametricDesignStudyManager(
+        optislang_instance=osl,
+    )
+    amop_study = design_study_manager.create_design_study(template=amop_template)
+    design_study_manager.save()
+
+    ###############################################################################
+    # Run the parametric study
+    # ------------------------
+    # Start the optiSLang workflow. The ProxySolver polls for pending design
+    # batches and dispatches them to HFSS (or the dummy solver) via
+    # ``compute_designs`` until all design points have been evaluated.
+
+    amop_study.execute()
+    design_study_manager.save()
+    time.sleep(5)
+
+    print("AMOP result designs:")
+    print_designs(amop_study.get_result_designs())
+    print("AMOP design study done!")
+
+    ###############################################################################
+    # Create MOP-based optimization system
+    # -------------------------------------
+    # Create an optimization system that uses the trained MOP as its surrogate
+    # model. Define the target frequency and the maximum number of generations.
+    #
+    # The ``OptimizationOnMOPTemplate`` and ``ParametricDesignStudyManager``
+    # classes automatically create the optimization and validation systems.
+
+    # Define the target frequency
+    target_frequency = 1.35  # GHz
+
+    # Define number of generations for the genetic algorithm
+    max_num_generations = 10
+
+    # Define the optimization criteria to minimize the squared difference between
+    # the resonance frequency and the target frequency.
+    criteria = [
+        ObjectiveCriterion(
+            "obj_freq_min",
+            expression=f"(freq_min-{target_frequency})^2",
+            criterion=ComparisonType.MIN,
+        )
+    ]
+
+    # Get the AMOP system object created in the previous step.
+    amop_system = amop_study.managed_instances[0].instance
+
+    # Create a nature-inspired optimization algorithm system using the trained MOP
+    # as its surrogate model.
+    optimizer_settings = GeneralAlgorithmSettings(
+        {
+            "OptimizerSettings": {
+                "settings": {
+                    "MaxGenerations": max_num_generations,
+                }
+            }
+        }
+    )
+    optimization_node_type = node_types.NOA2
+    optimization_template = OptimizationOnMOPTemplate(
+        optimizer_name="Optimization",
+        optimizer_type=optimization_node_type,
+        parameters=parameters_objects,
+        criteria=criteria,
+        responses=optimization_responses_objects,
+        mop_predecessor=amop_system,
+        callback=compute_designs,
+    )
+
+    optimization_study = design_study_manager.create_design_study(optimization_template)
+
+    # Find the optimization system
+    for managed_instance in optimization_study.managed_instances:
+        instance = managed_instance.instance
+        if instance.type == optimization_node_type:
+            optimization_system = instance
+    # Deactivate auto-save and set ``.omdb`` file update to "at end" to reduce run time.
+    optimization_system.set_property("AutoSaveMode", "no_auto_save")
+    optimization_system.set_property("UpdateResultFile", "at_end")
+    # Execute the optimization
+    optimization_study.execute()
+    # Save the project
+    design_study_manager.save()
+    print(f"Optimization design study done! Status: {optimization_study.get_status()}")
+
+    ###############################################################################
+    # Display results
+    # ---------------
+    # Print the MOP-based optimization results and the validated design values.
+    # Plot the resonance frequency convergence over all optimization designs,
+    # highlighting the Pareto-optimal designs.
+
+    print("MOP-based optimization designs:")
+    optimization_result_designs = optimization_study.get_result_designs()[
+        1:
+    ]  # Skip the first design; it is the validation design.
+    print_designs(optimization_result_designs)
+
+    # Get best design results
+    pareto_designs = get_pareto_designs(optimization_result_designs)
+    best_design = pareto_designs[0]
+    freq_min = best_design.responses[best_design.responses_names.index("freq_min")].value
+    amplitude_min = best_design.responses[best_design.responses_names.index("amplitude_min")].value
+    # Get validated design results
+    validated_design = pareto_designs[0]
+    freq_min_validated = validated_design.responses[
+        validated_design.responses_names.index("freq_min")
+    ].value
+    amplitude_min_validated = validated_design.responses[
+        validated_design.responses_names.index("amplitude_min")
+    ].value
+    print(f"Best design(s): {best_design.id}")
+    print(
+        f"MOP-based optimization results: Resonance frequency: {freq_min:.3f}GHz,"
+        f" Return loss: {amplitude_min:.2f}dB"
+    )
+    print(
+        f"Validated results:              Resonance frequency: {freq_min_validated:.3f}GHz,"
+        f" Return loss: {amplitude_min_validated:.2f}dB"
+    )
+
+    # Plot the resonance frequency over all designs
+    sorted_result_designs = sort_designs_by_id(optimization_result_designs)
+    freq_min_values = [
+        design.responses[design.responses_names.index("freq_min")].value
+        for design in sorted_result_designs
+    ]
+    design_ids = [int(design.id.split(".")[1]) for design in sorted_result_designs]
+    plt.plot(design_ids, freq_min_values, marker=".")
+    # Highlight the best designs in red
+    plt.scatter(
+        [int(p.id.split(".")[1]) for p in pareto_designs],
+        [p.responses[p.responses_names.index("freq_min")].value for p in pareto_designs],
+        c="None",
+        edgecolor="red",
+        zorder=5,
+        label="Pareto designs",
+    )
+    plt.xlabel("Design ID")
+    plt.ylabel(f"Resonance frequency [GHz] (Target: {target_frequency}GHz)")
+    plt.grid(True)
+    plt.show()
+
+    ###############################################################################
+    # Release optiSLang
+    # -----------------
+    # Dispose the optiSLang instance.
+
+    design_study_manager.optislang.dispose()
+    time.sleep(5)  # Allow optiSLang to shut down before cleaning the temporary project folder.
+
+    ###############################################################################
+    # Clean up
+    # --------
+    # All project files are saved in the temporary folder. The following command
+    # deletes all temporary files, including the project folder.
+
+    try:
+        temp_folder.cleanup()
+    except Exception as e:
+        print(
+            f"Tried to clean up temporary working directory path: {WORKING_DIR}\n"
+            f"Could not complete cleanup: {e}\n"
+        )
+
+
+if __name__ == "__main__":
+    freeze_support()
+    main()
