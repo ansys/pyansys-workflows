@@ -289,7 +289,7 @@ def hfss_worker(args):
     if p.is_alive():
         p.terminate()
         p.join()
-        print(f"Terminating task {p} due to exceeded timeout span {timeout}s.")
+        print(f"Terminating task {p} after it exceeded the {timeout}s timeout.")
         result_data = {}
     else:
         result_data = q.get()
@@ -676,10 +676,7 @@ def compute_designs(designs, working_dir):
         List of ``Design`` objects with populated response values.
     """
     if working_dir is None:
-        raise RuntimeError(
-            "working_dir is not initialized. This callback must be created after main() "
-            "has initialized the working directory."
-        )
+        raise RuntimeError("working_dir must not be None when compute_designs is invoked.")
 
     print(f"Calculate {len(designs)} designs: {', '.join([design.id for design in designs])}")
     all_designs_inputs = []
