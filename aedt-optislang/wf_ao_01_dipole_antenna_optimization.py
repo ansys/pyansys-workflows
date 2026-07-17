@@ -53,6 +53,7 @@ The workflow includes the following steps:
 # Perform required imports
 # ------------------------
 
+from functools import partial
 import math
 from multiprocessing import Process, Queue, freeze_support
 import os
@@ -144,9 +145,6 @@ PROJECT_INITIALIZATION_DELAY_SECONDS = 10
 
 POST_STUDY_SAVE_DELAY_SECONDS = 5
 """Delay after study execution or shutdown to let optiSLang flush project state."""
-
-WORKING_DIR = None
-"""Temporary working directory used by the design evaluation callback."""
 
 ###############################################################################
 # Define HFSS solve functions
@@ -657,7 +655,7 @@ def get_pareto_designs(designs):
 # dispatches them to the worker in parallel, and returns the collected responses.
 
 
-def compute_designs(designs):
+def compute_designs(designs, working_dir):
     """
     Evaluate a batch of design points and return the collected responses.
 
@@ -675,12 +673,15 @@ def compute_designs(designs):
     list
         List of ``Design`` objects with populated response values.
     """
-    if WORKING_DIR is None:
-        raise RuntimeError("WORKING_DIR is not initialized. Run this workflow through main().")
+    if working_dir is None:
+        raise RuntimeError(
+            "working_dir is not initialized. This callback must be created after main() "
+            "has initialized the working directory."
+        )
 
     print(f"Calculate {len(designs)} designs: {', '.join([design.id for design in designs])}")
     all_designs_inputs = []
-    aedt_working_dir = WORKING_DIR / AEDT_WORKING_DIRNAME
+    aedt_working_dir = working_dir / AEDT_WORKING_DIRNAME
     aedt_working_dir.mkdir(parents=True, exist_ok=True)
     for design in designs:
         hid = design.id
@@ -737,12 +738,10 @@ def compute_designs(designs):
 
 def main():
     """Run the AEDT and optiSLang optimization workflow."""
-    global WORKING_DIR
-
     # Create temporary working dir
     temp_folder = tempfile.TemporaryDirectory(suffix=".ansys")
-    WORKING_DIR = pathlib.Path(temp_folder.name)
-    print(f"WORKING DIR: {WORKING_DIR}")
+    working_dir = pathlib.Path(temp_folder.name)
+    print(f"WORKING DIR: {working_dir}")
 
     # The optiSLang project file is created on the fly when the ``Optislang``
     # instance is initialized.
@@ -825,7 +824,7 @@ def main():
     # For initializing the project and saving it we create a short batch
     # optiSLang session.
     osl = Optislang(
-        project_path=str(WORKING_DIR / osl_project_name),
+        project_path=str(working_dir / osl_project_name),
         batch=True,
     )
     osl.application.save()
@@ -834,14 +833,17 @@ def main():
 
     # Reopen the project in batch or GUI mode, depending on ``NG_MODE``.
     osl = Optislang(
-        project_path=str(WORKING_DIR / osl_project_name),
+        project_path=str(working_dir / osl_project_name),
         loglevel="INFO",
         log_process_stdout=True,
         log_process_stderr=True,
         batch=NG_MODE,
     )
 
-    solver_settings = ProxySolverNodeSettings(callback=compute_designs, multi_design_launch_num=-1)
+    compute_designs_callback = partial(compute_designs, working_dir=working_dir)
+    solver_settings = ProxySolverNodeSettings(
+        callback=compute_designs_callback, multi_design_launch_num=-1
+    )
 
     # Number of designs in an AMOP system
     algorithm_settings = GeneralAlgorithmSettings(
@@ -926,7 +928,7 @@ def main():
         criteria=criteria,
         responses=optimization_responses_objects,
         mop_predecessor=amop_system,
-        callback=compute_designs,
+        callback=compute_designs_callback,
     )
 
     optimization_study = design_study_manager.create_design_study(optimization_template)
@@ -1023,7 +1025,7 @@ def main():
         temp_folder.cleanup()
     except Exception as e:
         print(
-            f"Tried to clean up temporary working directory path: {WORKING_DIR}\n"
+            f"Tried to clean up temporary working directory path: {working_dir}\n"
             f"Could not complete cleanup: {e}\n"
         )
 
