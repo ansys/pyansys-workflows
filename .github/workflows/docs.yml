@@ -10,6 +10,12 @@ env:
   DOCUMENTATION_CNAME: 'workflows.docs.pyansys.com'
 
 jobs:
+  aedt-optislang:
+    uses: ./.github/workflows/aedt-optislang.yml
+    secrets: inherit
+    with:
+      doc-build: true
+
   geometry-mesh:
     uses: ./.github/workflows/geometry-mesh.yml
     secrets: inherit
@@ -62,8 +68,8 @@ jobs:
   compile-docs:
     runs-on: ubuntu-latest
     # TODO: enable when issues in PyMechanical are resolved
-    # needs: [geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
-    needs: [geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
+    # needs: [aedt-optislang, geometry-mesh, geometry-mesh-fluent, geometry-mechanical-dpf, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
+    needs: [aedt-optislang, geometry-mesh, geometry-mesh-fluent, fluent-mechanical, mapdl-dpf, speos-optislang, maxwell2d-lumerical, q3d-lumerical]
     steps:
       - name: Checkout code
         uses: actions/checkout@v7.0.0
@@ -80,6 +86,12 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           pip install -r doc/requirements.txt
+
+      - name: Download artifacts for aedt-optislang
+        uses: actions/download-artifact@v8
+        with:
+          name: aedt-optislang-docs
+          path: doc/
 
       - name: Download artifacts for geometry-mesh
         uses: actions/download-artifact@v8
