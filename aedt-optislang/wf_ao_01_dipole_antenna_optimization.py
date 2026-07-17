@@ -130,6 +130,21 @@ SOLVE_MODE = "DUMMY"
 SOLVE_TIMEOUT = 300
 """Timeout for the solve process in seconds. The process is aborted if this is exceeded."""
 
+NUM_DESIGNS_MAX = 30
+"""Maximum number of designs to compute in the AMOP system."""
+
+TARGET_FREQUENCY = 1.35
+"""Target resonance frequency in GHz for the MOP-based optimization."""
+
+MAX_NUM_GENERATIONS = 10
+"""Maximum number of generations for the genetic optimization algorithm."""
+
+PROJECT_INITIALIZATION_DELAY_SECONDS = 10
+"""Delay after creating the optiSLang project before reopening it."""
+
+POST_STUDY_SAVE_DELAY_SECONDS = 5
+"""Delay after study execution or shutdown to let optiSLang flush project state."""
+
 WORKING_DIR = None
 """Temporary working directory used by the design evaluation callback."""
 
@@ -762,8 +777,6 @@ def main():
     }
     # Maximum number of (HFSS or DUMMY) designs to compute in the AMOP system.
     # If the target CoP is met earlier, AMOP may evaluate fewer designs.
-    num_designs_max = 30
-
     # AMOP parameter definition
     parameters_objects = []
     for parameter_name, parameter_data in parameters_as_dict.items():
@@ -817,7 +830,7 @@ def main():
     )
     osl.application.save()
     osl.dispose()
-    time.sleep(10)
+    time.sleep(PROJECT_INITIALIZATION_DELAY_SECONDS)
 
     # Reopen the project in batch or GUI mode, depending on ``NG_MODE``.
     osl = Optislang(
@@ -835,7 +848,7 @@ def main():
         {
             "AMopSettings": {
                 "min_cop": 0.9999,
-                "num_designs_max": num_designs_max,
+                "num_designs_max": NUM_DESIGNS_MAX,
             }
         }
     )
@@ -865,7 +878,7 @@ def main():
 
     amop_study.execute()
     design_study_manager.save()
-    time.sleep(5)
+    time.sleep(POST_STUDY_SAVE_DELAY_SECONDS)
 
     print("AMOP result designs:")
     print_designs(amop_study.get_result_designs())
@@ -881,17 +894,12 @@ def main():
     # classes automatically create the optimization and validation systems.
 
     # Define the target frequency
-    target_frequency = 1.35  # GHz
-
-    # Define number of generations for the genetic algorithm
-    max_num_generations = 10
-
     # Define the optimization criteria to minimize the squared difference between
     # the resonance frequency and the target frequency.
     criteria = [
         ObjectiveCriterion(
             "obj_freq_min",
-            expression=f"(freq_min-{target_frequency})^2",
+            expression=f"(freq_min-{TARGET_FREQUENCY})^2",
             criterion=ComparisonType.MIN,
         )
     ]
@@ -905,7 +913,7 @@ def main():
         {
             "OptimizerSettings": {
                 "settings": {
-                    "MaxGenerations": max_num_generations,
+                    "MaxGenerations": MAX_NUM_GENERATIONS,
                 }
             }
         }
@@ -991,7 +999,7 @@ def main():
         label="Pareto designs",
     )
     plt.xlabel("Design ID")
-    plt.ylabel(f"Resonance frequency [GHz] (Target: {target_frequency}GHz)")
+    plt.ylabel(f"Resonance frequency [GHz] (Target: {TARGET_FREQUENCY}GHz)")
     plt.grid(True)
     plt.show()
 
@@ -1001,7 +1009,9 @@ def main():
     # Dispose the optiSLang instance.
 
     design_study_manager.optislang.dispose()
-    time.sleep(5)  # Allow optiSLang to shut down before cleaning the temporary project folder.
+    time.sleep(
+        POST_STUDY_SAVE_DELAY_SECONDS
+    )  # Allow optiSLang to shut down before cleaning the temporary project folder.
 
     ###############################################################################
     # Clean up
