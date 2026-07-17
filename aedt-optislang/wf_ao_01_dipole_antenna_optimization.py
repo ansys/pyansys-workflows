@@ -667,6 +667,8 @@ def compute_designs(designs, working_dir):
     ----------
     designs : list
         List of design objects from the ProxySolver.
+    working_dir : pathlib.Path
+        Base temporary directory where per-design AEDT working folders are created.
 
     Returns
     -------

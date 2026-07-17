@@ -116,7 +116,8 @@ jobs:
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
         shell: bash
         run: |
-          find doc/_build -type f -exec sed -i 's|C:\\Users\\ansys\\actions-runner\\_work\\pyansys-workflows\\pyansys-workflows\\doc\\source\\examples\\aedt-optislang\\images\\|./images/|g' {} +
+          DOC_IMAGES_PATH="${GITHUB_WORKSPACE//\\/\\\\}\\\\doc\\\\source\\\\examples\\\\aedt-optislang\\\\images\\\\"
+          find doc/_build -type f -exec sed -i "s|${DOC_IMAGES_PATH}|./images/|g" {} +
 
       - name: (DOCS) Upload docs artifacts
         if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
