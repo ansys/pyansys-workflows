@@ -1,0 +1,4 @@
+ansys-aedt-core[all]==1.1.0
+ansys-optislang-core==1.5.0
+matplotlib==3.10.3
+tqdm==4.67.1

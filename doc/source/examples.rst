@@ -14,6 +14,7 @@ Workflow examples
    examples/speos-optislang/index
    examples/maxwell2d-lumerical/index
    examples/q3d-lumerical/index
+   examples/aedt-optislang/index
    .. TODO: enable when issues in PyMechanical are resolved
       examples/geometry-mechanical-dpf/index
 
@@ -48,5 +49,9 @@ Workflow examples
     :end-before: .. toctree
 
 .. include:: examples/speos-optislang/index.rst
+    :start-line: 1
+    :end-before: .. toctree
+
+.. include:: examples/aedt-optislang/index.rst
     :start-line: 1
     :end-before: .. toctree
