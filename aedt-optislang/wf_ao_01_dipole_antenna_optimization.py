@@ -332,7 +332,11 @@ def dummy_solve(working_dir, parameter_values):
     freq = np.linspace(0, 3, 301).tolist()
 
     def notch_return_loss(f, f0, Q):
-        num = (f**2 - f0**2) ** 2
+        # catch resonance and avoid log10(0)
+        if math.isclose(f, f0, rel_tol=1e-12):
+            num = 1e-12
+        else:
+            num = (f**2 - f0**2) ** 2
         den = num + (f * f0 / Q) ** 2
         s11 = math.sqrt(num / den)
         return 20 * math.log10(s11)
