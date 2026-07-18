@@ -114,7 +114,7 @@ NUM_CORES_PER_PROCESS = 2
 """Number of cores to use for each HFSS process."""
 
 NG_MODE = True
-"""Run optiSLang in batch mode (``True``) or with GUI (``False``)."""
+"""Run optiSLang and AEDT in batch mode (``True``) or with GUI (``False``)."""
 
 MAX_PARALLEL_SOLVE_PROCESSES = 3
 """Maximum number of parallel solve processes."""
