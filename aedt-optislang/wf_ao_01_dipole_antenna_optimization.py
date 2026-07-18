@@ -125,7 +125,7 @@ FORCE_SEQUENTIAL_SOLVE = False
 AEDT_WORKING_DIRNAME = "pyaedt_workingdir"
 """Name of working directory to store the AEDT projects."""
 
-SOLVE_MODE = "DUMMY"
+SOLVE_MODE = "HFSS"
 """Solve mode: ``"HFSS"`` solves the HFSS antenna model; ``"DUMMY"`` runs an analytical model."""
 
 SOLVE_TIMEOUT = 300
