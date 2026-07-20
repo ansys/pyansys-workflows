@@ -65,6 +65,7 @@ jobs:
       PYMAPDL_START_INSTANCE: FALSE
       ON_DOCUMENTATION: TRUE
       ON_CICD: TRUE
+      PYMAPDL_GRPC_TRANSPORT: insecure
 
     steps:
 
@@ -198,6 +199,7 @@ jobs:
         if: failure()
         shell: bash
         run: |
+          . .venv/bin/activate
           pymapdl stop --all
           echo "Printing MAPDL log for debugging..."
           cat MAPDL_0.log
