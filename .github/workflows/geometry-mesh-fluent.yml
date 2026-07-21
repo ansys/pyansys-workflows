@@ -33,6 +33,10 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 24.1
 
+concurrency:
+  group: geometry-mesh-fluent-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
 
   is-only-docs-required:

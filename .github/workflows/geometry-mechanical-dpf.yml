@@ -32,6 +32,10 @@ env:
   PYANSYS_WORKFLOWS_CI: true
   ANSYS_RELEASE_FOR_DOCS: 25.1
 
+concurrency:
+  group: geometry-mechanical-dpf-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
 
   is-only-docs-required:
