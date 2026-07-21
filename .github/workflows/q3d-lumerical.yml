@@ -29,6 +29,10 @@ env:
   MAIN_PYTHON_VERSION: '3.12'
   ON_CI: true
 
+concurrency:
+  group: q3d-lumerical-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
 
   is-only-docs-required:

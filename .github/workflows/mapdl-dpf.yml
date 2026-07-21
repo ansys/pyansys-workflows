@@ -40,6 +40,10 @@ env:
   DPF_PORT_1: 21005
   PYVISTA_OFF_SCREEN: true
 
+concurrency:
+  group: mapdl-dpf-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 jobs:
 
   is-only-docs-required:
