@@ -1,2 +1,2 @@
-ansys-mapdl-core[graphics]==0.70.2
+ansys-mapdl-core[graphics]==0.73.2
 ansys-dpf-core==0.14.1
