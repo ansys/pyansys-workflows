@@ -25,6 +25,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: aedt-optislang-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
 env:
   ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
   ANSYS_RELEASE_FOR_DOCS: 26.1
