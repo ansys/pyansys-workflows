@@ -12,6 +12,10 @@ env:
   MAIN_PYTHON_VERSION: '3.12'
   DOCUMENTATION_CNAME: 'workflows.docs.pyansys.com'
 
+concurrency:
+  group: docs-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   aedt-optislang:
     permissions:
