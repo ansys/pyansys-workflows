@@ -86,7 +86,7 @@ jobs:
         run: |
           python -m venv .venv
           . .venv/bin/activate
-          apt-get update && apt-get -y install gcc mono-mcs g++
+          apt-get update && apt-get -y install gcc mono-mcs g++ openmpi-bin
 
       - name: Install dependencies
         shell: bash
@@ -113,18 +113,16 @@ jobs:
           export PYMAPDL_PORT=$PYMAPDL_PORT_0
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_0
           export DPF_PORT=$DPF_PORT_0
-          mapdl-dpf/.ci/start_mapdl.sh & export MAPDL_PID=$!
-          echo "Launching MAPDL service at PID: $MAPDL_PID"
-          echo "MAPDL_PID=$(echo $MAPDL_PID)" >> $GITHUB_OUTPUT
+          mapdl-dpf/.ci/start_mapdl.sh
+          echo "First MAPDL instance launch completed."
 
           echo "Launching second MAPDL instance..."
           export INSTANCE_NAME=MAPDL_1
           export PYMAPDL_PORT=$PYMAPDL_PORT_1
           export PYMAPDL_DB_PORT=$PYMAPDL_DB_PORT_1
           export DPF_PORT=$DPF_PORT_1
-          mapdl-dpf/.ci/start_mapdl.sh & export MAPDL_PID_1=$!
-          echo "Launching second MAPDL service at PID: $MAPDL_PID_1"
-          echo "MAPDL_PID_1=$(echo $MAPDL_PID_1)" >> $GITHUB_OUTPUT
+          mapdl-dpf/.ci/start_mapdl.sh
+          echo "Second MAPDL instance launch completed."
 
       - name: "DPF server setup"
         shell: bash

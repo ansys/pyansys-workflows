@@ -113,6 +113,12 @@ export P_SCHEMA=$P_SCHEMA
 export OMPI_ALLOW_RUN_AS_ROOT=1
 export OMPI_ALLOW_RUN_AS_ROOT_CONFIRM=1
 
+if [[ "${DISTRIBUTED_MODE,,}" == "dmp" ]] && ! command -v mpirun >/dev/null 2>&1; then
+    echo "ERROR: 'mpirun' is required for DMP mode but was not found in PATH."
+    echo "Install an MPI runtime (for Ubuntu-based images, install 'openmpi-bin')."
+    exit 1
+fi
+
 echo "Starting MAPDL directly in container..."
 echo "Environment variables:"
 echo "  ANSYS_LOCK: $ANSYS_LOCK"
