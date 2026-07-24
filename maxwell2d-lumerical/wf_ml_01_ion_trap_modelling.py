@@ -374,8 +374,8 @@ if in_ipython():
     from IPython.display import display
 
     display(schema_img)
-# Show image using default image viewer
-else:
+# Show image using default image viewer (skip when running on CI)
+elif not NG_MODE:
     schema_img.show()
 
 schema_img.close()
