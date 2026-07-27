@@ -410,8 +410,8 @@ if in_ipython():
     from IPython.display import display
 
     display(schema_img)
-# Show image using default image viewer
-else:
+# Show image using default image viewer (skip when running on CI)
+elif not NG_MODE:
     schema_img.show()
 
 schema_img.close()
@@ -425,6 +425,10 @@ schema_img.close()
 gc_0.close()
 gc_1.close()
 gc_2.close()
+# Explicitly delete FDTD objects so their __del__ runs now (while the Lumerical
+# library is still loaded) rather than during interpreter teardown, which would
+# otherwise trigger a spurious "Exception ignored in Lumerical.__del__" error.
+del gc_0, gc_1, gc_2
 q3d.save_project()
 q3d.desktop_class.release_desktop()
 
