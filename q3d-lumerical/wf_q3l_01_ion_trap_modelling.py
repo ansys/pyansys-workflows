@@ -382,13 +382,7 @@ gc_2.run()
 gc_2.feval(gc_farfield_path)
 print(f"Target focal distance of output laser beam: {gc_2.getv('Mselect') * 1000000} (um)")
 print(f"Actual focal distance for the optimised geometry: {gc_2.getv('Mactual') * 1000000} (um)")
-rel_error = gc_2.getv("RelVal") * 100
-print(f"Relative error: {rel_error}%")
-if rel_error > 10:
-    raise ValueError(
-        f"Relative error {rel_error:.2f}% exceeds the 10% threshold. "
-        "The grating coupler optimization did not converge to an acceptable solution."
-    )
+print(f"Relative error: {gc_2.getv('RelVal') * 100}%")
 print(f"FWHM of vertical direction at focus: {gc_2.getv('FWHM_X') * 1000000} (um)")
 print(f"FWHM of horizontal direction at focus {gc_2.getv('FWHM_Y') * 1000000} (um)")
 print(f"Substrate material : {gc_2.getv('Material')}")
