@@ -346,7 +346,13 @@ gc_2.run()
 gc_2.feval(gc_farfiled_path)
 print(f"Target focal distance of output laser beam: {gc_2.getv('Mselect') * 1000000} (um)")
 print(f"Actual focal distance for the optimised geometry: {gc_2.getv('Mactual') * 1000000} (um)")
-print(f"Relative error: {gc_2.getv('RelVal') * 100}%")
+rel_error = gc_2.getv("RelVal") * 100
+print(f"Relative error: {rel_error}%")
+if rel_error > 10:
+    raise ValueError(
+        f"Relative error {rel_error:.2f}% exceeds the 10% threshold. "
+        "The grating coupler optimization did not converge to an acceptable solution."
+    )
 print(f"FWHM of vertical direction at focus: {gc_2.getv('FWHM_X') * 1000000} (um)")
 print(f"FWHM of horizontal direction at focus {gc_2.getv('FWHM_Y') * 1000000} (um)")
 print(f"Substrate material : {gc_2.getv('Material')}")
@@ -389,6 +395,10 @@ schema_img.close()
 gc_0.close()
 gc_1.close()
 gc_2.close()
+# Explicitly delete FDTD objects so their __del__ runs now (while the Lumerical
+# library is still loaded) rather than during interpreter teardown, which would
+# otherwise trigger a spurious "Exception ignored in Lumerical.__del__" error.
+del gc_0, gc_1, gc_2
 m2d.save_project()
 m2d.desktop_class.release_desktop()
 
