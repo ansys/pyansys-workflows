@@ -3,10 +3,17 @@
 Speos Virtual BSDF Bench is a desktop GUI tool for configuring and running Virtual BSDF simulations with PyAnsys Speos.
 It provides a workflow to:
 
-- Load geometry (STL) or an existing SPEOS LightBox scene.
+- Load geometry (OBJ) or an existing SPEOS LightBox scene.
 - Configure material and simulation modes.
 - Build, preview, run, and cancel simulation jobs.
 - Export simulation results into timestamped output folders.
+
+## Version 0.5.1
+
+Release highlights:
+
+- Geometry input now uses OBJ files in the main UI and worker pipeline.
+- Added a safe OBJ preprocessing step to handle malformed `mtllib` lines before PyVista reads the mesh.
 
 ## Requirements
 
@@ -46,7 +53,7 @@ Development dependency:
 	- Custom theta/phi sampling
 	- Reflection only or reflection + transmission
 - Geometry input options:
-	- Direct STL geometry import
+	- Direct OBJ geometry import
 	- SPEOS LightBox loading
 - Job control:
 	- Build simulation
@@ -93,7 +100,7 @@ This opens the VBB GUI.
 	 - output folder
 	 - SPEOS RPC settings (version and port)
 3. In the Geometry tab, choose one input flow:
-	 - STL + optical properties, or
+	 - OBJ + optical properties, or
 	 - LightBox file
 4. Configure Source and Sensor sampling settings.
 5. Click **Build** to prepare the simulation.

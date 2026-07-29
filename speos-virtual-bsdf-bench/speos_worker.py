@@ -32,6 +32,43 @@ from ansys.speos.core import project,launcher,speos
 from ansys.speos.core.simulation import SimulationVirtualBSDF
 from setup_data import speos_config
 from toolfunction import copy_path_list_to_timestamp_dir
+
+
+def _prepare_obj_for_vtk(file_path: str) -> str:
+    """Return an OBJ path safe for vtkOBJReader when mtllib is malformed."""
+    if not file_path.lower().endswith(".obj"):
+        return file_path
+
+    try:
+        with open(file_path, "r", encoding="utf-8", errors="ignore") as obj_file:
+            lines = obj_file.readlines()
+    except OSError:
+        return file_path
+
+    patched_lines = []
+    changed = False
+    for line in lines:
+        stripped = line.lstrip()
+        if stripped.startswith("mtllib "):
+            lib_spec = stripped[7:].strip()
+            if lib_spec and " " in lib_spec and not (lib_spec.startswith('"') and lib_spec.endswith('"')):
+                patched_lines.append("# " + line)
+                changed = True
+                continue
+        patched_lines.append(line)
+
+    if not changed:
+        return file_path
+
+    safe_path = file_path[:-4] + "_vtksafe.obj"
+    try:
+        with open(safe_path, "w", encoding="utf-8") as safe_file:
+            safe_file.writelines(patched_lines)
+        return safe_path
+    except OSError:
+        return file_path
+
+
 class sim_worker(QObject):
     
     progress = Signal(str)         # Progress message
@@ -45,10 +82,14 @@ class sim_worker(QObject):
     @Slot()
     def _preview(self):
         if self._VBB_Proj is not None:
-            self._VBB_Proj.preview()
+            try:
+                self._emit("Loading preview... This may take a moment")
+                self._VBB_Proj.preview()
+                self._emit("Preview completed")
+            except Exception as e:
+                self.error.emit(f"Preview failed: {e}")
         else:
             raise RuntimeError("No simulation available for preview.")
-    @Slot(speos_config)
     def speos_run(self):
         self._run()
     @Slot()
@@ -129,9 +170,9 @@ class sim_worker(QObject):
                 except:
                     raise RuntimeError("Can not launch remote Speos RPC server")
             if not p.uselightbox: #Not using lightbox
-                # 1) read STL
+                # 1) read OBJ
                 self._emit("Loading geometry...")
-                mesh = pv.read(p.geo_path)
+                mesh = pv.read(_prepare_obj_for_vtk(p.geo_path))
                 mesh_center = mesh.center
                 vertices = mesh.points
                 vertex_normals = mesh.point_normals

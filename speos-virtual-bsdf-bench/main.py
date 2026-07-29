@@ -59,7 +59,7 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("Virtual BSDF Builder v0.5.0")
+        self.setWindowTitle("Virtual BSDF Builder v0.5.1")
         self._simulationTab()
         self._geometryTab()
         self._sourceTab()
@@ -129,7 +129,7 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
             self.resultFolderLe.setText("Invalid directory selected.")
     
     def _geometryTab(self):
-        self.geoPb.clicked.connect(lambda _: self._open_file_dialog(filetype = "stl (*.stl)",toLineEdit = self.geoAddrLe))
+        self.geoPb.clicked.connect(lambda _: self._open_file_dialog(filetype = "obj (*.obj)",toLineEdit = self.geoAddrLe))
         self.vopPb.clicked.connect(lambda _: self._open_file_dialog(filetype = "vop (*.material)",toLineEdit = self.vopAddrLe))
         vopfiletype:str = """Supported files (*.simplescattering,*.scattering,*.brdf,*.bsdf,*.bsdf180,*.coated,*.anisotropic,*.anisotropicbsdf,*.unpolished);;
         Simple scattering Files (*.simplescattering);;Advanced scattering Files (*.scattering);;
