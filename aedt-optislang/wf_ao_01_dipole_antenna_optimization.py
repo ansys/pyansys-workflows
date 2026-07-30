@@ -1026,6 +1026,7 @@ def main():
     # All project files are saved in the temporary folder. The following command
     # deletes all temporary files, including the project folder.
 
+    time.sleep(POST_STUDY_SAVE_DELAY_SECONDS)  # wait for AEDT/HFSS to release file handles
     try:
         temp_folder.cleanup()
     except Exception as e:
