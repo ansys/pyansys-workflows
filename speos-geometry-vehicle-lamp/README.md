@@ -1,6 +1,6 @@
-This version is tested with Speos RPC 2025R2 SP4, 
-PySpeos (ansys-speos-core) version 0.7.2,
-and PyAnsys Geometry (ansys-geometry-core) version 0.15.1.
+This version is tested with Speos RPC 2026R1 SP2, 
+PySpeos (ansys-speos-core) version 0.9.0,
+and PyAnsys Geometry (ansys-geometry-core) version 0.15.2.
 
 This tool is meant only for demonstration purposes. 
 It can be used as a starting point or reference for larger custom projects.

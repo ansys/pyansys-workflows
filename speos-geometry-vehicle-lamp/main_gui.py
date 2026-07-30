@@ -170,7 +170,7 @@ def main():
     tb_material = tk.Entry(master, textvariable=master.material_path)
     tb_material.place(relx=0.18, rely=rely_material, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    material_data_path_init = f"{os.getcwd()}\SpeosModel\Settings_Material.xlsx"
+    material_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Material.xlsx")
     if os.path.isfile(material_data_path_init):
         master.material_path.set(material_data_path_init)
     else:
@@ -186,7 +186,7 @@ def main():
     tb_source = tk.Entry(master, textvariable=master.source_path)
     tb_source.place(relx=0.18, rely=rely_source, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    source_data_path_init = f"{os.getcwd()}\SpeosModel\Settings_Source.xlsx"
+    source_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Source.xlsx")
     if os.path.isfile(source_data_path_init):
         master.source_path.set(source_data_path_init)
     else:
@@ -202,7 +202,7 @@ def main():
     tb_sensor = tk.Entry(master, textvariable=master.sensor_path)
     tb_sensor.place(relx=0.18, rely=rely_sensor, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    sensor_data_path_init = f"{os.getcwd()}\SpeosModel\Settings_Sensor.xlsx"
+    sensor_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Sensor.xlsx")
     if os.path.isfile(sensor_data_path_init):
         master.sensor_path.set(sensor_data_path_init)
     else:

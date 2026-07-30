@@ -105,9 +105,15 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         
         # generate geometry as a single face, populated with meshed facet data
         speos_face = speos_body.create_face(name=f"{speos_body_name}_face")
-        speos_face.set_vertices(vertices)
-        speos_face.set_facets(facets)
-        speos_face.set_normals(vertex_normals)
+        try:
+            speos_face.vertices = vertices.tolist()
+            speos_face.facets = facets.tolist()
+            speos_face.normals = vertex_normals.tolist()
+        except:
+            # set_vertices, set_facets, and set_normals are the old pyspeos syntax (<0.9.0)
+            speos_face.set_vertices(vertices)
+            speos_face.set_facets(facets)
+            speos_face.set_normals(vertex_normals)
         speos_face.commit()
         
         return speos_body
@@ -135,7 +141,13 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
             case 'Optic':
                 # only currently support index of refraction
                 index_of_refraction = material_data['VOP_Index'].item()
-                optical_property.set_volume_optic(index=index_of_refraction, absorption=0, constringence=None)
+                try:
+                    optical_property.set_volume_optic().index = index_of_refraction
+                    optical_property.set_volume_optic().absorption = 0
+                    optical_property.set_volume_optic().constringence = None
+                except:
+                    # set_volume_optic(index, absorption, constringence) is the old pyspeos syntax (<0.9.0)
+                    optical_property.set_volume_optic(index=index_of_refraction, absorption=0, constringence=None)
         
             case 'Library':
                 # set the material volume data path (speos .material file)
@@ -144,7 +156,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
                     log_message("\nError in Material Library, on material '" + material_data['Material_Name'].item() + "'")
                     log_message("material data file path not found (" + vop_data_path + ")")
                     log_message("reverting to mirror\n")
-                optical_property.set_volume_library(vop_data_path)
+                try:
+                    optical_property.set_volume_library().material_file_uri = vop_data_path
+                except:
+                    # set_volume_library(uri) is the old pyspeos syntax (<0.9.0)
+                    optical_property.set_volume_library(vop_data_path)
 
         # check SOP type
         match material_data['SOP'].item():
@@ -154,14 +170,25 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
                     log_message("Error in Material Library, on material '" + material_data['Material_Name'].item() + "'\nmirror SOP on non-opaque VOP")
                     log_message("unable to set VOP")
                     optical_property.set_volume_opaque()
-                reflectance = index_of_refraction = material_data['SOP_Reflectance'].item()
-                optical_property.set_surface_mirror(reflectance)
+                reflectance = material_data['SOP_Reflectance'].item()
+                try:
+                    optical_property.set_surface_mirror().reflectance = reflectance
+                except:
+                    # set_surface_mirror(reflectance) is the old pyspeos syntax (<0.9.0)
+                    optical_property.set_surface_mirror(reflectance)
             case 'OpticalPolished':
                 # don't allow on opaque VOP
                 if material_data['VOP'].item() == 'Opaque':
                     log_message("Error in Material Library, on material '" + material_data['Material_Name'].item() + "'\noptical polish SOP on opaque VOP")
                     log_message("unable to set VOP")
-                    optical_property.set_volume_optic(index=1.0, absorption=0, constringence=None)
+                    try:
+                        optical_vop = optical_property.set_volume_optic()
+                        optical_vop.index = 1.0
+                        optical_vop.absorption = 0
+                        optical_vop.constringence = None
+                    except:
+                        # set_volume_optic(index, absorption, constringence) is the old pyspeos syntax (<0.9.0)
+                        optical_property.set_volume_optic(index=1.0, absorption=0, constringence=None)
                 optical_property.set_surface_opticalpolished()
             case 'Library':
                 # need some intricate error handling here
@@ -171,8 +198,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
                     log_message("\nError in Material Library, on material '" + material_data['Material_Name'].item() + "'")
                     log_message("material data file path not found (" + sop_data_path + ")")
                     log_message("reverting to mirror\n")
-                optical_property.set_surface_library(sop_data_path)
-        
+                try:
+                    optical_property.set_surface_library().file_uri = sop_data_path
+                except:
+                    # set_surface_library(uri) is the old pyspeos syntax (<0.9.0)
+                    optical_property.set_surface_library(sop_data_path) 
         return optical_property
 
     def create_sensor(p, cs, sensor_data):
@@ -191,18 +221,33 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         sensor_axis.extend([dx.x, dx.y, dx.z])
         sensor_axis.extend([dy.x, dy.y, dy.z])
         sensor_axis.extend([dz.x, dz.y, dz.z])
-        sensor.set_axis_system(sensor_axis)
-        sensor.set_integration_angle(2)
+        try:
+            sensor.axis_system = sensor_axis
+            sensor.integration_angle = 2
+        except:
+            # set_axis_system is the old pyspeos syntax (<0.9.0)
+            sensor.set_axis_system(sensor_axis)
+            sensor.set_integration_angle(2)
 
         # set the other data from the sensor library
-        sensor.set_focal(sensor_data['EFL'].item())
-        dim = sensor.set_dimensions()
-        dim.set_x_start(sensor_data['X_Start'].item())
-        dim.set_x_end(sensor_data['X_End'].item())
-        dim.set_x_sampling(sensor_data['X_Samp'].item())
-        dim.set_y_start(sensor_data['Y_Start'].item())
-        dim.set_y_end(sensor_data['Y_End'].item())
-        dim.set_y_sampling(sensor_data['Y_Samp'].item())
+        try:
+            sensor.focal = sensor_data['EFL'].item()
+            sensor.dimensions.x_start = sensor_data['X_Start'].item()
+            sensor.dimensions.x_end = sensor_data['X_End'].item()
+            sensor.dimensions.x_sampling = sensor_data['X_Samp'].item()
+            sensor.dimensions.y_start = sensor_data['Y_Start'].item()
+            sensor.dimensions.y_end = sensor_data['Y_End'].item()
+            sensor.dimensions.y_sampling = sensor_data['Y_Samp'].item()           
+        except:
+            # set_focal, set_dimensions, and set_x_start are the old pyspeos syntax (<0.9.0)
+            sensor.set_focal(sensor_data['EFL'].item())
+            dim = sensor.set_dimensions()
+            dim.set_x_start(sensor_data['X_Start'].item())
+            dim.set_x_end(sensor_data['X_End'].item())
+            dim.set_x_sampling(sensor_data['X_Samp'].item())
+            dim.set_y_start(sensor_data['Y_Start'].item())
+            dim.set_y_end(sensor_data['Y_End'].item())
+            dim.set_y_sampling(sensor_data['Y_Samp'].item())
 
         # commit
         sensor.commit()
@@ -218,11 +263,16 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         library_data_dir, fname = os.path.split(library_data_filepath)
         ies_data_path = library_data_dir + "\\Library_Data\\Source\\" + this_source_data['Ies_File'].item()
         spectrum_data_path = library_data_dir + "\\Library_Data\\Source\\" + this_source_data['Spectrum_File'].item()
-
-        this_source.set_intensity_file_uri(ies_data_path)
-        this_source.set_flux_luminous(this_source_data['Flux_Luminous'].item())
-        spectrum = this_source.set_spectrum()
-        spectrum.set_library(spectrum_data_path)
+        try:
+            this_source.intensity_file_uri = ies_data_path
+            this_source.flux.set_luminous().value = this_source_data['Flux_Luminous'].item()
+            this_source.spectrum.set_library().file_uri = spectrum_data_path
+        except:
+            # set_intensity_file_uri, set_flux_luminous, and set_spectrum().set_library() are the old pyspeos syntax (<0.9.0)
+            this_source.set_intensity_file_uri(ies_data_path)
+            this_source.set_flux_luminous(this_source_data['Flux_Luminous'].item())
+            spectrum = this_source.set_spectrum()
+            spectrum.set_library(spectrum_data_path)
         # set orientation and position from cs
         o = cs.frame.origin
         dx = -1 * cs.frame.direction_x
@@ -232,7 +282,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         source_axis.extend([dx.x, dx.y, dx.z])
         source_axis.extend([dy.x, dy.y, dy.z])
         source_axis.extend([dz.x, dz.y, dz.z])
-        this_source.set_axis_system(source_axis)
+        try:
+            this_source.axis_system = source_axis
+        except:
+            # set_axis_system is the old pyspeos syntax (<0.9.0)
+            this_source.set_axis_system(source_axis)
         this_source.commit()
         source_names_record.append(source_name)
         return 
@@ -264,7 +318,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
                 geoms = []
                 for f in faces:
                     geoms.append((f.geo_path, bool(row["Reverse_Normal"])))
-                this_source.set_exitance_constant(geometries=geoms)
+                try:
+                    this_source.set_exitance_constant().geometries = geoms
+                except:
+                    # set_exitance_constant(geometries) is the old pyspeos syntax (<0.9.0)
+                    this_source.set_exitance_constant(geometries=geoms)
             else:
                 log_message("\nWARNING: face selection for surface source not currently supported\nface picker may lock up due to tkinter/pyvista interoperability issue\n")
             ######## UNDER CONSTRUCTION ########
@@ -276,10 +334,15 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
                     faces_blocks.append(f.tessellate())
                 selected_face = plot_helper.plot_picker(faces_blocks, geom_body.faces)
                 this_source.set_exitance_constant(geometries=[(selected_face.geo_path, row["Reverse_Normal"])])
-            
-            this_source.set_flux_luminous(row["Flux_Luminous"])
-            spectrum_filepath = library_data_dir + "\\Library_Data\\Source\\" + row['Spectrum_File']
-            this_source.set_spectrum().set_library(spectrum_filepath)
+
+            try:
+                this_source.flux.set_luminous_intensity().value = row["Flux_Luminous"]
+                this_source.spectrum.set_library().file_uri = library_data_dir + "\\Library_Data\\Source\\" + row['Spectrum_File']
+            except:
+                # set_flux_luminous and set_spectrum().set_library() are the old pyspeos syntax (<0.9.0)
+                this_source.set_flux_luminous(row["Flux_Luminous"])
+                spectrum_filepath = library_data_dir + "\\Library_Data\\Source\\" + row['Spectrum_File']
+                this_source.set_spectrum().set_library(spectrum_filepath)
             this_source.commit()
             source_names_record.append(row["Source_Name"])
             
@@ -307,13 +370,24 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         # === create the speos simulation object ===
         sim_name = "inversesim_ambient"
         sim = p.create_simulation(name=sim_name, feature_type=SimulationInverse)
-        sim.set_sensor_paths(sensors)
-        sim.set_source_paths(sources)
+        try:
+            sim.sensor_paths = sensors
+            sim.source_paths = sources
+        except:
+            # set_sensor_paths and set_source_paths are the old pyspeos syntax (<0.9.0)
+            sim.set_sensor_paths(sensors)
+            sim.set_source_paths(sources)
 
         # define the other settings
-        sim.set_dispersion(True)
-        sim.set_stop_condition_passes_number(50)
-        sim.set_stop_condition_duration(10000)
+        try:
+            sim.dispersion = True
+            sim.stop_condition_passes_number = 50
+            sim.stop_condition_duration = 10000
+        except:
+            # set_dispersion, set_stop_condition_passes_number, and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
+            sim.set_dispersion(True)
+            sim.set_stop_condition_passes_number(50)
+            sim.set_stop_condition_duration(10000)
         sim.commit()
         return sim
 
@@ -321,13 +395,24 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         # === create the speos simulation object ===
         sim_name = "directsim_lamp_lit"
         sim = p.create_simulation(name=sim_name, feature_type=SimulationDirect)
-        sim.set_sensor_paths(sensors)
-        sim.set_source_paths(sources)
+        try:
+            sim.sensor_paths = sensors
+            sim.source_paths = sources
+        except:
+            # set_sensor_paths and set_source_paths are the old pyspeos syntax (<0.9.0)
+            sim.set_sensor_paths(sensors)
+            sim.set_source_paths(sources)
 
         # define the other settings
-        sim.set_dispersion(True)
-        sim.set_stop_condition_rays_number(None) # hard-coded number of rays
-        sim.set_stop_condition_duration(180)
+        try:
+            sim.dispersion = True
+            sim.stop_condition_rays_number = None # hard-coded number of rays
+            sim.stop_condition_duration = 180
+        except:
+            # set_dispersion, set_stop_condition_rays_number, and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
+            sim.set_dispersion(True)
+            sim.set_stop_condition_rays_number(None) # hard-coded number of rays
+            sim.set_stop_condition_duration(180)
         sim.commit()
         return sim  
 
@@ -381,7 +466,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         for modeler_subcomp in modeler_comp.components:
             # create speos subcomponent
             speos_subcomp = speos_comp.create_sub_part(name=modeler_subcomp.name)
-            speos_subcomp.set_axis_system(axis_system=[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1])
+            try:
+                speos_subcomp.axis_system = [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1]
+            except:
+                # set_axis_system is the old pyspeos syntax (<0.9.0)
+                speos_subcomp.set_axis_system(axis_system=[0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1])
 
             #if list(modeler_subcomp.get_world_transform().flat) != list(np.identity(4).flat):
             #    #not necessary to check, since the mesh data is in global coordinates
@@ -422,7 +511,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
             geometries_list = optical_property.get("geometries")['geo_paths'] #[optical_property._material_instance.geometries]
             georef_list = [GeoRef.from_native_link(geometries_list[i]) for i in range(0,len(geometries_list))]
             georef_list.append(speos_body)
-            optical_property.set_geometries(geometries=georef_list)
+            try:
+                optical_property.geometries = georef_list
+            except:
+                # set_geometries(georef_list) is the old pyspeos syntax (<0.9.0)
+                optical_property.set_geometries(geometries=georef_list)
 
         else:
             # grab the material data entry from the library
@@ -430,7 +523,11 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
             # create optical property from library data
             optical_property = create_materials(p, material_data)
             # apply to  geometries
-            optical_property.set_geometries(geometries=[speos_body])
+            try:
+                optical_property.geometries = [speos_body]
+            except:
+                # set_geometries([speos_body]) is the old pyspeos syntax (<0.9.0)
+                optical_property.set_geometries(geometries=[speos_body])
 
         optical_property.commit()
         return
@@ -485,11 +582,10 @@ def import_cad(speos_session="", cad_data_filepath="", material_settings_filepat
         log_message("Building Speos Model")
         log_message("Launching Geometry Service...")
         #modeler = launch_modeler(mode="spaceclaim", hidden=True) # mode="discovery", mode="geometry_service"
-        modeler = launch_modeler(mode="geometry_service", version="261")#, version="261")
+        modeler = launch_modeler(mode="geometry_service", version="261")
         log_message("Launching SPEOS RPC server...")
         # check your port by running C:\Program Files\ANSYS Inc\vXXX\Optical Products\SPEOS_RPC\SpeosRPC_Server.exe
-        #pyspeos = launcher.launch_local_speos_rpc_server(version="252", port=50098) 
-        pyspeos = launcher.launch_local_speos_rpc_server(port=50051) #version="252" 
+        pyspeos = launcher.launch_local_speos_rpc_server(version="261")
     
     ### Create new pyspeos project
     p = project.Project(speos=pyspeos)
@@ -571,28 +667,37 @@ def run_simulation(sim, p):
     #xmp_path = open_result._find_correct_result(simulation_feature=sim, result_name=sensor_name+".xmp")
 
     # transfer results to project folder
-    out_folder = project_folder + "\\SPEOS Output Files\\Pyspeos_Simulation_Results"
-    if not os.path.isdir(out_folder):
-        os.mkdir(out_folder)
-    
+    base_out_folder = os.path.join(project_folder, "SPEOS Output Files", "Pyspeos_Simulation_Results")
+    os.makedirs(base_out_folder, exist_ok=True)
+
     # add simulation name to out path
     sim_name = sim._name
-    out_folder = out_folder + "\\" + sim_name
-    if not os.path.isdir(out_folder):
-        # create the output folder
-        os.mkdir(out_folder)
-    else:
-        # clear the output folder
-        for item in os.listdir(out_folder):
-            item_path = os.path.join(out_folder, item)
-            if os.path.isfile(item_path) or os.path.islink(item_path):
+    out_folder = os.path.join(base_out_folder, sim_name)
+    os.makedirs(out_folder, exist_ok=True)
+
+    # clear stale files from previous runs
+    for item in os.listdir(out_folder):
+        item_path = os.path.join(out_folder, item)
+        if os.path.isfile(item_path) or os.path.islink(item_path):
+            try:
                 os.remove(item_path)
+            except Exception as e:
+                log_message(f"warning: unable to remove stale file '{item_path}': {e}")
 
     # Move all data files from xmp_path to out_folder, overwriting existing files
-    for filename in os.listdir(os.path.dirname(xmp_path)):
-        full_file_name = os.path.join(os.path.dirname(xmp_path), filename)
-        if os.path.isfile(full_file_name):
+    src_folder = os.path.dirname(xmp_path)
+    files_to_copy = [name for name in os.listdir(src_folder) if os.path.isfile(os.path.join(src_folder, name))]
+    log_message(f"copying {len(files_to_copy)} result file(s) from '{src_folder}' to '{out_folder}'")
+    logger.force_update()
+    for idx, filename in enumerate(files_to_copy, start=1):
+        full_file_name = os.path.join(src_folder, filename)
+        try:
             shutil.copy2(full_file_name, out_folder)  # overwrite existing files
+        except Exception as e:
+            log_message(f"warning: failed to copy '{full_file_name}': {e}")
+        if idx % 10 == 0 or idx == len(files_to_copy):
+            log_message(f"copied {idx}/{len(files_to_copy)} file(s)")
+            logger.force_update()
     #shutil.rmtree(os.path.dirname(xmp_path))
     try:
         sim.job_link.delete()
@@ -601,7 +706,7 @@ def run_simulation(sim, p):
         sim.job_link.delete()
 
     # open the result in an XMP viewer window
-    xmp_path = out_folder + "\\" + os.path.basename(xmp_path)
+    xmp_path = os.path.join(out_folder, os.path.basename(xmp_path))
     xmpviewer = CreateObject("XMPViewer.Application")
     xmpviewer.OpenFile(xmp_path)
     xmpviewer.Show(1)
@@ -612,22 +717,45 @@ def run_simulation(sim, p):
 
 def merge_results(xmp_paths):
     ### Manage Inputs 
+    if len(xmp_paths) < 2:
+        raise ValueError("merge_results requires two XMP paths (direct and inverse)")
+
     outfile = project_folder + "\\SPEOS Output Files\\Pyspeos_Simulation_Results\\XmpUnionResult.xmp"
     if os.path.isfile(outfile):
         os.remove(outfile)
 
-    #photometric calc instance creation
-    vpLab = win32com.client.Dispatch("VPLab.Application")
-    vpLab.FileSource1(xmp_paths[0])
-    vpLab.FileSource2(xmp_paths[1])
-    vpLab.FileResult(outfile)
-    vpLab.Operation("MapUnion")
-    vpLab.Process
+    # photometric calc instance creation
+    vpLab = None
+    pid = None
+    try:
+        vpLab = win32com.client.Dispatch("VPLab.Application")
+        vpLab.FileSource1(xmp_paths[0])
+        vpLab.FileSource2(xmp_paths[1])
+        vpLab.FileResult(outfile)
+        vpLab.Operation("MapUnion")
 
-    # Close VPLab
-    pid=vpLab.GetPID
-    cmd = 'taskkill /PID ' + str(pid) + ' /F'
-    os.system(cmd)
+        # COM wrappers can expose Process/GetPID as methods or properties.
+        process_member = vpLab.Process
+        if callable(process_member):
+            process_member()
+
+        pid_member = vpLab.GetPID
+        pid = pid_member() if callable(pid_member) else pid_member
+    finally:
+        if vpLab is not None:
+            for close_name in ("Quit", "Close", "Exit"):
+                close_member = getattr(vpLab, close_name, None)
+                if callable(close_member):
+                    try:
+                        close_member()
+                        break
+                    except Exception:
+                        pass
+
+        # Fallback: if COM close is unavailable, force close by PID.
+        if pid:
+            cmd = 'taskkill /PID ' + str(pid) + ' /F'
+            os.system(cmd)
     
     # show the result
     xmpviewer = CreateObject("XMPViewer.Application")
