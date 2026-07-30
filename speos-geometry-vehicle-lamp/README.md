@@ -1,11 +1,11 @@
-This version is tested with Speos RPC 2026R1 SP2, 
+This version is tested with Speos RPC 2026R1 SP2,
 PySpeos (ansys-speos-core) version 0.9.0,
 and PyAnsys Geometry (ansys-geometry-core) version 0.15.2.
 
-This tool is meant only for demonstration purposes. 
+This tool is meant only for demonstration purposes.
 It can be used as a starting point or reference for larger custom projects.
 
-This tool utilizes the ansys geometry interface for CAD import, which can be 
+This tool utilizes the ansys geometry interface for CAD import, which can be
 installed from the ansys universal installer or as a part of the Discovery installation.
 More information can be found here:
 https://geometry.docs.pyansys.com/version/0.6/getting_started/faq.html#how-is-the-ansys-geometry-service-installed
