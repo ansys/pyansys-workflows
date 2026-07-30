@@ -1006,7 +1006,9 @@ def main():
     plt.xlabel("Design ID")
     plt.ylabel(f"Resonance frequency [GHz] (Target: {TARGET_FREQUENCY}GHz)")
     plt.grid(True)
-    plt.show()
+    plt.savefig(Path(working_dir, "freq_convergence.png"))
+    if not NG_MODE:
+        plt.show()
 
     ###############################################################################
     # Release optiSLang
