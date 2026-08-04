@@ -59,7 +59,7 @@ class vbbwindow(Ui_MainWindow, QMainWindow):
     def __init__(self):
         super().__init__()
         self.setupUi(self)
-        self.setWindowTitle("Virtual BSDF Builder v0.5.1")
+        self.setWindowTitle("Virtual BSDF Builder v0.5.2")
         self._simulationTab()
         self._geometryTab()
         self._sourceTab()

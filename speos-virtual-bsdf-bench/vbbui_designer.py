@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'vbbUIv4Qvrprs.ui'
+## Form generated from reading UI file 'vbbUIv4AqObTS.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.11.1
 ##
@@ -38,7 +38,7 @@ class Ui_MainWindow(object):
         self.Simulation.setObjectName(u"Simulation")
         self.wavelengthGb = QGroupBox(self.Simulation)
         self.wavelengthGb.setObjectName(u"wavelengthGb")
-        self.wavelengthGb.setGeometry(QRect(20, 320, 90, 185))
+        self.wavelengthGb.setGeometry(QRect(20, 320, 111, 185))
         self.verticalLayout_3 = QVBoxLayout(self.wavelengthGb)
         self.verticalLayout_3.setObjectName(u"verticalLayout_3")
         self.label = QLabel(self.wavelengthGb)
@@ -511,6 +511,7 @@ class Ui_MainWindow(object):
         self.thetaSampleSb = QSpinBox(self.layoutWidget_2)
         self.thetaSampleSb.setObjectName(u"thetaSampleSb")
         self.thetaSampleSb.setMinimum(2)
+        self.thetaSampleSb.setMaximum(999)
         self.thetaSampleSb.setSingleStep(1)
         self.thetaSampleSb.setValue(9)
 
@@ -533,7 +534,7 @@ class Ui_MainWindow(object):
         self.sourcePhiBox.setGeometry(QRect(50, 170, 400, 251))
         self.layoutWidget_3 = QWidget(self.sourcePhiBox)
         self.layoutWidget_3.setObjectName(u"layoutWidget_3")
-        self.layoutWidget_3.setGeometry(QRect(10, 30, 210, 124))
+        self.layoutWidget_3.setGeometry(QRect(10, 30, 212, 124))
         self.formLayout_4 = QFormLayout(self.layoutWidget_3)
         self.formLayout_4.setObjectName(u"formLayout_4")
         self.formLayout_4.setContentsMargins(0, 0, 0, 0)
@@ -569,6 +570,7 @@ class Ui_MainWindow(object):
         self.phiSampleSb = QSpinBox(self.layoutWidget_3)
         self.phiSampleSb.setObjectName(u"phiSampleSb")
         self.phiSampleSb.setMinimum(2)
+        self.phiSampleSb.setMaximum(9999)
         self.phiSampleSb.setSingleStep(1)
         self.phiSampleSb.setValue(36)
 
@@ -693,6 +695,7 @@ class Ui_MainWindow(object):
         self.sensorPhiSampleSb = QSpinBox(self.layoutWidget_7)
         self.sensorPhiSampleSb.setObjectName(u"sensorPhiSampleSb")
         self.sensorPhiSampleSb.setMinimum(2)
+        self.sensorPhiSampleSb.setMaximum(999)
         self.sensorPhiSampleSb.setSingleStep(5)
         self.sensorPhiSampleSb.setValue(36)
 
@@ -752,6 +755,7 @@ class Ui_MainWindow(object):
         self.sensorThetaSampleSb = QSpinBox(self.layoutWidget_8)
         self.sensorThetaSampleSb.setObjectName(u"sensorThetaSampleSb")
         self.sensorThetaSampleSb.setMinimum(2)
+        self.sensorThetaSampleSb.setMaximum(999)
         self.sensorThetaSampleSb.setSingleStep(1)
         self.sensorThetaSampleSb.setValue(11)
 
@@ -872,8 +876,8 @@ class Ui_MainWindow(object):
 
         self.stackedSensorWidget.setCurrentIndex(0)
         self.rayUnitCb.setCurrentIndex(0)
-        self.geoWidget.setCurrentIndex(1)
-        self.stackedSourceWidget.setCurrentIndex(1)
+        self.geoWidget.setCurrentIndex(0)
+        self.stackedSourceWidget.setCurrentIndex(0)
         self.sensorTypeCombo.setCurrentIndex(0)
 
 

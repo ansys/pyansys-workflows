@@ -7,7 +7,9 @@ It provides a workflow to:
 - Configure material and simulation modes.
 - Build, preview, run, and cancel simulation jobs.
 - Export simulation results into timestamped output folders.
+## Version 0.5.2
 
+- Increase source maximum sampling to theta->999 phi ->9999
 ## Version 0.5.1
 
 Release highlights:
