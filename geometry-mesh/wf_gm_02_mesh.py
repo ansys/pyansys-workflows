@@ -31,6 +31,8 @@ imported from a file, and the mesh is generated using the Ansys PRIME API.
 
 """  # noqa: D400, D415
 
+# sphinx_gallery_thumbnail_number = 2
+
 import os
 from pathlib import Path
 
