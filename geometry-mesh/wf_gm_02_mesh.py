@@ -110,7 +110,7 @@ if GRAPHICS_BOOL:
 #
 
 # Element size
-element_size = 0.5
+element_size = 5.0
 
 # Get topoface IDs
 faces = part.get_topo_faces()
@@ -126,7 +126,6 @@ surfer_params = prime.SurferParams(
     model=model,
     size_field_type=prime.SizeFieldType.CONSTANT,
     constant_size=element_size,
-    generate_quads=True,
 )
 
 surfer_result = prime.Surfer(model).mesh_topo_faces(part.id, topo_faces=faces, params=surfer_params)
