@@ -81,7 +81,7 @@ model = prime_client.model
 modeling_file = Path(OUTPUT_DIR, "modeling_demo.fmd")
 file_io = prime.FileIO(model)
 file_io.import_cad(
-    file_name=modeling_file,
+    file_name=str(modeling_file),
     params=prime.ImportCadParams(
         model=model,
     ),
@@ -102,33 +102,16 @@ if GRAPHICS_BOOL:
 # The mesh is generated using the Ansys PRIME API. The mesh is generated using
 # the following steps:
 #
-# 1. Initialize the connection tolerance and other parameters.
-# 2. Scaffold the part.
-# 3. Mesh the surfaces.
-# 4. Write the mesh to a file.
+# 1. Mesh the surfaces of the part.
+# 2. Mesh the volume of the part.
+# 3. Write the mesh to a file.
 #
 
-# Initialize the connection tolerance and other parameters --
-#
-# Target element size
+# Element size
 element_size = 0.5
 
-# Initialize the parameters
-params = prime.ScaffolderParams(
-    model,
-    absolute_dist_tol=0.1 * element_size,
-    intersection_control_mask=prime.IntersectionMask.FACEFACEANDEDGEEDGE,
-    constant_mesh_size=element_size,
-)
-
-# Get existing topoface or topoedge IDs
+# Get topoface IDs
 faces = part.get_topo_faces()
-beams = []
-
-scaffold_res = prime.Scaffolder(model, part.id).scaffold_topo_faces_and_beams(
-    topo_faces=faces, topo_beams=beams, params=params
-)
-print(scaffold_res)
 
 ###############################################################################
 # Surface meshing
@@ -146,10 +129,28 @@ surfer_params = prime.SurferParams(
 
 surfer_result = prime.Surfer(model).mesh_topo_faces(part.id, topo_faces=faces, params=surfer_params)
 
+###############################################################################
+# Volume meshing
+# ---------------
+#
+
+volume_mesh = prime.AutoMesh(model)
+auto_mesh_param = prime.AutoMeshParams(
+    model,
+    size_field_type=prime.SizeFieldType.GEOMETRIC,
+    volume_fill_type=prime.VolumeFillType.TET,
+)
+volume_mesh.mesh(part.id, auto_mesh_param)
+
 # Display the mesh
 if GRAPHICS_BOOL:
     display = Graphics(model=model)
-    display()
+    display(update=True)
+
+# Review the mesh
+part = model.get_part_by_name("modelingdemo")
+part_summary_res = part.get_summary(prime.PartSummaryParams(model, print_mesh=True))
+print(part_summary_res)
 
 ###############################################################################
 # Export the mesh
@@ -158,7 +159,7 @@ if GRAPHICS_BOOL:
 # MAPDL case.
 #
 mapdl_cdb = Path(OUTPUT_DIR, "modeling_demo.cdb")
-file_io.export_mapdl_cdb(mapdl_cdb, params=prime.ExportMapdlCdbParams(model))
+file_io.export_mapdl_cdb(str(mapdl_cdb), params=prime.ExportMapdlCdbParams(model))
 assert os.path.exists(mapdl_cdb)
 print(f"MAPDL case exported at {mapdl_cdb}")
 
