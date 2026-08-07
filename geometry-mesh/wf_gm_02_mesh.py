@@ -94,10 +94,6 @@ part = model.get_part_by_name("modelingdemo")
 part_summary_res = part.get_summary(prime.PartSummaryParams(model, print_mesh=False))
 print(part_summary_res)
 
-if GRAPHICS_BOOL:
-    display = Graphics(model=model)
-    display()
-
 ###############################################################################
 # Mesh generation
 # ---------------
@@ -110,7 +106,7 @@ if GRAPHICS_BOOL:
 #
 
 # Element size
-element_size = 5.0
+element_size = 2.0
 
 # Get topoface IDs
 faces = part.get_topo_faces()
@@ -146,7 +142,7 @@ volume_mesh.mesh(part.id, auto_mesh_param)
 # Display the mesh
 if GRAPHICS_BOOL:
     display = Graphics(model=model)
-    display(update=True)
+    display()
 
 # Review the mesh
 part = model.get_part_by_name("modelingdemo")
