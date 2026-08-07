@@ -104,7 +104,7 @@ print(part_summary_res)
 #
 
 # Element size
-element_size = 2.5
+element_size = 4.0
 
 # Get topoface IDs
 faces = part.get_topo_faces()
