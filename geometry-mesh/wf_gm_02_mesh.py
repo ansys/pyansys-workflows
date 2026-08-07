@@ -31,8 +31,6 @@ imported from a file, and the mesh is generated using the Ansys PRIME API.
 
 """  # noqa: D400, D415
 
-# sphinx_gallery_thumbnail_number = 2
-
 import os
 from pathlib import Path
 
@@ -106,7 +104,7 @@ print(part_summary_res)
 #
 
 # Element size
-element_size = 2.0
+element_size = 2.5
 
 # Get topoface IDs
 faces = part.get_topo_faces()
