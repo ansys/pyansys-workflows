@@ -37,7 +37,7 @@ import os
 from pathlib import Path
 
 from ansys.meshing import prime
-from ansys.meshing.prime.graphics import PrimePlotter
+from ansys.meshing.prime.graphics import Graphics
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -96,9 +96,8 @@ print(part_summary_res)
 
 # Display the imported geometry
 if GRAPHICS_BOOL:
-    plotter = PrimePlotter()
-    plotter.plot(model)
-    plotter.show()
+    display = Graphics(model=model)
+    display()
 
 ###############################################################################
 # Mesh generation
@@ -147,9 +146,9 @@ volume_mesh.mesh(part.id, auto_mesh_param)
 
 # Display the mesh
 if GRAPHICS_BOOL:
-    plotter = PrimePlotter()
-    plotter.plot(model, update=True)
-    plotter.show()
+    model._model_pv_mesh = None
+    display = Graphics(model=model)
+    display()
 
 # Review the mesh
 part = model.get_part_by_name("modelingdemo")
