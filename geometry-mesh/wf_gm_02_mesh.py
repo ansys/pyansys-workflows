@@ -31,11 +31,13 @@ imported from a file, and the mesh is generated using the Ansys PRIME API.
 
 """  # noqa: D400, D415
 
+# sphinx_gallery_thumbnail_number = 2
+
 import os
 from pathlib import Path
 
 from ansys.meshing import prime
-from ansys.meshing.prime.graphics import Graphics
+from ansys.meshing.prime.graphics import PrimePlotter
 
 # sphinx_gallery_start_ignore
 # Check if the __file__ variable is defined. If not, set it.
@@ -92,6 +94,12 @@ part = model.get_part_by_name("modelingdemo")
 part_summary_res = part.get_summary(prime.PartSummaryParams(model, print_mesh=False))
 print(part_summary_res)
 
+# Display the imported geometry
+if GRAPHICS_BOOL:
+    plotter = PrimePlotter()
+    plotter.plot(model)
+    plotter.show()
+
 ###############################################################################
 # Mesh generation
 # ---------------
@@ -139,8 +147,9 @@ volume_mesh.mesh(part.id, auto_mesh_param)
 
 # Display the mesh
 if GRAPHICS_BOOL:
-    display = Graphics(model=model)
-    display()
+    plotter = PrimePlotter()
+    plotter.plot(model, update=True)
+    plotter.show()
 
 # Review the mesh
 part = model.get_part_by_name("modelingdemo")
