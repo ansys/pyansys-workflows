@@ -10,6 +10,7 @@
 * [Camille Latapie](https://github.com/clatapie)
 * [Dipin](https://github.com/dipinknair)
 * [Kathy Pippert](https://github.com/PipKat)
+* [Martin Walters](https://github.com/waltersma)
 * [Maxime Rey](https://github.com/MaxJPRey)
 * [Pengyuan LU](https://github.com/pluAtAnsys)
 * [Rajesh Meena](https://github.com/MeenaBytes)
