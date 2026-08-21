@@ -7,9 +7,7 @@ It provides a workflow to:
 - Configure material and simulation modes.
 - Build, preview, run, and cancel simulation jobs.
 - Export simulation results into timestamped output folders.
-## Version 0.5.2
 
-- Increase source maximum sampling to theta->999 phi ->9999
 ## Version 0.5.1
 
 Release highlights:
@@ -37,6 +35,9 @@ Project dependencies are defined in `pyproject.toml`:
 Development dependency:
 
 - `pyinstaller>=6.20.0`
+
+### Model requirement
+The object model center should locate at global (0,0,0). This is necessary for both .obj and lightbox
 
 ## Core Features
 
