@@ -21,7 +21,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: "Run PyAnsys code style checks"
-        uses: ansys/actions/code-style@v11.0.2
+        uses: ansys/actions/code-style@v11.0.3
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
