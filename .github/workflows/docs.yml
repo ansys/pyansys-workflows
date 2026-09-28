@@ -176,7 +176,7 @@ jobs:
     if: ${{ github.event_name == 'schedule' && failure() }}
     steps:
       - name: Microsoft Teams Notification
-        uses: skitionek/notify-microsoft-teams@216b8b28967e7e89b0b64b81dc94aeae90e642ab # v1.3.0
+        uses: skitionek/notify-microsoft-teams@2cf0b0df520f148c192026ebfdc25fdfa85c1687 # v1.3.2
         with:
           webhook_url: ${{ secrets.MSTEAMS_WEBHOOK }}
           raw: >-
