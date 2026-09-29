@@ -148,6 +148,7 @@ def examples_gallery_dirs_and_filename_pattern():
             "../../speos-optislang",
             "../../maxwell2d-lumerical",
             "../../q3d-lumerical",
+            "../../aedt-optislang",
         ]
         gallery_dirs = [
             "examples/geometry-mesh",
@@ -159,6 +160,7 @@ def examples_gallery_dirs_and_filename_pattern():
             "examples/speos-optislang",
             "examples/maxwell2d-lumerical",
             "examples/q3d-lumerical",
+            "examples/aedt-optislang",
         ]
 
     return examples_dirs, gallery_dirs, filename_pattern
