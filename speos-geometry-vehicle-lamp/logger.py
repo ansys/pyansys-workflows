@@ -19,18 +19,21 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""Logging helpers that write messages and progress to a Tkinter text widget."""
 
 log_widget = None
 tk_master = None
 
 
 def init_logger(master, widget):
+    """Register the Tkinter root window and the text widget used for logging."""
     global tk_master, log_widget
     tk_master = master
     log_widget = widget
 
 
 def log_message(msg):
+    """Append a line to the log widget."""
     if log_widget is None:
         return
     log_widget.config(state="normal")
@@ -41,6 +44,7 @@ def log_message(msg):
 
 
 def log_progress_inline(percent):
+    """Replace the last log line with a text progress bar for the given percentage."""
     if log_widget is None:
         return
 
@@ -61,5 +65,6 @@ def log_progress_inline(percent):
 
 
 def force_update():
+    """Process pending GUI events so the log refreshes during long operations."""
     if tk_master:
         tk_master.update()

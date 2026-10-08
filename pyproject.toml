@@ -11,5 +11,6 @@ src_paths = [
     "geometry-mechanical-dpf",
     "geometry-mesh-fluent",
     "geometry-mesh",
+    "speos-geometry-vehicle-lamp",
     "speos-optislang",
 ]

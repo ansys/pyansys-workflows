@@ -19,22 +19,26 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Tkinter GUI for the vehicle lamp PySpeos lit-appearance demo.
 
-# This tool imports CAD data and runs a Speos ray tracing simulation.
-# Optical material data is applied based on body names, according to a user-specified library (xlsx).
-# Sensors are specified by coordinate axes by name, and use a user-specified library (xlsx).
-# Sources are specified by object name, and settings are determined by a user-specified library (xlsx).
-#
-# Provision of this resource is intended for demonstration purposes only.
-#
-# Zach Derocher
+This tool imports CAD data and runs a Speos ray tracing simulation.
+Optical material data is applied based on body names, per a user-specified library (xlsx).
+Sensors are specified by coordinate axes by name, and use a user-specified library (xlsx).
+Sources are specified by object name, and settings come from a user-specified library (xlsx).
 
+Provision of this resource is intended for demonstration purposes only.
+
+Author: Zach Derocher
+
+"""
 
 import os
 import tkinter as tk
 from tkinter import filedialog
 
 import PySpeos_LitAppearance_Demo
+from PySpeos_LitAppearance_Demo import BASE_DIR
 import logger
 from logger import log_message
 
@@ -46,7 +50,8 @@ color_green = "#d3fbc5"
 
 
 class pyspeos_sim:
-    # holds the pyspeos object and some metadata
+    """Hold the PySpeos objects and run state for the current session."""
+
     def __init__(self):
         self.built = tk.BooleanVar()
         self.built.set(False)
@@ -64,7 +69,7 @@ class pyspeos_sim:
 
 
 def buttonpress_exit():
-    # terminates the gui
+    """Close the GUI."""
     master.destroy()
 
 
@@ -75,8 +80,7 @@ def buttonpress_import_cad(
     sensor_settings_filepath,
     source_settings_filepath,
 ):
-    # generates the pyspeos connection and model
-
+    """Import the CAD data and build the PySpeos project from the selected files."""
     # build model
     build_result = PySpeos_LitAppearance_Demo.import_cad(
         speos_session=speos_session,
@@ -96,11 +100,12 @@ def buttonpress_import_cad(
 
 
 def buttonpress_preview_simulation(speos_session):
-    # pop-up window of pyspeos preview
+    """Open the PySpeos preview window."""
     speos_session.project.preview()
 
 
 def buttonpress_run_direct_simulation(speos_session):
+    """Run the direct simulation on the GPU and store the result path."""
     log_message("running direct simulation on GPU...")
     logger.log_message("")
     # run the simulation with the current pyspeos model
@@ -112,6 +117,7 @@ def buttonpress_run_direct_simulation(speos_session):
 
 
 def buttonpress_run_inverse_simulation(speos_session):
+    """Run the inverse simulation on the GPU and store the result path."""
     log_message("running inverse simulation on GPU...")
     logger.log_message("")
     # run the simulation with the current pyspeos model
@@ -123,13 +129,15 @@ def buttonpress_run_inverse_simulation(speos_session):
 
 
 def buttonpress_merge_results(xmp_paths):
-    # merges the inverse and direct results
+    """Merge the direct and inverse XMP results."""
     results_path = PySpeos_LitAppearance_Demo.merge_results(xmp_paths)
 
 
 def buttonpress_browse_cad():
     """
-    from py-ansys-geometry the latest supported file types for import are:
+    Select a CAD file through a file dialog.
+
+    From PyAnsys Geometry, the latest supported file types for import are:
     ___
     Format and latest supported version
         * AutoCAD 2024
@@ -153,7 +161,7 @@ def buttonpress_browse_cad():
     ]
     selected_path = filedialog.askopenfilename(
         parent=master,
-        initialdir=os.getcwd(),
+        initialdir=BASE_DIR,
         title="Select a CAD file",
         filetypes=allowed_filetypes,
     )
@@ -163,10 +171,11 @@ def buttonpress_browse_cad():
 
 
 def buttonpress_browse_xlsx(target_var, text):
+    """Select an Excel settings file and store its path in ``target_var``."""
     allowed_filetypes = [("Excel File", "*.xlsx"), ("All Files", "*.*")]
     selected_path = filedialog.askopenfilename(
         parent=master,
-        initialdir=os.getcwd(),
+        initialdir=BASE_DIR,
         title=f"Select an excel file describing material properties for {text} settings",
         filetypes=allowed_filetypes,
     )
@@ -178,7 +187,7 @@ def buttonpress_browse_xlsx(target_var, text):
 def update_buttons(
     speos_session, button_preview, button_run_direct, button_run_inverse, button_merge
 ):
-    # only allow preview/run if the model has been built
+    """Enable preview and run buttons once built, and merge once both runs are complete."""
     if speos_session.built.get():
         button_preview.config(state="normal")
         button_run_direct.config(state="normal")
@@ -195,6 +204,7 @@ def update_buttons(
 
 
 def main():
+    """Build and run the GUI."""
     # create the class to hold our pyspeos project
     if "speos_session" not in globals():
         speos_session = pyspeos_sim()
@@ -219,7 +229,7 @@ def main():
     tb_material = tk.Entry(master, textvariable=master.material_path)
     tb_material.place(relx=0.18, rely=rely_material, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    material_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Material.xlsx")
+    material_data_path_init = os.path.join(BASE_DIR, "SpeosModel", "Settings_Material.xlsx")
     if os.path.isfile(material_data_path_init):
         master.material_path.set(material_data_path_init)
     else:
@@ -241,7 +251,7 @@ def main():
     tb_source = tk.Entry(master, textvariable=master.source_path)
     tb_source.place(relx=0.18, rely=rely_source, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    source_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Source.xlsx")
+    source_data_path_init = os.path.join(BASE_DIR, "SpeosModel", "Settings_Source.xlsx")
     if os.path.isfile(source_data_path_init):
         master.source_path.set(source_data_path_init)
     else:
@@ -263,7 +273,7 @@ def main():
     tb_sensor = tk.Entry(master, textvariable=master.sensor_path)
     tb_sensor.place(relx=0.18, rely=rely_sensor, width=800, anchor=tk.W)
     # initialize for convenience, if possible
-    sensor_data_path_init = os.path.join(os.getcwd(), "SpeosModel", "Settings_Sensor.xlsx")
+    sensor_data_path_init = os.path.join(BASE_DIR, "SpeosModel", "Settings_Sensor.xlsx")
     if os.path.isfile(sensor_data_path_init):
         master.sensor_path.set(sensor_data_path_init)
     else:

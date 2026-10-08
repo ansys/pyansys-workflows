@@ -19,30 +19,42 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""
+Build and run a Speos lit-appearance simulation of a vehicle lamp using PySpeos.
+
+The CAD data is imported through the Ansys Geometry Service and tessellated into a PySpeos
+project. Materials, sensors, and sources are defined by user-supplied Excel libraries and
+by object names in the CAD model. A direct (lamp) and an inverse (ambient light) simulation
+are run on the GPU, and their XMP results are merged into one lit-appearance result.
+
+"""  # noqa: D400, D415
 
 import os
+from pathlib import Path
 import shutil
 import time
 
 from ansys.geometry.core import launch_modeler
 from ansys.geometry.core.designer.component import Component
 from ansys.geometry.core.misc.options import ImportOptions, TessellationOptions
-from ansys.speos.core import Body, Face, Part, launcher, project
+from ansys.speos.core import Face, Part, launcher, project
 from ansys.speos.core.geo_ref import GeoRef
 from ansys.speos.core.kernel.job import ProtoJob
 from ansys.speos.core.opt_prop import OptProp
 from ansys.speos.core.sensor import SensorRadiance
 from ansys.speos.core.simulation import SimulationDirect, SimulationInverse
 from ansys.speos.core.source import SourceAmbientNaturalLight, SourceLuminaire, SourceSurface
-from ansys.speos.core.workflow import open_result
 from comtypes.client import CreateObject
-import logger
-from logger import log_message
 import numpy as np
 import pandas as pd
-import plot_helper
-import progressbar
 import win32com.client
+
+import logger
+from logger import log_message
+import plot_helper
+
+BASE_DIR = Path(__file__).resolve().parent
+"""Folder that contains this script, the Library folder, and the SpeosModel folder."""
 
 
 def import_cad(
@@ -52,7 +64,29 @@ def import_cad(
     sensor_settings_filepath="",
     source_settings_filepath="",
 ):
-    """imports the CAD data into the Speos session"""
+    """
+    Import the CAD data and build the PySpeos project and simulations.
+
+    Parameters
+    ----------
+    speos_session : pyspeos_sim
+        Session holding the state of a previous build, used to reuse the modeler and server.
+    cad_data_filepath : str
+        Path to the CAD file.
+    material_settings_filepath : str
+        Path to the Excel file that assigns materials to bodies.
+    sensor_settings_filepath : str
+        Path to the Excel file that defines the sensors.
+    source_settings_filepath : str
+        Path to the Excel file that defines the sources.
+
+    Returns
+    -------
+    list
+        The Speos RPC server, the modeler, the project, the direct simulation, and the
+        inverse simulation.
+
+    """
 
     ### error handling on input data
 
@@ -94,7 +128,7 @@ def import_cad(
         fine_mesh_substr = [
             "HEX",
             "Lightguide",
-        ]  # hacky hard-code for optical designs; ideally mesh settings would be defined in materials XLSX, or UI
+        ]  # hard-coded for optical designs; ideally set in the materials XLSX or UI
         if any(sub in speos_body_name for sub in fine_mesh_substr):
             log_message(f"fine mesh on body: {speos_body_name}")
             tessellation_options = TessellationOptions(
@@ -127,14 +161,14 @@ def import_cad(
         # if merge=False, need to loop through blocks
         ### EXAMPLE PSEUDO-CODE ###
         # for block in mesh:
-        #    facets = block.faces[np.mod(np.arange(mesh.faces.size),4)!=0] # remove every 4th entry (that is the number of vertices for the facet; for pyspeos it is always n=3)
+        # remove every 4th entry (the facet vertex count; always 3 for pyspeos)
+        #    facets = block.faces[np.mod(np.arange(mesh.faces.size),4)!=0]
         #    vertices = 1000*block.points.flatten()
         #    vertex_normals = block.point_normals.flatten()
 
         # if merge=True, the entire body is one block
-        facets = mesh.faces[
-            np.mod(np.arange(mesh.faces.size), 4) != 0
-        ]  # remove every 4th entry (that is the number of vertices for the facet; for pyspeos it is always n=3)
+        # remove every 4th entry (the facet vertex count; always 3 for pyspeos)
+        facets = mesh.faces[np.mod(np.arange(mesh.faces.size), 4) != 0]
         vertices = 1000 * mesh.points.flatten()
         vertex_normals = mesh.point_normals.flatten()
 
@@ -184,7 +218,7 @@ def import_cad(
                     optical_property.set_volume_optic().absorption = 0
                     optical_property.set_volume_optic().constringence = None
                 except:
-                    # set_volume_optic(index, absorption, constringence) is the old pyspeos syntax (<0.9.0)
+                    # set_volume_optic(index, absorption, ...) is old pyspeos syntax (<0.9.0)
                     optical_property.set_volume_optic(
                         index=index_of_refraction, absorption=0, constringence=None
                     )
@@ -214,9 +248,8 @@ def import_cad(
                 # don't allow on transparent VOP
                 if material_data["VOP"].item() != "Opaque":
                     log_message(
-                        "Error in Material Library, on material '"
-                        + material_data["Material_Name"].item()
-                        + "'\nmirror SOP on non-opaque VOP"
+                        f"Error in Material Library, on material "
+                        f"{material_data['Material_Name'].item()}\nmirror SOP on non-opaque VOP"
                     )
                     log_message("unable to set VOP")
                     optical_property.set_volume_opaque()
@@ -230,9 +263,8 @@ def import_cad(
                 # don't allow on opaque VOP
                 if material_data["VOP"].item() == "Opaque":
                     log_message(
-                        "Error in Material Library, on material '"
-                        + material_data["Material_Name"].item()
-                        + "'\noptical polish SOP on opaque VOP"
+                        f"Error in Material Library, on material "
+                        f"{material_data['Material_Name'].item()}\noptical polish SOP on opaque VOP"
                     )
                     log_message("unable to set VOP")
                     try:
@@ -241,7 +273,7 @@ def import_cad(
                         optical_vop.absorption = 0
                         optical_vop.constringence = None
                     except:
-                        # set_volume_optic(index, absorption, constringence) is the old pyspeos syntax (<0.9.0)
+                        # set_volume_optic(index, absorption, ...) is old pyspeos syntax (<0.9.0)
                         optical_property.set_volume_optic(
                             index=1.0, absorption=0, constringence=None
                         )
@@ -254,9 +286,8 @@ def import_cad(
                 # check file existance
                 if not os.path.exists(sop_data_path):
                     log_message(
-                        "\nError in Material Library, on material '"
-                        + material_data["Material_Name"].item()
-                        + "'"
+                        f"\nError in Material Library, on material "
+                        f"{material_data['Material_Name'].item()}"
                     )
                     log_message("material data file path not found (" + sop_data_path + ")")
                     log_message("reverting to mirror\n")
@@ -321,24 +352,23 @@ def import_cad(
         return
 
     def create_source_luminaire(p, cs, this_source_data):
+        """Create a luminaire source at the coordinate system cs from library data."""
         # create the surface source
         source_name = this_source_data["Source_Name"].item()
         this_source = p.create_source(name=source_name, feature_type=SourceLuminaire)
 
         # get library path
         library_data_dir, fname = os.path.split(library_data_filepath)
-        ies_data_path = (
-            library_data_dir + "\\Library_Data\\Source\\" + this_source_data["Ies_File"].item()
-        )
-        spectrum_data_path = (
-            library_data_dir + "\\Library_Data\\Source\\" + this_source_data["Spectrum_File"].item()
-        )
+        library_source_dir = library_data_dir + "\\Library_Data\\Source"
+        ies_data_path = library_source_dir + "\\" + this_source_data["Ies_File"].item()
+        spectrum_data_path = library_source_dir + "\\" + this_source_data["Spectrum_File"].item()
         try:
             this_source.intensity_file_uri = ies_data_path
             this_source.flux.set_luminous().value = this_source_data["Flux_Luminous"].item()
             this_source.spectrum.set_library().file_uri = spectrum_data_path
         except:
-            # set_intensity_file_uri, set_flux_luminous, and set_spectrum().set_library() are the old pyspeos syntax (<0.9.0)
+            # set_intensity_file_uri, set_flux_luminous,
+            # and set_spectrum().set_library() are the old pyspeos syntax (<0.9.0)
             this_source.set_intensity_file_uri(ies_data_path)
             this_source.set_flux_luminous(this_source_data["Flux_Luminous"].item())
             spectrum = this_source.set_spectrum()
@@ -378,16 +408,13 @@ def import_cad(
             feature = p.find(name=row["Parent_Name"], name_regex=True, feature_type=Part)
             if len(feature) > 1:
                 log_message(
-                    "error: multiple bodies found with body name specified for source <"
-                    + row["Body_Name"]
-                    + ">"
+                    f"error: multiple bodies found with body name specified "
+                    f"for source <{row['Body_Name']}>"
                 )
                 continue
             if feature == []:
                 log_message(
-                    "error: no body found with body name specified for source <"
-                    + row["Body_Name"]
-                    + ">"
+                    f"error: no body found with body name specified for source <{row['Body_Name']}>"
                 )
                 continue
             feature = feature[0]
@@ -407,7 +434,8 @@ def import_cad(
                     this_source.set_exitance_constant(geometries=geoms)
             else:
                 log_message(
-                    "\nWARNING: face selection for surface source not currently supported\nface picker may lock up due to tkinter/pyvista interoperability issue\n"
+                    "\nWARNING: face selection for surface source not currently supported\n"
+                    + "face picker may lock up due to tkinter/pyvista interoperability issue\n"
                 )
                 ######## UNDER CONSTRUCTION ########
                 # re-tessellate the body in order to allow face-selection in GUI
@@ -427,7 +455,7 @@ def import_cad(
                     library_data_dir + "\\Library_Data\\Source\\" + row["Spectrum_File"]
                 )
             except:
-                # set_flux_luminous and set_spectrum().set_library() are the old pyspeos syntax (<0.9.0)
+                # set_flux_luminous and set_spectrum().set_library() are old pyspeos syntax (<0.9.0)
                 this_source.set_flux_luminous(row["Flux_Luminous"])
                 spectrum_filepath = (
                     library_data_dir + "\\Library_Data\\Source\\" + row["Spectrum_File"]
@@ -457,6 +485,7 @@ def import_cad(
         return source_name
 
     def create_inverse_simulation(p, sensors, sources):
+        """Create the inverse simulation for the given sensors and sources."""
         # === create the speos simulation object ===
         sim_name = "inversesim_ambient"
         sim = p.create_simulation(name=sim_name, feature_type=SimulationInverse)
@@ -474,7 +503,8 @@ def import_cad(
             sim.stop_condition_passes_number = 50
             sim.stop_condition_duration = 10000
         except:
-            # set_dispersion, set_stop_condition_passes_number, and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
+            # set_dispersion, set_stop_condition_passes_number,
+            # and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
             sim.set_dispersion(True)
             sim.set_stop_condition_passes_number(50)
             sim.set_stop_condition_duration(10000)
@@ -482,6 +512,7 @@ def import_cad(
         return sim
 
     def create_direct_simulation(p, sensors, sources):
+        """Create the direct simulation for the given sensors and sources."""
         # === create the speos simulation object ===
         sim_name = "directsim_lamp_lit"
         sim = p.create_simulation(name=sim_name, feature_type=SimulationDirect)
@@ -499,7 +530,8 @@ def import_cad(
             sim.stop_condition_rays_number = None  # hard-coded number of rays
             sim.stop_condition_duration = 180
         except:
-            # set_dispersion, set_stop_condition_rays_number, and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
+            # set_dispersion, set_stop_condition_rays_number,
+            # and set_stop_condition_duration are the old pyspeos syntax (<0.9.0)
             sim.set_dispersion(True)
             sim.set_stop_condition_rays_number(None)  # hard-coded number of rays
             sim.set_stop_condition_duration(180)
@@ -572,7 +604,7 @@ def import_cad(
 
             # if list(modeler_subcomp.get_world_transform().flat) != list(np.identity(4).flat):
             #    #not necessary to check, since the mesh data is in global coordinates
-            #    log_message("Warning: subcomponent <" + modeler_subcomp.name + "> position/orientation was not correctly imported")
+            #    log_message("Warning: subcomponent <" + modeler_subcomp.name + ">")
             #    log_message(modeler_subcomp.get_world_transform())
             #    axis = list(modeler_subcomp.get_world_transform().flat)
             #    speos_axis = [1e3*axis[12], 1e3*axis[13], 1e3*axis[14], 1, 0, 0, 0, 1, 0, 0, 0, 1]
@@ -698,10 +730,10 @@ def import_cad(
     else:
         log_message("Building Speos Model")
         log_message("Launching Geometry Service...")
-        # modeler = launch_modeler(mode="spaceclaim", hidden=True) # mode="discovery", mode="geometry_service"
+        # modeler = launch_modeler(mode="spaceclaim", hidden=True)
         modeler = launch_modeler(mode="geometry_service", version="261")
         log_message("Launching SPEOS RPC server...")
-        # check your port by running C:\Program Files\ANSYS Inc\vXXX\Optical Products\SPEOS_RPC\SpeosRPC_Server.exe
+        # check port by running SpeosRPC_Server.exe in the Optical Products\SPEOS_RPC folder
         pyspeos = launcher.launch_local_speos_rpc_server(version="261")
 
     ### Create new pyspeos project
@@ -711,12 +743,12 @@ def import_cad(
 
     ### Import the material library data
     global library_data_filepath
-    library_data_filepath = os.getcwd() + "\\Library\\MaterialsLibrary.xlsx"
+    library_data_filepath = str(BASE_DIR / "Library" / "MaterialsLibrary.xlsx")
     material_library_data = load_settings(library_data_filepath)
 
     ### Import the settings data
     global project_folder
-    project_folder = os.getcwd() + "\\SpeosModel"
+    project_folder = str(BASE_DIR / "SpeosModel")
     material_settings_data = load_settings(material_settings_filepath)
     sensor_settings_data = load_settings(sensor_settings_filepath)
     source_settings_data = load_settings(source_settings_filepath)
@@ -738,7 +770,8 @@ def import_cad(
     )
 
     ### Set up remaining Speos simulation items
-    # create remaining sources (we've only created the luminaires during the retrieve_design_data step)
+    # create remaining sources
+    # #(we've only created the luminaires during the retrieve_design_data step)
     create_source_surface(p, modeler_design)
 
     # create the direct simulation
@@ -752,7 +785,22 @@ def import_cad(
 
 
 def run_simulation(sim, p):
-    """runs the speos simulation, retrieves the results, and opens in XMP viewer"""
+    """
+    Run a simulation on the GPU, copy the results to the project folder, and open them.
+
+    Parameters
+    ----------
+    sim : SimulationDirect or SimulationInverse
+        Simulation to run.
+    p : ansys.speos.core.Project
+        Project that owns the simulation.
+
+    Returns
+    -------
+    str
+        Path to the XMP result file in the project output folder.
+
+    """
     # sim_result = sim.compute_GPU()
     ### LAUNCH SIMULATION AS PROTOJOB ###
     sim._job.job_type = ProtoJob.Type.GPU
@@ -783,7 +831,9 @@ def run_simulation(sim, p):
     ### retrieve the results
     xmp_path = results.results[0].path
     # sensor_name = sim.get("sensor_paths")[0].split(":")[0]
-    # xmp_path = open_result._find_correct_result(simulation_feature=sim, result_name=sensor_name+".xmp")
+    # xmp_path = open_result._find_correct_result(
+    #     simulation_feature=sim, result_name=sensor_name + ".xmp"
+    # )
 
     # transfer results to project folder
     base_out_folder = os.path.join(
@@ -841,6 +891,15 @@ def run_simulation(sim, p):
 
 
 def merge_results(xmp_paths):
+    """
+    Merge the direct and inverse XMP results into a single union result.
+
+    Parameters
+    ----------
+    xmp_paths : list[str]
+        Paths to the direct and inverse XMP files, in that order.
+
+    """
     ### Manage Inputs
     if len(xmp_paths) < 2:
         raise ValueError("merge_results requires two XMP paths (direct and inverse)")

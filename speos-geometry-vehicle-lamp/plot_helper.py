@@ -19,6 +19,7 @@
 # LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
+"""Interactive PyVista helper for picking a face on a tessellated body."""
 
 import time
 
@@ -28,6 +29,23 @@ from pyvistaqt import BackgroundPlotter
 
 
 def plot_picker(faces_blocks, faces):
+    """
+    Display faces in an interactive window and let the user pick one.
+
+    Press Enter in the window to confirm the selection and close it.
+
+    Parameters
+    ----------
+    faces_blocks : list
+        Tessellated meshes, one per face.
+    faces : list
+        Faces matching ``faces_blocks``; each must expose an ``id``.
+
+    Returns
+    -------
+    The ID of the selected face, or None if nothing was picked.
+
+    """
     selected_face_id = {"value": None}
 
     def add_block(block, face):
