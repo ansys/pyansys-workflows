@@ -1,3 +1,5 @@
+ansys-geometry-core==0.17.2
+ansys-speos-core==0.9.1
 ansys_api_dbu==0.3.29
 ansys_api_discovery==1.0.32
 ansys_api_geometry==0.4.92
