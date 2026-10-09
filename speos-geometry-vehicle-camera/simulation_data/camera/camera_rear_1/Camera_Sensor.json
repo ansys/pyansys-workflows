@@ -10,7 +10,7 @@
   "spectrum_red_file":"Sensitivity_Red.spectrum",
   "spectrum_green_file":"Sensitivity_Green.spectrum",
   "spectrum_blue_file":"Sensitivity_Blue.spectrum",
-  "axis": 
+  "axis":
     {
       "origin": [
         0,
