@@ -14,6 +14,10 @@ Within this repository, users can find multiphysics examples that demonstrate ho
 to automate Ansys simulations. The workflows are organized by folders, each containing Python scripts
 for every part of the simulation process. The available workflows are:
 
+- [AEDT and optiSLang parametric study](https://github.com/ansys/pyansys-workflows/tree/main/aedt-optislang): this workflow demonstrates how to combine PyAEDT and pyOptiSLang to run a parametric AMOP (Adaptive Meta-model of Optimal Prognosis) study on a dipole antenna in HFSS. optiSLang's ProxySolver node is used to process the designs. Parallel design evaluations are managed via `process_map`. The AMOP system automatically creates a MOP (Meta-Model of Optimal Prognosis), which is then used in a subsequent MOP-Solver based optimization system as well as a validation system. The involved Ansys products are:
+    - For electromagnetic analysis: Ansys HFSS (via PyAEDT)
+    - For parametric study: Ansys optiSLang
+
 - [Geometry and meshing](https://github.com/ansys/pyansys-workflows/tree/main//geometry-mesh): this workflow demonstrates how to create a geometry and mesh
   it using PyAnsys. The geometry is a simple CAD structure. The involved Ansys products are:
     - For geometry: Ansys SpaceClaim / Ansys Discovery / Ansys Geometry Service
