@@ -9,7 +9,7 @@ sphinxcontrib-websupport==2.0.0
 sphinx-copybutton==0.5.2
 sphinx-gallery==0.22.1
 sphinx-notfound-page==1.1.0
-imageio==2.37.4
+imageio==2.38.0
 imageio-ffmpeg==0.6.0
 jupyter_sphinx==0.5.3
 jupyterlab>=4.6.4
@@ -19,7 +19,7 @@ plotly==7.1.0
 pythreejs==2.4.2
 pillow==12.3.0
 ipyvtklink==0.2.3
-ipykernel==7.3.0
+ipykernel==7.4.0
 pyvista[jupyter]==0.45.3
 trame-vtk<2.10.3
 vtk==9.4.2
