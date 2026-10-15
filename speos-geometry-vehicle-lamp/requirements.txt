@@ -1,0 +1,11 @@
+ansys-speos-core==0.9.0
+ansys-geometry-core==0.15.2
+comtypes==1.4.11
+numpy>=1.26,<3
+pandas>=2.2,<3
+openpyxl>=3.1,<4
+progressbar2>=4.5,<5
+pyvista==0.46.5
+pyvistaqt==0.11.3
+PyQt5>=5.15,<6
+pywin32==311
