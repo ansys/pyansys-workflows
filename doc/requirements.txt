@@ -17,7 +17,7 @@ matplotlib==3.11.2
 panel==1.9.4
 plotly==7.1.0
 pythreejs==2.4.2
-pillow==12.3.0
+pillow==13.0.0
 ipyvtklink==0.2.3
 ipykernel==7.4.0
 pyvista[jupyter]==0.45.3
