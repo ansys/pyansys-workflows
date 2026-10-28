@@ -1,0 +1,134 @@
+name: AEDT optiSLang Workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  workflow_call:
+    inputs:
+      doc-build:
+        required: false
+        default: false
+        type: boolean
+        description: 'Whether to build the documentation'
+  push:
+    branches:
+      - main
+  pull_request:
+    paths:
+      - 'aedt-optislang/**'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aedt-optislang-${{ github.event.pull_request.number || github.ref || github.run_id }}
+  cancel-in-progress: true
+
+env:
+  ANSYSLMD_LICENSE_FILE: ${{ format('1055@{0}', secrets.LICENSE_SERVER )}}
+  ANSYS_RELEASE_FOR_DOCS: 26.1
+  ANSYSEM_ROOT261: 'C:\Program Files\ANSYS Inc\v261\AnsysEM'
+  MAIN_PYTHON_VERSION: '3.12'
+  ON_CI: true
+
+jobs:
+
+  is-only-docs-required:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check-docs-required.yml
+    with:
+      doc-build: ${{ inputs.doc-build || false }}
+
+  aedt-optislang:
+    name: AEDT optiSLang
+    permissions:
+      contents: read
+    runs-on: [self-hosted, Windows, pyansys-workflows]
+    needs: is-only-docs-required
+    strategy:
+      fail-fast: false
+      matrix:
+        ansys-release: ${{ needs.is-only-docs-required.outputs.only-docs == 'true' && fromJSON('[26.1]') || fromJSON('[26.1]') }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v4.2.2
+        with:
+          sparse-checkout: |
+            aedt-optislang
+            doc
+
+      - name: Set up Python ${{ env.MAIN_PYTHON_VERSION }}
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v5.6.0
+        with:
+          python-version: ${{ env.MAIN_PYTHON_VERSION }}
+
+      - name: Set up environment variables
+        shell: bash
+        run: |
+          ANSYS_RELEASE_SHORT="${{ matrix.ansys-release }}"
+          echo "ANSYS_RELEASE_SHORT=$ANSYS_RELEASE_SHORT" >> $GITHUB_ENV
+          ANSYS_RELEASE_COMPACT="${ANSYS_RELEASE_SHORT//./}"
+          echo "ANSYS_RELEASE_COMPACT=$ANSYS_RELEASE_COMPACT" >> $GITHUB_ENV
+
+      - name: Modify ansyslmd.ini file
+        shell: bash
+        run: |
+          # Define the path to the license file
+          LIC_FILE_PATH="C:\Program Files\ANSYS Inc\Shared Files\licensing\ansyslmd.ini"
+          # Verify that the file exists
+          if [ ! -f "$LIC_FILE_PATH" ]; then
+            echo "License file not found at $LIC_FILE_PATH"
+            exit 1
+          fi
+          # REPLACE the line starting with SERVER by something like: SERVER=1055@XX.XXX.XX.XX
+          sed -i "s|^SERVER=.*|SERVER=${{ env.ANSYSLMD_LICENSE_FILE }}|" "$LIC_FILE_PATH"
+
+      - name: Install dependencies
+        shell: bash
+        run: |
+          python -m pip install --upgrade pip
+          python -m venv .venv
+          source .venv/Scripts/activate
+          pip install -r aedt-optislang/requirements_${{ matrix.ansys-release }}.txt
+
+      - name: Run the workflow script
+        env:
+          AEDT_VERSION: ${{ matrix.ansys-release }}
+        shell: bash
+        run: |
+          source .venv/Scripts/activate
+          python aedt-optislang/wf_ao_01_dipole_antenna_optimization.py
+
+      - name: (DOCS) Build the documentation (only on ${{ env.ANSYS_RELEASE_FOR_DOCS }})
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        env:
+          BUILD_DOCS_SCRIPT: 'aedt-optislang/wf_ao_01_dipole_antenna_optimization.py'
+        shell: bash
+        run: |
+          source .venv/Scripts/activate
+          cd doc
+          pip install -r requirements.txt
+          ./make.bat html
+
+      - name: (DOCS) Adapt the documentation paths
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        shell: bash
+        run: |
+          DOC_IMAGES_PATH="${GITHUB_WORKSPACE//\\/\\\\}\\\\doc\\\\source\\\\examples\\\\aedt-optislang\\\\images\\\\"
+          find doc/_build -type f -exec sed -i "s|${DOC_IMAGES_PATH}|./images/|g" {} +
+
+      - name: (DOCS) Upload docs artifacts
+        if: needs.is-only-docs-required.outputs.only-docs == 'true' && matrix.ansys-release == env.ANSYS_RELEASE_FOR_DOCS
+        uses: actions/upload-artifact@v7
+        with:
+          name: aedt-optislang-docs
+          path: |
+            doc/_build/
+            doc/source/examples/aedt-optislang/
+          overwrite: true
