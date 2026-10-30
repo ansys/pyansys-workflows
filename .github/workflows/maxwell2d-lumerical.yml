@@ -61,12 +61,23 @@ jobs:
         with:
           python-version: ${{ env.MAIN_PYTHON_VERSION }}
 
+      # Bootstrap from the PSF-published wheel and hash: an index-based upgrade
+      # would still rely on the old pip's compromised CA bundle.
+      - name: "Bootstrap pip with a safe certificate bundle"
+        shell: bash
+        run: |
+          python -m pip --disable-pip-version-check install --no-cache-dir --force-reinstall "pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+
       - name: Install dependencies
         shell: bash
         run: |
-          python -m pip install --upgrade pip
           python -m venv .venv
           source .venv/Scripts/activate
+
+          # Bootstrap from the PSF-published wheel and hash: an index-based upgrade
+          # would still rely on the old pip's compromised CA bundle.
+          python -m pip --disable-pip-version-check install --no-cache-dir --force-reinstall "pip @ https://files.pythonhosted.org/packages/3f/06/3e4420302363fbb71be3c7f35ce042f54bfca330e3e66b3a2e3c4cca579f/pip-26.2.2-py3-none-any.whl#sha256=fd7f4dfa8190e014013b9f08f3e973f4e4c26ffd179a204895533a7254813a70"
+
           pip install -r maxwell2d-lumerical/requirements_${{ matrix.ansys-release }}.txt
 
       - name: Run the workflow script
