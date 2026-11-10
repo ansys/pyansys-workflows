@@ -10,9 +10,9 @@ sphinx-copybutton==0.5.2
 sphinx-gallery==0.22.1
 sphinx-notfound-page==1.1.0
 imageio==2.38.1
-imageio-ffmpeg==0.6.0
+imageio-ffmpeg==0.7.0
 jupyter_sphinx==0.5.3
-jupyterlab>=4.6.4
+jupyterlab>=4.6.5
 matplotlib==3.11.2
 panel==1.10.0
 plotly==7.1.0
