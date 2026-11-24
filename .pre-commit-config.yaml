@@ -2,7 +2,7 @@ exclude: "tests/integration/files"
 repos:
 
   - repo: https://github.com/google/yamlfmt
-    rev: v0.21.0
+    rev: b5ca1890231d5e1e5181fef75a1be609d1e25029 # frozen: v0.21.0
     hooks:
       - id: yamlfmt
         args:
@@ -10,22 +10,22 @@ repos:
           - "max_line_length=180,retain_line_breaks=true,retain_line_breaks_single=true"
 
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 26.10.1
+    rev: a5439e9af2ff9371297bb1a76a01b8ad17989b88 # frozen: 26.10.1
     hooks:
       - id: black
 
   - repo: https://github.com/pycqa/isort
-    rev: 10.0.0b3
+    rev: eb62da318ea543b82340f3d0a52bc0509c7e626e # frozen: 10.0.0b3
     hooks:
       - id: isort
 
   - repo: https://github.com/PyCQA/flake8
-    rev: 7.5.0
+    rev: 960c1d286190804104f7255b97da034446fdaac3 # frozen: 7.5.0
     hooks:
       - id: flake8
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v6.0.0
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c # frozen: v6.0.0
     hooks:
       - id: check-merge-conflict
       - id: debug-statements
@@ -33,7 +33,7 @@ repos:
       - id: trailing-whitespace
 
   - repo: https://github.com/ansys/pre-commit-hooks
-    rev: v0.8.1
+    rev: 5040e1fffc2867225e12b55a15e11d207663f1a6 # frozen: v0.8.4
     hooks:
       - id: add-license-headers
         files: '/.*\.(py)'
@@ -42,6 +42,6 @@ repos:
 
   # this validates our github workflow files
   - repo: https://github.com/python-jsonschema/check-jsonschema
-    rev: 0.39.0
+    rev: 39478bf2c099a58683d3f1aedf675105318b078d # frozen: 0.39.0
     hooks:
       - id: check-github-workflows
