@@ -1,0 +1,67 @@
+
+:orphan:
+
+.. _sphx_glr_sg_execution_times:
+
+
+Computation times
+=================
+**141:52.626** total execution time for 11 files **from all galleries**:
+
+.. container::
+
+  .. raw:: html
+
+    <style scoped>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css" rel="stylesheet" />
+    </style>
+    <script src="https://code.jquery.com/jquery-3.7.0.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script type="text/javascript" class="init">
+    $(document).ready( function () {
+        $('table.sg-datatable').DataTable({order: [[1, 'desc']]});
+    } );
+    </script>
+
+  .. list-table::
+   :header-rows: 1
+   :class: table table-striped sg-datatable
+
+   * - Example
+     - Time
+     - Mem (MB)
+   * - :ref:`sphx_glr_examples_q3d-lumerical_wf_q3l_01_ion_trap_modelling.py` (``../../q3d-lumerical/wf_q3l_01_ion_trap_modelling.py``)
+     - 39:27.923
+     - 0.0
+   * - :ref:`sphx_glr_examples_maxwell2d-lumerical_wf_ml_01_ion_trap_modelling.py` (``../../maxwell2d-lumerical/wf_ml_01_ion_trap_modelling.py``)
+     - 33:57.400
+     - 0.0
+   * - :ref:`sphx_glr_examples_speos-optislang_wf_so_01_light_guide_robustness_study.py` (``../../speos-optislang/wf_so_01_light_guide_robustness_study.py``)
+     - 26:57.019
+     - 0.0
+   * - :ref:`sphx_glr_examples_geometry-mesh-fluent_wf_gmf_03_fluent_solver.py` (``../../geometry-mesh-fluent/wf_gmf_03_fluent_solver.py``)
+     - 18:26.514
+     - 0.0
+   * - :ref:`sphx_glr_examples_fluent-mechanical_wf_fm_02_mechanical.py` (``../../fluent-mechanical/wf_fm_02_mechanical.py``)
+     - 08:06.522
+     - 0.0
+   * - :ref:`sphx_glr_examples_fluent-mechanical_wf_fm_01_fluent.py` (``../../fluent-mechanical/wf_fm_01_fluent.py``)
+     - 06:57.088
+     - 0.0
+   * - :ref:`sphx_glr_examples_geometry-mesh-fluent_wf_gmf_02_fluent_meshing.py` (``../../geometry-mesh-fluent/wf_gmf_02_fluent_meshing.py``)
+     - 05:29.850
+     - 0.0
+   * - :ref:`sphx_glr_examples_geometry-mesh-fluent_wf_gmf_01_geometry.py` (``../../geometry-mesh-fluent/wf_gmf_01_geometry.py``)
+     - 00:57.866
+     - 0.0
+   * - :ref:`sphx_glr_examples_geometry-mesh_wf_gm_01_geometry.py` (``../../geometry-mesh/wf_gm_01_geometry.py``)
+     - 00:48.047
+     - 0.0
+   * - :ref:`sphx_glr_examples_geometry-mesh_wf_gm_02_mesh.py` (``../../geometry-mesh/wf_gm_02_mesh.py``)
+     - 00:29.726
+     - 0.0
+   * - :ref:`sphx_glr_examples_mapdl-dpf_wf_mapdl-dpf.py` (``../../mapdl-dpf/wf_mapdl-dpf.py``)
+     - 00:14.670
+     - 0.0
